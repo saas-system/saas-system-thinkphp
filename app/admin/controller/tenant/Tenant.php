@@ -1,0 +1,391 @@
+<?php
+
+namespace app\admin\controller\tenant;
+
+use app\admin\model\TenantAdmin;
+use app\common\conf\MsgField;
+use app\common\controller\Backend;
+use app\common\model\tenant\TenantConfig;
+use app\common\services\tenant\TenantService;
+use ba\Random;
+use think\db\exception\PDOException;
+use think\Exception;
+use think\exception\ValidateException;
+use think\facade\Db;
+use think\facade\Log;
+
+/**
+ * 租户 - 租户信息管理
+ *
+ */
+class Tenant extends Backend
+{
+    /**
+     * Tenant模型对象
+     * @var \app\admin\model\Tenant
+     */
+    protected object $model;
+
+    protected string|array $defaultSortField = 'create_time,desc';
+
+    protected string|array $preExcludeFields = ['create_time', 'update_time'];
+
+    protected string|array $quickSearchField = ['name', 'mobile'];
+
+    protected array $withJoinTable = ['province', 'city', 'district', 'config'];
+
+    public function initialize(): void
+    {
+        parent::initialize();
+        $this->model = new \app\admin\model\Tenant;
+    }
+
+    /**
+     * 查看
+     */
+    public function index(): void
+    {
+        $this->request->filter(['strip_tags', 'trim']);
+        if ($this->request->param('select')) {
+            $this->select();
+        }
+
+        list($where, $alias, $limit, $order) = $this->queryBuilder();
+        $res = $this->model
+            ->field($this->indexField)
+            ->withJoin($this->withJoinTable, $this->withJoinType)
+            ->alias($alias)
+            ->where($where)
+            ->order($order)
+            ->paginate($limit);
+
+        $this->success('', [
+            'list'   => $res->items(),
+            'total'  => $res->total(),
+            'remark' => get_route_remark(),
+        ]);
+    }
+
+    /**
+     * 添加
+     */
+    public function add(): void
+    {
+        if ($this->request->isPost()) {
+            $data = $this->request->post();
+            if (!$data) {
+                $this->error(__('Parameter %s can not be empty', ['']));
+            }
+
+            $data = $this->excludeFields($data);
+            if ($this->dataLimit && $this->dataLimitFieldAutoFill) {
+                $data[$this->dataLimitField] = $this->auth->id;
+            }
+
+            $result = false;
+            Db::startTrans();
+            try {
+                // 模型验证
+                if ($this->modelValidate) {
+                    $validate = str_replace("\\model\\", "\\validate\\", get_class($this->model));
+                    if (class_exists($validate)) {
+                        $validate = new $validate;
+                        if ($this->modelSceneValidate)
+                            $validate->scene('add');
+                        $validate->check($data);
+                    }
+                }
+
+                $mobile = $data['mobile'];
+
+                // $isRepeat = TenantAdmin::where('mobile', $mobile)->find();
+                // if ($isRepeat) {
+                //     throw new Exception('创建失败，手机号已存在');
+                // }
+
+                $data['id'] = Random::uuid();
+                // $areaIds             = $data['area_ids'];
+                // $data['province_id'] = $areaIds[0];
+                // $data['city_id']     = $areaIds[1];
+                // $data['district_id'] = $areaIds[2];
+                $result = $this->model->save($data);
+
+                // 初始化租户管理员信息
+                $ip = $this->request->ip();
+                TenantService::initTenantAdminGroup($this->model);
+
+                Db::commit();
+            } catch (ValidateException|PDOException|\Exception $e) {
+                Db::rollback();
+                $this->error($e->getMessage());
+            }
+            if ($result !== false) {
+                $this->success(__('Added successfully'));
+            } else {
+                $this->error(__('No rows were added'));
+            }
+        }
+
+        $this->error(__('Parameter error'));
+    }
+
+    /**
+     * 删除
+     * @param array $ids
+     */
+    public function del(array $ids = []): void
+    {
+        if (!$this->request->isDelete() || !$ids) {
+            $this->error(__('Parameter error'));
+        }
+
+        $dataLimitAdminIds = $this->getDataLimitAdminIds();
+        if ($dataLimitAdminIds) {
+            $this->model->where($this->dataLimitField, 'in', $dataLimitAdminIds);
+        }
+
+        $this->error('禁止删除');
+
+        $pk    = $this->model->getPk();
+        $data  = $this->model->where($pk, 'in', $ids)->select();
+        $count = 0;
+        Db::startTrans();
+        try {
+            foreach ($data as $v) {
+                $count += $v->delete();
+            }
+            Db::commit();
+        } catch (PDOException|Exception $e) {
+            Db::rollback();
+            $this->error($e->getMessage());
+        }
+        if ($count) {
+            $this->success(__('Deleted successfully'));
+        } else {
+            $this->error(__('No rows were deleted'));
+        }
+    }
+
+    /**
+     * 获取配置
+     */
+    public function getTenantConfig(): void
+    {
+        $id  = $this->request->param('id');
+        $row = (new \app\common\model\tenant\TenantConfig())->where(['tenant_id' => $id])->find();
+        $this->success('成功', $row);
+    }
+
+    /**
+     * 编辑
+     */
+    public function config(): void
+    {
+        $id    = $this->request->param('id');
+        $model = new \app\common\model\tenant\TenantConfig();
+        $row   = $model->find($id);
+
+        if ($this->request->isPost()) {
+            $data = $this->request->post();
+            if (!$data) {
+                $this->error(__('Parameter %s can not be empty', ['']));
+            }
+
+            $tenantPre = $data['tenant_pre'] ?? '';
+
+            if ($tenantPre) {
+                if ($id) {
+                    $result = TenantConfig::where('tenant_pre', $tenantPre)->where('id', '<>', $id)->find();
+                } else {
+                    $result = TenantConfig::where('tenant_pre', $tenantPre)->find();
+                }
+
+                if ($result) {
+                    $this->error('租户前缀已存在，请重新输入');
+                }
+            }
+
+
+            $result = false;
+            Db::startTrans();
+            try {
+                if (!$row) {
+                    unset($data['id']);
+                    // App解锁码
+                    $data['unlock_code'] = $this->getUnlockCode();
+
+                    $result = $model->save($data);
+                } else {
+                    // App解锁码
+                    if (!$row->unlock_code) {
+                        $data['unlock_code'] = $this->getUnlockCode();
+                    }
+
+                    $result = $row->save($data);
+                }
+                Db::commit();
+            } catch (ValidateException $e) {
+                Db::rollback();
+                $this->error($e->getMessage());
+            }
+            if ($result !== false) {
+                $this->success(__('Update successful'));
+            } else {
+                $this->error(__('No rows updated'));
+            }
+
+        }
+
+        $this->success('', [
+            'row' => $row
+        ]);
+    }
+
+    /**
+     * 初始化租户数据
+     */
+    public function initData(): void
+    {
+        $tenantId = $this->request->post('id');
+        if (!$tenantId) {
+            $this->error('请传租户ID');
+        }
+
+        $row = $this->model->find($tenantId);
+        if (!$row) {
+            $this->error('租户不存在');
+        }
+
+        // 启动事务
+        Db::startTrans();
+        try {
+            /* 1、初始化轮播图 */
+            $slideCategoryModel = new \app\common\model\common\SlideCategory;
+            $slideModel         = new \app\common\model\common\Slide;
+
+            $slideCategory = $slideCategoryModel->where('tenant_id', $tenantId)->find();
+            if (!$slideCategory) {
+                // 新增分类
+                $slideCategoryModel->name      = '小程序';
+                $slideCategoryModel->tenant_id = $tenantId;
+                $slideCategoryModel->save();
+
+                // 分类ID
+                $categoryId = $slideCategoryModel->id;
+
+                // 删除多余数据
+                $slide = $slideModel->where('tenant_id', $tenantId)->select();
+                if ($slide) {
+                    $slide->delete();
+                }
+
+                // 新增轮播图
+                $slideList = [
+                    ['title' => '商城图片1', 'image' => '/static/images/wx_mini/slide/banner_1.png', 'position' => 1, 'category_id' => $categoryId, 'tenant_id' => $tenantId],
+                    ['title' => '商城图片2', 'image' => '/static/images/wx_mini/slide/banner_2.png', 'position' => 1, 'category_id' => $categoryId, 'tenant_id' => $tenantId],
+                    ['title' => '赛事图片1', 'image' => '/static/images/wx_mini/slide/banner_1.png', 'position' => 2, 'category_id' => $categoryId, 'tenant_id' => $tenantId],
+                    ['title' => '赛事图片2', 'image' => '/static/images/wx_mini/slide/banner_2.png', 'position' => 2, 'category_id' => $categoryId, 'tenant_id' => $tenantId]
+                ];
+                $slideModel->saveAll($slideList);
+            }
+
+            // 提交事务
+            Db::commit();
+
+        } catch (\Exception $e) {
+            Log::critical("初始化租户数据发生错误：" . $e->__toString());
+            // 回滚事务
+            Db::rollback();
+
+            $this->error('初始化数据失败');
+        }
+
+        $this->success('初始化数据成功');
+    }
+
+    /**
+     * 清除租户数据
+     * @return void
+     */
+    public function clearData(): void
+    {
+        $tenantId = $this->request->post('id');
+        if (!$tenantId) {
+            $this->error('请传租户ID');
+        }
+
+        $row = $this->model->find($tenantId);
+        if (!$row) {
+            $this->error('租户不存在');
+        }
+
+        $dataLimitAdminIds = $this->getDataLimitAdminIds();
+        if ($dataLimitAdminIds && !in_array($row[$this->dataLimitField], $dataLimitAdminIds)) {
+            $this->error(__('You have no permission'));
+        }
+
+        // 启动事务
+        Db::startTrans();
+        try {
+            // 1、获取比赛ID
+            $matchIds = Db::table('tenant_match')
+                ->whereNull('delete_time')
+                ->where('tenant_id', $tenantId)
+                ->column('id');
+            foreach ($matchIds as $matchId) {
+                if ($matchId) {
+                    // 删除 tenant_match_timer、tenant_match_timer_level
+                    Db::table('tenant_match_timer')
+                        ->where('match_id', $matchId)
+                        ->delete();
+
+                    Db::table('tenant_match_timer_level')
+                        ->where('match_id', $matchId)
+                        ->delete();
+                }
+            }
+
+            // 2、删除租户其他相关表
+            $deleteTables = [
+                'tenant_admin_log' => 0,
+                'tenant_pages'     => 1,
+            ];
+
+            foreach ($deleteTables as $tableName => $isSoft) {
+                $db = Db::table($tableName)->where('tenant_id', $tenantId);
+                if ($isSoft) {
+                    $db = $db->whereNull('delete_time')->useSoftDelete('delete_time', time());
+                }
+                $db->delete();
+            }
+
+            // 提交事务
+            Db::commit();
+
+        } catch (\Exception $e) {
+            Log::critical("清除租户数据发生错误：" . $e->__toString());
+            // 回滚事务
+            Db::rollback();
+
+            $this->error('清除数据失败');
+        }
+
+        $this->success('清除数据成功');
+    }
+
+
+    /**
+     * 递归的方式获取 tv app 解锁码
+     * @return string
+     */
+    public function getUnlockCode()
+    {
+        $model = new \app\common\model\tenant\TenantConfig();
+        // 生成一个随机6位数字
+        $unlockCode = Random::build('numeric', 6);
+        if ($model->where('unlock_code', $unlockCode)->find()) {
+            return $this->getUnlockCode();
+        }
+        return $unlockCode;
+    }
+}

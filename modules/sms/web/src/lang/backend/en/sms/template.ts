@@ -1,0 +1,16 @@
+export default {
+    id: 'id',
+    title: 'title',
+    code: 'code',
+    template: 'template',
+    content: 'content',
+    variables: 'variables',
+    updatetime: 'updatetime',
+    createtime: 'createtime',
+    variable__title: 'variable__title',
+    'quick Search Fields': 'title、code',
+    status: 'status',
+    test_send: 'test send',
+    'Please enter the receiver mobile': 'Please enter the receiver mobile',
+    'Please enter the correct mobile number': 'Please enter the correct mobile number',
+}
