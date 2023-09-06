@@ -42,13 +42,11 @@ class TenantConfig extends Base
      * @param $unlockCode
      * @return mixed|null
      */
-    public static function getTenantIdByAppId($miniAppId = '', $unlockCode = '')
+    public static function getTenantIdByAppId($miniAppId = '')
     {
         $tenantId = null;
         if ($miniAppId) {
             $tenantId = TenantConfig::getTenantIdByMiniAppId($miniAppId);
-        } elseif ($unlockCode) {
-            $tenantId = TenantConfig::getTenantIdByTvUnlockCode($unlockCode);
         }
         return $tenantId;
     }
@@ -73,17 +71,6 @@ class TenantConfig extends Base
     public static function getTenantPreByTenantId($tenantId)
     {
         return TenantConfig::where('tenant_id', $tenantId)->value('tenant_pre');
-    }
-
-    /**
-     * 通过uniappId 获取租户ID
-     *
-     * @param $uniAppId
-     * @return mixed
-     */
-    public static function getTenantIdByTvUnlockCode($uniAppId)
-    {
-        return TenantConfig::where('unlock_code', $uniAppId)->value('tenant_id');
     }
 
     /**

@@ -1,5 +1,5 @@
 <template>
-    <el-scrollbar ref="verticalMenusRef" class="vertical-menus-scrollbar">
+    <el-scrollbar ref="verticalMenusRef" class="vertical-menus-scrollbar-t">
         <el-menu
             class="layouts-menu-vertical"
             :collapse-transition="false"
@@ -66,7 +66,7 @@ onBeforeRouteUpdate((to) => {
 })
 </script>
 <style>
-.vertical-menus-scrollbar {
+.vertical-menus-scrollbar-t {
     height: v-bind(verticalMenusScrollbarHeight);
     background-color: v-bind('config.getColorVal("menuBackground")');
 }

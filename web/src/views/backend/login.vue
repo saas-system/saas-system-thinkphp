@@ -2,9 +2,9 @@
     <div class="login">
         <div class="login-box">
             <div class="word">
-                <img class="logo_img" src="~assets/logo_white.png" alt="山西省扑克运动协会">
+                <img class="logo_img" src="~assets/logo_white.png" alt="LOGO">
                 <div class="logo_text_1">欢迎使用</div>
-                <div class="logo_text_2">山西省扑克运动协会<br/>国际扑克训练基地</div>
+                <div class="logo_text_2">XX后台管理系统</div>
             </div>
             <div class="content">
                 <el-form @keyup.enter="onSubmitPre()" ref="formRef" :rules="rules" size="large" :model="form">

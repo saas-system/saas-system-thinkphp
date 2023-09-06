@@ -209,20 +209,6 @@ class Tenant extends Backend
             $result = false;
             Db::startTrans();
             try {
-                if (!$row) {
-                    unset($data['id']);
-                    // App解锁码
-                    $data['unlock_code'] = $this->getUnlockCode();
-
-                    $result = $model->save($data);
-                } else {
-                    // App解锁码
-                    if (!$row->unlock_code) {
-                        $data['unlock_code'] = $this->getUnlockCode();
-                    }
-
-                    $result = $row->save($data);
-                }
                 Db::commit();
             } catch (ValidateException $e) {
                 Db::rollback();
@@ -263,35 +249,11 @@ class Tenant extends Backend
             $slideCategoryModel = new \app\common\model\common\SlideCategory;
             $slideModel         = new \app\common\model\common\Slide;
 
-            $slideCategory = $slideCategoryModel->where('tenant_id', $tenantId)->find();
-            if (!$slideCategory) {
-                // 新增分类
-                $slideCategoryModel->name      = '小程序';
-                $slideCategoryModel->tenant_id = $tenantId;
-                $slideCategoryModel->save();
-
-                // 分类ID
-                $categoryId = $slideCategoryModel->id;
-
-                // 删除多余数据
-                $slide = $slideModel->where('tenant_id', $tenantId)->select();
-                if ($slide) {
-                    $slide->delete();
-                }
-
-                // 新增轮播图
-                $slideList = [
-                    ['title' => '商城图片1', 'image' => '/static/images/wx_mini/slide/banner_1.png', 'position' => 1, 'category_id' => $categoryId, 'tenant_id' => $tenantId],
-                    ['title' => '商城图片2', 'image' => '/static/images/wx_mini/slide/banner_2.png', 'position' => 1, 'category_id' => $categoryId, 'tenant_id' => $tenantId],
-                    ['title' => '赛事图片1', 'image' => '/static/images/wx_mini/slide/banner_1.png', 'position' => 2, 'category_id' => $categoryId, 'tenant_id' => $tenantId],
-                    ['title' => '赛事图片2', 'image' => '/static/images/wx_mini/slide/banner_2.png', 'position' => 2, 'category_id' => $categoryId, 'tenant_id' => $tenantId]
-                ];
-                $slideModel->saveAll($slideList);
-            }
+            $slideCategoryModel->where('tenant_id', $tenantId)->delete();
+            $slideModel->where('tenant_id', $tenantId)->delete();
 
             // 提交事务
             Db::commit();
-
         } catch (\Exception $e) {
             Log::critical("初始化租户数据发生错误：" . $e->__toString());
             // 回滚事务
@@ -327,25 +289,7 @@ class Tenant extends Backend
         // 启动事务
         Db::startTrans();
         try {
-            // 1、获取比赛ID
-            $matchIds = Db::table('tenant_match')
-                ->whereNull('delete_time')
-                ->where('tenant_id', $tenantId)
-                ->column('id');
-            foreach ($matchIds as $matchId) {
-                if ($matchId) {
-                    // 删除 tenant_match_timer、tenant_match_timer_level
-                    Db::table('tenant_match_timer')
-                        ->where('match_id', $matchId)
-                        ->delete();
-
-                    Db::table('tenant_match_timer_level')
-                        ->where('match_id', $matchId)
-                        ->delete();
-                }
-            }
-
-            // 2、删除租户其他相关表
+            // 清除租户相关表
             $deleteTables = [
                 'tenant_admin_log' => 0,
                 'tenant_pages'     => 1,
@@ -371,21 +315,5 @@ class Tenant extends Backend
         }
 
         $this->success('清除数据成功');
-    }
-
-
-    /**
-     * 递归的方式获取 tv app 解锁码
-     * @return string
-     */
-    public function getUnlockCode()
-    {
-        $model = new \app\common\model\tenant\TenantConfig();
-        // 生成一个随机6位数字
-        $unlockCode = Random::build('numeric', 6);
-        if ($model->where('unlock_code', $unlockCode)->find()) {
-            return $this->getUnlockCode();
-        }
-        return $unlockCode;
     }
 }

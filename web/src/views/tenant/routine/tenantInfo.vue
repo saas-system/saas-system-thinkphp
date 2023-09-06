@@ -21,10 +21,6 @@
                     <div class="admin-info-base">
                         <div class="admin-nickname">{{ state.tenantInfo.name }}</div>
                     </div>
-                    <div class="unlock-code" v-if="state.tenantInfo.unlock_code">
-                        TVAPP解锁码：<span>{{ state.tenantInfo.unlock_code || '' }}</span>
-                    </div>
-
                     <div class="admin-info-form">
                         <el-form
                             @keyup.enter="onSubmit(formRef)"

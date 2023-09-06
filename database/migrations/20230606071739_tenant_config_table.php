@@ -33,7 +33,6 @@ class TenantConfigTable extends Migrator
             ->addColumn('mini_app_id', 'string', ['limit' => 255, 'default' => '', 'comment' => '微信小程序ID'])
             ->addColumn('mini_secret_id', 'string', ['limit' => 255, 'default' => '', 'comment' => '微信小程序秘钥'])
             ->addColumn('mini_logo', 'string', ['limit' => 200, 'default' => '', 'comment' => '微信小程序logo'])
-            ->addColumn('unlock_code', 'string', ['limit' => 30, 'default' => '', 'comment' => 'App解锁码'])
 
             // 卡号生成相关配置
             ->addColumn('tenant_pre', 'string', ['limit' => 64, 'default' => '', 'comment' => '租户前缀'])

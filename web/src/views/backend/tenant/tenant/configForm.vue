@@ -32,7 +32,6 @@
                     <FormItem :label="'微信小程序ID'" type="string" v-model="baTable.form.items!.mini_app_id" prop="mini_app_id" :placeholder="t('Please input field', { field: '微信小程序ID' })"/>
                     <FormItem :label="'微信小程序秘钥'" type="string" v-model="baTable.form.items!.mini_secret_id" prop="mini_secret_id" :placeholder="t('Please input field', { field: '微信小程序秘钥' })"/>
                     <FormItem :label="'小程序二维码'" type="image" v-model="baTable.form.items!.mini_logo" prop="mini_logo" />
-                    <FormItem :label="'TVAPP解锁码'" :input-attr="{ disabled: true }" type="string" v-model="baTable.form.items!.unlock_code" prop="unlock_code" :placeholder="t('保存后自动生成', { field: '解锁码' })"/>
                     <FormItem :label="'租户前缀'" type="string" v-model="baTable.form.items!.tenant_pre" prop="tenant_pre" :placeholder="t('Please input field', { field: '租户前缀' })"/>
                     <FormItem :label="'卡号前缀'" type="number" prop="number_pre" :input-attr="{ step: 1 }" v-model.number="baTable.form.items!.number_pre" :placeholder="t('Please input field', { field: '卡号前缀' })"/>
                     <FormItem label="过期提醒人员" type="remoteSelects" v-model="baTable.form.items!.remind_admin_ids" prop="remind_admin_ids"

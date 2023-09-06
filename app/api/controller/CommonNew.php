@@ -145,9 +145,8 @@ class CommonNew extends Api
     public function getTenantId(Request $request)
     {
         $miniAppId  = $request->get('mini_app_id', '');
-        $unlockCode = $request->get('unlock_code', '');
 
-        $tenantId = TenantConfig::getTenantIdByAppId($miniAppId, $unlockCode);
+        $tenantId = TenantConfig::getTenantIdByAppId($miniAppId);
         if (!$tenantId) {
             $this->error("获取租户ID失败");
         }

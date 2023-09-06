@@ -34,7 +34,7 @@ class TenantAdminTable extends Migrator
             ->addColumn('nickname', 'string', ['limit' => 50, 'null' => false, 'default' => '', 'comment' => '昵称'])
             ->addColumn('avatar', 'string', ['limit' => 255, 'null' => false, 'default' => '', 'comment' => '头像'])
             ->addColumn('email', 'string', ['limit' => 100, 'null' => false, 'default' => '', 'comment' => '邮箱'])
-            ->addColumn('mobile', 'string', ['limit' => 10, 'null' => false, 'default' => '', 'comment' => '手机'])
+            ->addColumn('mobile', 'string', ['limit' => 11, 'null' => false, 'default' => '', 'comment' => '手机'])
             ->addColumn('loginfailure', 'integer', ['limit' => 1, 'null' => false, 'default' => 0, 'comment' => '登录失败次数'])
             ->addColumn('lastlogintime', 'integer', ['null' => true, 'comment' => '登录时间'])
             ->addColumn('lastloginip', 'string', ['limit' => 50, 'null' => true, 'comment' => '登录IP'])

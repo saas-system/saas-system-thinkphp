@@ -38,7 +38,6 @@ class TenantInfo extends Backend
 
             $fullAddress        = $provinceName . $cityName . $districtName . $info->address;
             $info->full_address = $fullAddress;
-            $info->unlock_code  = TenantConfig::where('tenant_id', $tenantId)->value('unlock_code');
         }
 
         $this->success('', [
