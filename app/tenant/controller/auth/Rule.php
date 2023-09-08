@@ -4,7 +4,7 @@ namespace app\tenant\controller\auth;
 
 use ba\Tree;
 use Throwable;
-use app\admin\model\AdminRule;
+use app\tenant\model\AdminRule;
 use app\common\controller\TenantBackend as Backend;
 
 class Rule extends Backend

@@ -17,7 +17,7 @@ class Admin extends Backend
      */
     protected object $model;
 
-    protected array|string $preExcludeFields = ['createtime', 'updatetime', 'password', 'salt', 'loginfailure', 'lastlogintime', 'lastloginip'];
+    protected array|string $preExcludeFields = ['createtime', 'updatetime', 'password', 'salt', 'login_failure', 'last_login_time', 'last_login_ip'];
 
     protected array|string $quickSearchField = ['username', 'nickname'];
 
@@ -47,7 +47,7 @@ class Admin extends Backend
         list($where, $alias, $limit, $order) = $this->queryBuilder();
         $res = $this->model
             ->permission($this->auth->tenant_id)
-            ->withoutField('loginfailure,password,salt')
+            ->withoutField('login_failure,password,salt')
             ->withJoin($this->withJoinTable, $this->withJoinType)
             ->alias($alias)
             ->where($where)
@@ -204,7 +204,7 @@ class Admin extends Backend
             }
         }
 
-        unset($row['salt'], $row['loginfailure']);
+        unset($row['salt'], $row['login_failure']);
         $row['password'] = '';
         $this->success('', [
             'row' => $row

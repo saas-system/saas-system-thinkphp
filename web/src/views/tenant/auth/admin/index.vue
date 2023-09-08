@@ -51,7 +51,7 @@ const baTable = new baTableClass(
             { label: t('auth.admin.mobile'), prop: 'mobile', align: 'center', operator: 'LIKE', operatorPlaceholder: t('Fuzzy query') },
             {
                 label: t('auth.admin.Last login'),
-                prop: 'lastlogintime',
+                prop: 'last_login_time',
                 align: 'center',
                 render: 'datetime',
                 sortable: 'custom',

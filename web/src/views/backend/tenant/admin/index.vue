@@ -78,9 +78,9 @@ const baTable = new baTableClass(
             { label: '手机号', prop: 'mobile', align: 'center', operatorPlaceholder: t('Fuzzy query'), operator: 'LIKE', sortable: false },
             { label: '头像', prop: 'avatar', align: 'center', render: 'image', operator: false },
             { label: '邮箱', prop: 'email', align: 'center', operatorPlaceholder: t('Fuzzy query'), operator: 'LIKE', sortable: false },
-            { label: '登录失败次数', prop: 'loginfailure', align: 'center', operator: 'RANGE', sortable: false },
-            { label: '登录时间', prop: 'lastlogintime', align: 'center', render: 'datetime', operator: false, sortable: 'custom', width: 160, timeFormat: 'yyyy-mm-dd hh:MM:ss' },
-            { label: '登录IP', prop: 'lastloginip', align: 'center', operatorPlaceholder: t('Fuzzy query'), operator: 'LIKE', sortable: false },
+            { label: '登录失败次数', prop: 'login_failure', align: 'center', operator: 'RANGE', sortable: false },
+            { label: '登录时间', prop: 'last_login_time', align: 'center', render: 'datetime', operator: false, sortable: 'custom', width: 160, timeFormat: 'yyyy-mm-dd hh:MM:ss' },
+            { label: '登录IP', prop: 'last_login_ip', align: 'center', operatorPlaceholder: t('Fuzzy query'), operator: 'LIKE', sortable: false },
             { label: '状态', prop: 'status', align: 'center', render: 'switch', operator: '=', sortable: false, replaceValue: { 1: '启用', 0: '禁用' } },
             { label: '创建时间', prop: 'createtime', align: 'center', render: 'datetime', operator: false, sortable: 'custom', width: 160, timeFormat: 'yyyy-mm-dd hh:MM:ss' },
             { label: t('Operate'), align: 'center', width: 100, render: 'buttons', buttons: optButtons, operator: false }

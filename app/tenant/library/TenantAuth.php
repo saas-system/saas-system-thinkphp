@@ -65,7 +65,7 @@ class TenantAuth extends \ba\Auth
      */
     protected string $adminGroupAccessTable = 'tenant_admin_group_access';
 
-    protected array $allowFields = ['id', 'username', 'mobile', 'nickname', 'avatar', 'lastlogintime', 'tenant_id'];
+    protected array $allowFields = ['id', 'username', 'mobile', 'nickname', 'avatar', 'last_login_time', 'tenant_id'];
 
     public function __construct(array $config = [])
     {
@@ -172,7 +172,7 @@ class TenantAuth extends \ba\Auth
             return false;
         }
         $adminLoginRetry = Config::get('buildadmin.admin_login_retry');
-        if ($adminLoginRetry && $this->model->loginfailure >= $adminLoginRetry && time() - $this->model->getData('lastlogintime') < 86400) {
+        if ($adminLoginRetry && $this->model->login_failure >= $adminLoginRetry && time() - $this->model->getData('last_login_time') < 86400) {
             $this->setError('Please try again after 1 day');
             return false;
         }
@@ -251,9 +251,9 @@ class TenantAuth extends \ba\Auth
         }
         Db::startTrans();
         try {
-            $this->model->loginfailure++;
-            $this->model->lastlogintime = time();
-            $this->model->lastloginip   = request()->ip();
+            $this->model->login_failure++;
+            $this->model->last_login_time = time();
+            $this->model->last_login_ip   = request()->ip();
             $this->model->save();
 
             $this->token   = '';
