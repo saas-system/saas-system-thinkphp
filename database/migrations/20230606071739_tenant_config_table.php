@@ -36,6 +36,7 @@ class TenantConfigTable extends Migrator
 
             // 卡号生成相关配置
             ->addColumn('tenant_pre', 'string', ['limit' => 64, 'default' => '', 'comment' => '租户前缀'])
+            ->addColumn('admin_pre', 'string', ['limit' => 64, 'default' => '', 'comment' => '租户管理员前缀'])
             ->addColumn('number_pre', 'integer', ['limit' => 10, 'default' => 88, 'comment' => '卡号生成前缀数字'])
 
             //消息提醒管理员IDS
