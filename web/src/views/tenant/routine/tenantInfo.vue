@@ -1,82 +1,29 @@
 <template>
     <div class="default-main">
-        <el-row :gutter="30">
-            <el-col class="lg-mb-20" :xs="24" :sm="24" :md="24" :lg="10">
-                <div class="admin-info">
-                    <el-upload
-                        class="avatar-uploader"
-                        action=""
-                        :show-file-list="false"
-                        @change="onAvatarBeforeUpload"
-                        :auto-upload="false"
-                        accept="image/gif, image/jpg, image/jpeg, image/bmp, image/png, image/webp">
-                        <el-image :src="state.tenantInfo.logo" class="avatar">
-                            <template #error>
-                                <div class="image-slot">
-                                    <Icon size="30" color="#c0c4cc" name="el-icon-Picture" />
-                                </div>
-                            </template>
-                        </el-image>
-                    </el-upload>
-                    <div class="admin-info-base">
-                        <div class="admin-nickname">{{ state.tenantInfo.name }}</div>
+        <div class="admin-info">
+            <el-image :src="state.tenantInfo.logo" class="avatar">
+                <template #error>
+                    <div class="image-slot">
+                        <Icon size="30" color="#c0c4cc" name="el-icon-Picture"/>
                     </div>
-                    <div class="admin-info-form">
-                        <el-form
-                            @keyup.enter="onSubmit(formRef)"
-                            :key="state.formKey"
-                            label-position="top"
-                            :rules="rules"
-                            ref="formRef"
-                            :model="state.tenantInfo">
-
-                            <el-form-item :label="t('routine.tenantInfo.short_name')" prop="short_name">
-                                <el-input disabled
-                                          :placeholder="t('Please input field', { field: t('routine.tenantInfo.short_name') })"
-                                          v-model="state.tenantInfo.short_name"
-                                ></el-input>
-                            </el-form-item>
-                            <el-form-item :label="t('routine.tenantInfo.full_address')" prop="full_address">
-                                <el-input disabled v-model="state.tenantInfo.full_address"></el-input>
-                            </el-form-item>
-
-                            <el-form-item :label="t('routine.tenantInfo.expire_time_text')" prop="expire_time_text">
-                                <el-input disabled :placeholder="t('routine.tenantInfo.expire_time_text')" v-model="state.tenantInfo.expire_time_text"></el-input>
-                            </el-form-item>
-
-                            <el-form-item :label="t('routine.tenantInfo.mobile')" prop="mobile">
-                                <el-input disabled
-                                          :placeholder="t('Please input field', { field: t('routine.tenantInfo.mobile') })"
-                                          v-model="state.tenantInfo.mobile"
-                                ></el-input>
-                            </el-form-item>
-
-                            <el-form-item :label="t('routine.tenantInfo.contact_name')" prop="contact_name">
-                                <el-input
-                                    :placeholder="t('Please input field', { field: t('routine.tenantInfo.contact_name') })"
-                                    v-model="state.tenantInfo.contact_name"
-                                ></el-input>
-                            </el-form-item>
-
-                            <el-form-item>
-                                <el-button type="primary" :loading="state.buttonLoading" @click="onSubmit(formRef)">{{
-                                    t('routine.tenantInfo.Save changes')
-                                }}</el-button>
-<!--                                <el-button @click="onResetForm(formRef)">{{ t('Reset') }}</el-button>-->
-                            </el-form-item>
-                        </el-form>
-                    </div>
-                </div>
-            </el-col>
-
-        </el-row>
+                </template>
+            </el-image>
+            <div class="admin-info-base" v-if="state.tenantInfo.name">
+                <div class="admin-nickname">{{ state.tenantInfo.name }}</div>
+            </div>
+            <el-table v-if="state.tableData[0]" class="info-table" :data="state.tableData" :stripe="true" :header-cell-style="{textAlign: 'center', color: '#333'}" :cell-style="{textAlign: 'center'}" border>
+                <!--                <el-table-column prop="contact_name" label="联系人" />-->
+                <!--                <el-table-column prop="mobile" label="联系电话" />-->
+                <el-table-column prop="expire_time" label="到期时间" />
+            </el-table>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { index,postData } from '/@/api/tenant/routine/TenantInfo'
+import { index, postData } from '/@/api/tenant/routine/TenantInfo'
 import { ElForm, FormItemRule } from 'element-plus'
 import { onResetForm } from '/@/utils/common'
 import { uuid } from '../../../utils/random'
@@ -94,56 +41,28 @@ const state: {
     tenantInfo: anyObj
     formKey: string
     buttonLoading: boolean
+    tableData: any
 } = reactive({
     tenantInfo: {},
     formKey: uuid(),
     buttonLoading: false,
+    tableData: []
 })
 
 index().then((res) => {
     state.tenantInfo = res.data.info
+    state.tableData = [
+        {
+            contact_name: state.tenantInfo.contact_name,
+            mobile: state.tenantInfo.mobile,
+            expire_time: state.tenantInfo.expire_time_text
+        }
+    ];
     // 重新渲染表单以记录初始值
     state.formKey = uuid()
 })
 
-const rules: Partial<Record<string, FormItemRule[]>> = reactive({
-
-})
-
-const onAvatarBeforeUpload = (file: any) => {
-    let fd = new FormData()
-    fd.append('file', file.raw)
-    fileUpload(fd).then((res) => {
-        if (res.code == 1) {
-            postData({
-                id: state.tenantInfo.id,
-                logo: res.data.file.url,
-            }).then(() => {
-                state.tenantInfo.logo = res.data.file.full_url
-            })
-        }
-    })
-}
-
-const onSubmit = (formEl: InstanceType<typeof ElForm> | undefined) => {
-    if (!formEl) return
-    formEl.validate((valid) => {
-        if (valid) {
-            let data = { ...state.tenantInfo }
-            delete data.name
-            delete data.logo
-            delete data.mobile
-            state.buttonLoading = true
-            postData(data)
-                .then(() => {
-                    state.buttonLoading = false
-                })
-                .catch(() => {
-                    state.buttonLoading = false
-                })
-        }
-    })
-}
+const rules: Partial<Record<string, FormItemRule[]>> = reactive({})
 </script>
 
 <script lang="ts">
@@ -154,38 +73,32 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
+.info-table {
+    width: 60%;
+    margin: 20px auto 0;
+}
+
 .admin-info {
+    width: 100%;
+    height: calc(100vh - 130px);
     background-color: var(--ba-bg-color-overlay);
     border-radius: var(--el-border-radius-base);
     border-top: 3px solid #409eff;
-    .avatar-uploader {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        margin: 60px auto 10px auto;
-        border-radius: 50%;
-        box-shadow: var(--el-box-shadow-light);
-        border: 1px dashed var(--el-border-color);
-        cursor: pointer;
-        overflow: hidden;
-        width: 110px;
-        height: 110px;
-    }
-    .avatar-uploader:hover {
-        border-color: var(--el-color-primary);
-    }
+
     .avatar {
         width: 110px;
         height: 110px;
         display: block;
+        margin: 60px auto 10px;
     }
+
     .image-slot {
         display: flex;
         align-items: center;
         justify-content: center;
         height: 100%;
     }
+
     .admin-info-base {
         .admin-nickname {
             font-size: 22px;
@@ -193,39 +106,28 @@ export default defineComponent({
             text-align: center;
             padding: 8px 0;
         }
-        .admin-other {
-            color: var(--el-text-color-regular);
-            font-size: 14px;
-            text-align: center;
-            line-height: 20px;
-        }
-    }
-    .admin-info-form {
-        padding: 30px;
     }
 
     .unlock-code {
-        margin-top: 10px;
+        color: #000;
+        width: 200px;
+        margin: 10px auto;
         font-size: 16px;
         display: flex;
-        padding: 0 10px;
+        padding: 6px 12px;
         align-items: center;
         justify-content: center;
         white-space: nowrap;
+        border: 1px solid #4290f7;
+        border-radius: 8px;
+        background: rgba(66, 144, 247, 0.05);
         color: var(--el-text-color-regular);
 
         span {
+            font-size: 18px;
             font-weight: bold;
             color: var(--el-color-primary);
         }
-    }
-}
-.el-card :deep(.el-timeline-item__icon) {
-    font-size: 10px;
-}
-@media screen and (max-width: 1200px) {
-    .lg-mb-20 {
-        margin-bottom: 20px;
     }
 }
 </style>
