@@ -11,11 +11,9 @@
             <div class="admin-info-base" v-if="state.tenantInfo.name">
                 <div class="admin-nickname">{{ state.tenantInfo.name }}</div>
             </div>
-            <el-table v-if="state.tableData[0]" class="info-table" :data="state.tableData" :stripe="true" :header-cell-style="{textAlign: 'center', color: '#333'}" :cell-style="{textAlign: 'center'}" border>
-                <!--                <el-table-column prop="contact_name" label="联系人" />-->
-                <!--                <el-table-column prop="mobile" label="联系电话" />-->
-                <el-table-column prop="expire_time" label="到期时间" />
-            </el-table>
+            <div class="unlock-code" v-if="state.tenantInfo.expire_time_text">
+                到期时间：<span>{{ state.tenantInfo.expire_time_text }}</span>
+            </div>
         </div>
     </div>
 </template>
@@ -41,28 +39,17 @@ const state: {
     tenantInfo: anyObj
     formKey: string
     buttonLoading: boolean
-    tableData: any
 } = reactive({
     tenantInfo: {},
     formKey: uuid(),
-    buttonLoading: false,
-    tableData: []
+    buttonLoading: false
 })
 
 index().then((res) => {
     state.tenantInfo = res.data.info
-    state.tableData = [
-        {
-            contact_name: state.tenantInfo.contact_name,
-            mobile: state.tenantInfo.mobile,
-            expire_time: state.tenantInfo.expire_time_text
-        }
-    ];
     // 重新渲染表单以记录初始值
     state.formKey = uuid()
 })
-
-const rules: Partial<Record<string, FormItemRule[]>> = reactive({})
 </script>
 
 <script lang="ts">
@@ -80,6 +67,9 @@ export default defineComponent({
 
 .admin-info {
     width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
     height: calc(100vh - 130px);
     background-color: var(--ba-bg-color-overlay);
     border-radius: var(--el-border-radius-base);
@@ -110,10 +100,10 @@ export default defineComponent({
 
     .unlock-code {
         color: #000;
-        width: 200px;
+        width: auto;
         margin: 10px auto;
         font-size: 16px;
-        display: flex;
+        display: inline-flex;
         padding: 6px 12px;
         align-items: center;
         justify-content: center;

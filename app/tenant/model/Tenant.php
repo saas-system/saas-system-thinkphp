@@ -23,7 +23,7 @@ class Tenant extends BaseModel
     public function getExpireTimeTextAttr($value, $data)
     {
         $value = $value ?: (isset($data['expire_time']) ? $data['expire_time'] : '');
-        return is_numeric($value) ? date("Y-m-d H:i:s", $value) : $value;
+        return is_numeric($value) ? date("Y年m月d日", $value) : $value;
     }
 
     public function getLogoAttr($value)
