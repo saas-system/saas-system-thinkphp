@@ -44,9 +44,12 @@ trait BackendTrait
         }
 
         list($where, $alias, $limit, $order) = $this->queryBuilder();
-        $res = $this->model
-            ->permission($this->auth->tenant_id, empty($this->withJoinTable) ? null : array_values($alias)[0])
-            ->field($this->indexField)
+        $fields = array_keys($this->model->getFields());
+        $query  = $this->model;
+        if (in_array('tenant_id', $fields)) {
+            $query = $query->permission($this->auth->tenant_id, empty($this->withJoinTable) ? null : array_values($alias)[0]);
+        }
+        $res = $query->field($this->indexField)
             ->withJoin($this->withJoinTable, $this->withJoinType)
             ->alias($alias)
             ->where($where)
