@@ -116,7 +116,12 @@ trait BackendTrait
     public function edit(): void
     {
         $id  = $this->request->param($this->model->getPk());
-        $row = $this->model->permission($this->auth->tenant_id)->find($id);
+        $fields = array_keys($this->model->getFields());
+        $query  = $this->model;
+        if (in_array('tenant_id', $fields)) {
+            $query = $query->permission($this->auth->tenant_id);
+        }
+        $row = $query->find($id);
         if (!$row) {
             $this->error(__('Record not found'));
         }
