@@ -11,7 +11,10 @@
             <div class="admin-info-base" v-if="state.tenantInfo.name">
                 <div class="admin-nickname">{{ state.tenantInfo.name }}</div>
             </div>
-            <div class="unlock-code" v-if="state.tenantInfo.expire_time_text">
+            <div class="tenant-info-line">
+                <a v-if="state.tenantInfo.app_download_url" :href="state.tenantInfo.app_download_url" target="_blank">APP下载</a>
+            </div>
+            <div class="tenant-info-line" v-if="state.tenantInfo.expire_time_text">
                 到期时间：<span>{{ state.tenantInfo.expire_time_text }}</span>
             </div>
         </div>
@@ -98,12 +101,11 @@ export default defineComponent({
         }
     }
 
-    .unlock-code {
-        color: #000;
+    .tenant-info-line {
         width: auto;
         margin: 10px auto;
         font-size: 16px;
-        display: inline-flex;
+        display: flex;
         padding: 6px 12px;
         align-items: center;
         justify-content: center;
@@ -117,6 +119,7 @@ export default defineComponent({
             font-size: 18px;
             font-weight: bold;
             color: var(--el-color-primary);
+            margin-right: 10px;
         }
     }
 }

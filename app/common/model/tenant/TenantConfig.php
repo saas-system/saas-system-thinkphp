@@ -38,11 +38,10 @@ class TenantConfig extends Base
     /**
      * 获取租户ID
      *
-     * @param $miniAppId
-     * @param $unlockCode
+     * @param string $miniAppId
      * @return mixed|null
      */
-    public static function getTenantIdByAppId($miniAppId = '')
+    public static function getTenantIdByAppId(string $miniAppId = ''): mixed
     {
         $tenantId = null;
         if ($miniAppId) {

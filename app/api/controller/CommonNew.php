@@ -5,6 +5,7 @@ namespace app\api\controller;
 use app\common\controller\Api;
 use app\common\model\common\Pages;
 use app\common\model\common\Slide;
+use app\common\model\tenant\AppVersion;
 use app\common\model\tenant\TenantConfig;
 use app\common\services\CommonService;
 use app\Request;
@@ -136,6 +137,24 @@ class CommonNew extends Api
         }
     }
 
+    /**
+     * 获取APP下载地址
+     */
+    public function getAppDownload(Request $request)
+    {
+        $version = $request->get('version', '');
+
+        $where = ['status' => 1];
+        if (!empty($version)) {
+            $where['version'] = $version;
+        }
+        $data = AppVersion::where($where)
+            ->order('version_code', 'desc')
+            ->find();
+        unset($data->user_ids);
+
+        $this->success('获取成功', $data);
+    }
 
     /**
      * 获取租户ID

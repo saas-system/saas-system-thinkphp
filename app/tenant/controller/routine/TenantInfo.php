@@ -3,6 +3,7 @@
 namespace app\tenant\controller\routine;
 
 use app\common\model\Area;
+use app\common\model\tenant\AppVersion;
 use app\common\model\tenant\TenantConfig;
 use app\tenant\model\Tenant;
 use app\common\controller\TenantBackend as Backend;
@@ -29,7 +30,10 @@ class TenantInfo extends Backend
     public function index(): void
     {
         $tenantId = $this->auth->tenant_id;
-        $info     = Tenant::where('id', $tenantId)->field($this->authAllowFields)->find();
+        $info     = Tenant::field($this->authAllowFields)
+            ->with(['config'])
+            ->where('id', $tenantId)
+            ->find();
 
         if ($info) {
             $provinceName = Area::getAreaName($info->province_id);
@@ -38,6 +42,12 @@ class TenantInfo extends Backend
 
             $fullAddress        = $provinceName . $cityName . $districtName . $info->address;
             $info->full_address = $fullAddress;
+
+            // app下载地址
+            $appVersion = AppVersion::order('version_code', 'desc')->find();
+            if ($appVersion) {
+                $info->app_download_url = $appVersion->url;
+            }
         }
 
         $this->success('', [

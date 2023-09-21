@@ -1,0 +1,18 @@
+export default {
+    id: 'id',
+    version: 'version',
+    version_code: 'version_code',
+    size: 'size',
+    content: 'content',
+    url: 'url',
+    enforce: 'enforce',
+    'enforce 1': 'enforce 1',
+    'enforce 0': 'enforce 0',
+    status: 'status',
+    'status 1': 'status 1',
+    'status 0': 'status 0',
+    create_time: 'create_time',
+    update_time: 'update_time',
+    delete_time: 'delete_time',
+    'quick Search Fields': 'id',
+}

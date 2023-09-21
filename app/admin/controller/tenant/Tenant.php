@@ -2,8 +2,6 @@
 
 namespace app\admin\controller\tenant;
 
-use app\admin\model\TenantAdmin;
-use app\common\conf\MsgField;
 use app\common\controller\Backend;
 use app\common\model\tenant\TenantConfig;
 use app\common\services\tenant\TenantService;
@@ -209,6 +207,13 @@ class Tenant extends Backend
             $result = false;
             Db::startTrans();
             try {
+                if (!$row) {
+                    unset($data['id']);
+                    $result = $model->save($data);
+                } else {
+                    $result = $row->save($data);
+                }
+
                 Db::commit();
             } catch (ValidateException $e) {
                 Db::rollback();
@@ -219,7 +224,6 @@ class Tenant extends Backend
             } else {
                 $this->error(__('No rows updated'));
             }
-
         }
 
         $this->success('', [

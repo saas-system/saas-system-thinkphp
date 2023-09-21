@@ -21,30 +21,8 @@ class AppVersion extends Model
     // 隐藏字段
     protected $hidden = ['update_time', 'delete_time'];
 
-
-    protected static function onBeforeWrite($model)
+    public function getUrlAttr($value): string
     {
-        if ($model->range == 0) {
-            $model->user_ids = '';
-        }
-    }
-
-    public function getUserIdsAttr($value): array
-    {
-        if ($value === '' || $value === null) return [];
-        if (!is_array($value)) {
-            return explode(',', $value);
-        }
-        return $value;
-    }
-
-    public function setUserIdsAttr($value): string
-    {
-        return is_array($value) ? implode(',', $value) : $value;
-    }
-
-    public function tenant()
-    {
-        return $this->belongsTo(Tenant::class, 'tenant_id', 'id');
+        return $value ? full_url($value) : '';
     }
 }
