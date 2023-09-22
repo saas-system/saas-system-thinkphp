@@ -29,7 +29,7 @@ class TenantTable extends Migrator
     public function change()
     {
         $table = $this->table('tenant', ['collation' => 'utf8mb4_unicode_ci', 'comment' => '租户 - 租户信息表', 'id' => false]);
-        $table->addColumn('id', 'string', ['limit' => 64, 'comment' => '主键ID'])
+        $table->addColumn('id', 'string', ['limit' => 64, 'null' => false, 'comment' => '主键ID'])
             ->addColumn('name', 'string', ['limit' => 50, 'default' => '', 'comment' => '租户名称'])
             ->addColumn('short_name', 'string', ['limit' => 50, 'default' => '', 'comment' => '简称'])
             ->addColumn('logo', 'string', ['limit' => 255, 'default' => '', 'comment' => '站点logo'])
