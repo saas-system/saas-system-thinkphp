@@ -6,6 +6,7 @@
 
 # 通过 Git 部署项目至线上时可以考虑删除的忽略规则
 /public/storage/*
+composer.lock
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
