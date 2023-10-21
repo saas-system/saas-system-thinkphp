@@ -80,6 +80,7 @@ interface Props extends /* @vue-ignore */ ElSelectProps {
     modelValue: valType
     labelFormatter?: (optionData: anyObj, optionKey: string) => string
     tooltipParams?: anyObj
+    attr?: ElSelectProps
 }
 const props = withDefaults(defineProps<Props>(), {
     pk: 'id',
