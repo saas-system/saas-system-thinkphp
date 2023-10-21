@@ -14,6 +14,10 @@ return [
     'admin_login_retry'    => 10,
     // 开启管理员单点登录
     'admin_sso'            => false,
+    // 会员登录态保持时间（非刷新token，3天）
+    'user_token_keep_time'  => 60 * 60 * 24 * 3,
+    // 管理员登录态保持时间（非刷新token，3天）
+    'admin_token_keep_time' => 60 * 60 * 24 * 3,
     // 开启会员单点登录
     'user_sso'             => false,
     // 表格拖拽排序时,两个权重相等则自动重新整理;控制器类中也有此项（作为单控制器自定义配置）

@@ -12,8 +12,7 @@ use app\admin\model\AdminGroup;
 
 /**
  * 管理员权限类
- *
- * @property int $id         管理员ID
+ * @property int    $id         管理员ID
  * @property string $username   管理员用户名
  * @property string $nickname   管理员昵称
  * @property string $email      管理员邮箱
@@ -59,28 +58,27 @@ class Auth extends \ba\Auth
 
     /**
      * 令牌默认有效期
+     * 可在 config/buildadmin.php 内修改默认值
      * @var int
      */
     protected int $keepTime = 86400;
 
     /**
+     * 刷新令牌有效期
+     * @var int
+     */
+    protected int $refreshTokenKeepTime = 2592000;
+
+    /**
      * 允许输出的字段
      * @var array
      */
-
-    protected $adminGroupAccessTable = 'platform_admin_group_access';
-
     protected array $allowFields = ['id', 'username', 'nickname', 'avatar', 'last_login_time'];
 
     public function __construct(array $config = [])
     {
-        $config = [
-            'auth_group'        => 'platform_admin_group', // 用户组数据表名
-            'auth_group_access' => 'platform_admin_group_access', // 用户-用户组关系表
-            'auth_rule'         => 'platform_admin_rule', // 权限规则表
-        ];
-
         parent::__construct($config);
+        $this->setKeepTime((int)Config::get('buildadmin.admin_token_keep_time'));
     }
 
     /**
@@ -148,13 +146,13 @@ class Auth extends \ba\Auth
 
     /**
      * 管理员登录
-     * @param string $username
-     * @param string $password
-     * @param bool $keepTime
+     * @param string $username 用户名
+     * @param string $password 密码
+     * @param bool   $keep     是否保持登录
      * @return bool
      * @throws Throwable
      */
-    public function login(string $username, string $password, bool $keepTime = false): bool
+    public function login(string $username, string $password, bool $keep = false): bool
     {
         $this->model = Admin::where('username', $username)->find();
         if (!$this->model) {
@@ -180,8 +178,8 @@ class Auth extends \ba\Auth
             Token::clear('admin-refresh', $this->model->id);
         }
 
-        if ($keepTime) {
-            $this->setRefreshToken(2592000);
+        if ($keep) {
+            $this->setRefreshToken($this->refreshTokenKeepTime);
         }
         $this->loginSuccessful();
         return true;
@@ -393,7 +391,7 @@ class Auth extends \ba\Auth
      */
     public function getAdminChildGroups(): array
     {
-        $groupIds = Db::name($this->adminGroupAccessTable)
+        $groupIds = Db::name('admin_group_access')
             ->where('uid', $this->id)
             ->select();
         $children = [];
@@ -405,7 +403,7 @@ class Auth extends \ba\Auth
 
     /**
      * 获取一个分组下的子分组
-     * @param int $groupId 分组ID
+     * @param int   $groupId  分组ID
      * @param array $children 存放子分组的变量
      * @return void
      * @throws Throwable
@@ -428,7 +426,7 @@ class Auth extends \ba\Auth
      */
     public function getGroupAdmins(array $groups): array
     {
-        return Db::name($this->adminGroupAccessTable)
+        return Db::name('admin_group_access')
             ->where('group_id', 'in', $groups)
             ->column('uid');
     }
