@@ -4,13 +4,10 @@ import { ElNotification } from 'element-plus'
 import { useConfig } from '/@/stores/config'
 import { useNavTabs } from '/@/stores/navTabs'
 import { useNavTabs as useTenantNavTabs } from '/@/stores/tenantNavTabs'
-import { useSiteConfig } from '/@/stores/siteConfig'
-import { useMemberCenter } from '/@/stores/memberCenter'
 import { closeShade } from '/@/utils/pageShade'
 import { adminBaseRoute, tenantBaseRoute } from '/@/router/static'
 import { i18n } from '/@/lang/index'
 import { isAdminApp } from '/@/utils/common'
-import { Menus } from '/@/stores/interface'
 import { compact, reverse } from 'lodash-es'
 
 /**
