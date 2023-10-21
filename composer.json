@@ -22,6 +22,7 @@
     "topthink/think-throttle": "v2.0.0",
     "topthink/think-migration": "^3.0",
     "phpmailer/phpmailer": "^6.8",
+    "voku/anti-xss": "^4.1",
     "nelexa/zip": "^4.0.0",
     "ext-calendar": "*",
     "ext-bcmath": "*",
