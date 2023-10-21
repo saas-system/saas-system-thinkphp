@@ -93,6 +93,9 @@ const props = withDefaults(defineProps<Props>(), {
     tooltipParams: () => {
         return {}
     },
+    attr: () => {
+        return {}
+    },
 })
 
 const state: {
