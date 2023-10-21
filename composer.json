@@ -1,17 +1,17 @@
 {
-  "name": "wonderful-code/buildadmin",
-  "description": "Build your admin framework",
+  "name": "sxqibo/saas-system",
+  "description": "saas system",
   "type": "project",
   "keywords": [
-    "buildadmin",
+    "saas system",
     "thinkphp"
   ],
-  "homepage": "https://uni.buildadmin.com",
+  "homepage": "https://saas.sxqibo.com",
   "license": "Apache-2.0",
   "authors": [
     {
-      "name": "妙码生花",
-      "email": "hi@buildadmin.com"
+      "name": "hongwei",
+      "email": "403236160@qq.com"
     }
   ],
   "require": {

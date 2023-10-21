@@ -18,7 +18,7 @@
                         <span>{{ $t('module.Balance') + ' ' + baAccount.money }}</span>
                     </p>
                     <div class="userinfo-buttons">
-                        <el-button @click="openUrl('https://uni.buildadmin.com/user/account/moduleOrders')" v-blur size="default" type="primary">
+                        <el-button @click="openUrl('https://saas.sxqibo.com/user/account/moduleOrders')" v-blur size="default" type="primary">
                             {{ $t('module.My module') }}
                         </el-button>
                         <el-button @click="baAccount.logout()" v-blur size="default" type="warning">{{ $t('module.Logout login') }}</el-button>
