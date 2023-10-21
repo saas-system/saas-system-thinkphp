@@ -191,8 +191,6 @@ class Backend extends Api
         $initKey     = $this->request->get("initKey/s", $pk);
         $initValue   = $this->request->get("initValue", '');
 
-        $search = $this->filterParams($search, $nobuildfields); // 过滤搜索参数
-
         $where              = [];
         $modelTable         = strtolower($this->model->getTable());
         $alias[$modelTable] = parse_name(basename(str_replace('\\', '/', get_class($this->model))));
@@ -235,6 +233,9 @@ class Backend extends Api
             if (!is_array($field) || !isset($field['operator']) || !isset($field['field']) || !isset($field['val'])) {
                 continue;
             }
+
+            $field['operator'] = $this->getOperatorByAlias($field['operator']);
+
 
             $fieldName = str_contains($field['field'], '.') ? $field['field'] : $mainTableAlias . $field['field'];
 
@@ -346,17 +347,20 @@ class Backend extends Api
     }
 
     /**
-     * 过滤原始的不能用buildParams 的条件
+     * 从别名获取原始的逻辑运算符
+     * @param string $operator 逻辑运算符别名
+     * @return string 原始的逻辑运算符，无别名则原样返回
      */
-    public function filterParams($filter, $nobuildfields = [])
+    protected function getOperatorByAlias(string $operator): string
     {
-        if ($nobuildfields) {
-            foreach ($filter as $k => $f) {
-                if (in_array($f['field'], $nobuildfields)) {
-                    unset($filter[$k]);
-                }
-            }
-        }
-        return $filter;
+        $alias = [
+            'ne'  => '<>',
+            'eq'  => '=',
+            'gt'  => '>',
+            'egt' => '>=',
+            'lt'  => '<',
+            'elt' => '<=',
+        ];
+        return $alias[$operator] ?? $operator;
     }
 }
