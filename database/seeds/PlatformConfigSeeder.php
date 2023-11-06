@@ -217,7 +217,7 @@ class PlatformConfigSeeder extends Seeder
                 'title'     => '存储方式',
                 'tip'       => '',
                 'type'      => 'select',
-                'value'     => 'alioss',
+                'value'     => 'local',
                 'content'   => '{"local":"本地磁盘存储","alioss":"阿里云对象存储OSS"}',
                 'rule'      => 'required',
                 'extend'    => '',
