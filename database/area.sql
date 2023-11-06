@@ -126,7 +126,7 @@ INSERT INTO `area` (`id`, `name`, `pid`, `level`) VALUES (130435, '曲周县', 1
 INSERT INTO `area` (`id`, `name`, `pid`, `level`) VALUES (130481, '武安市', 130400, 3);
 INSERT INTO `area` (`id`, `name`, `pid`, `level`) VALUES (130500, '邢台市', 130000, 2);
 INSERT INTO `area` (`id`, `name`, `pid`, `level`) VALUES (130502, '桥东区', 130500, 3);
-INSERT INTO `area` (`id`, `name`, `pid`, `level`) VALUES (130503, '桥西区', 130500, 3);
+INSERT INTO `area` (`id`, `name`, `pid`, `level`) VALUES (130503, '信都区', 130500, 3);
 INSERT INTO `area` (`id`, `name`, `pid`, `level`) VALUES (130521, '邢台县', 130500, 3);
 INSERT INTO `area` (`id`, `name`, `pid`, `level`) VALUES (130522, '临城县', 130500, 3);
 INSERT INTO `area` (`id`, `name`, `pid`, `level`) VALUES (130523, '内丘县', 130500, 3);
@@ -144,6 +144,7 @@ INSERT INTO `area` (`id`, `name`, `pid`, `level`) VALUES (130534, '清河县', 1
 INSERT INTO `area` (`id`, `name`, `pid`, `level`) VALUES (130535, '临西县', 130500, 3);
 INSERT INTO `area` (`id`, `name`, `pid`, `level`) VALUES (130581, '南宫市', 130500, 3);
 INSERT INTO `area` (`id`, `name`, `pid`, `level`) VALUES (130582, '沙河市', 130500, 3);
+
 INSERT INTO `area` (`id`, `name`, `pid`, `level`) VALUES (130600, '保定市', 130000, 2);
 INSERT INTO `area` (`id`, `name`, `pid`, `level`) VALUES (130602, '竞秀区', 130600, 3);
 INSERT INTO `area` (`id`, `name`, `pid`, `level`) VALUES (130606, '莲池区', 130600, 3);
@@ -3760,6 +3761,7 @@ INSERT INTO `area` (`id`, `name`, `pid`, `level`) VALUES (820101, '澳门半岛'
 INSERT INTO `area` (`id`, `name`, `pid`, `level`) VALUES (820102, '凼仔', 820100, 3);
 INSERT INTO `area` (`id`, `name`, `pid`, `level`) VALUES (820103, '路凼城', 820100, 3);
 INSERT INTO `area` (`id`, `name`, `pid`, `level`) VALUES (820104, '路环', 820100, 3);
+
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
