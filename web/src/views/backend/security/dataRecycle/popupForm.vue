@@ -34,11 +34,23 @@
                         :placeholder="t('security.dataRecycle.The rule name helps to identify deleted data later')"
                     />
                     <FormItem
+                        :label="t('security.dataRecycle.app')"
+                        type="select"
+                        v-model="baTable.form.items!.app"
+                        prop="app"
+                        :data="{ content: baTable.form.extend!.appList }"
+                        :placeholder="
+                            t('security.dataRecycle.The data collection mechanism will monitor delete operations under this app')
+                        "
+                        :input-attr="{ onChange: baTable.onAppChange }"
+                    />
+                    <FormItem
                         :label="t('security.dataRecycle.controller')"
                         type="select"
+                        :key="baTable.form.extend!.controllerSelectKey"
                         v-model="baTable.form.items!.controller"
                         prop="controller"
-                        :data="{ content: props.formData.controllerList }"
+                        :data="{ content: baTable.form.extend!.controllerList }"
                         :placeholder="t('security.dataRecycle.The data collection mechanism will monitor delete operations under this controller')"
                     />
                     <FormItem
@@ -46,7 +58,7 @@
                         type="select"
                         v-model="baTable.form.items!.data_table"
                         prop="data_table"
-                        :data="{ content: props.formData.tableList }"
+                        :data="{ content: baTable.form.extend!.tableList }"
                         :input-attr="{ onChange: onTableChange }"
                     />
                     <FormItem
@@ -79,27 +91,14 @@
 <script setup lang="ts">
 import { reactive, ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type baTableClass from '/@/utils/baTable'
 import FormItem from '/@/components/formItem/index.vue'
 import type { FormInstance, FormItemRule } from 'element-plus'
 import { buildValidatorData } from '/@/utils/validate'
 import { getTablePk } from '/@/api/common'
-
-interface Props {
-    formData: {
-        tableList?: anyObj
-        controllerList?: anyObj
-    }
-}
-
-const props = withDefaults(defineProps<Props>(), {
-    formData: () => {
-        return {}
-    },
-})
+import  { dataRecycleClass } from './index'
 
 const formRef = ref<FormInstance>()
-const baTable = inject('baTable') as baTableClass
+const baTable = inject('baTable') as dataRecycleClass
 
 const { t } = useI18n()
 

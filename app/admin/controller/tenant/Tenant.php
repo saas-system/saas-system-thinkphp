@@ -175,63 +175,6 @@ class Tenant extends Backend
     }
 
     /**
-     * 编辑
-     */
-    public function config(): void
-    {
-        $id    = $this->request->param('id');
-        $model = new \app\common\model\tenant\TenantConfig();
-        $row   = $model->find($id);
-
-        if ($this->request->isPost()) {
-            $data = $this->request->post();
-            if (!$data) {
-                $this->error(__('Parameter %s can not be empty', ['']));
-            }
-
-            $tenantPre = $data['tenant_pre'] ?? '';
-
-            if ($tenantPre) {
-                if ($id) {
-                    $result = TenantConfig::where('tenant_pre', $tenantPre)->where('id', '<>', $id)->find();
-                } else {
-                    $result = TenantConfig::where('tenant_pre', $tenantPre)->find();
-                }
-
-                if ($result) {
-                    $this->error('租户前缀已存在，请重新输入');
-                }
-            }
-
-
-            $result = false;
-            Db::startTrans();
-            try {
-                if (!$row) {
-                    unset($data['id']);
-                    $result = $model->save($data);
-                } else {
-                    $result = $row->save($data);
-                }
-
-                Db::commit();
-            } catch (ValidateException $e) {
-                Db::rollback();
-                $this->error($e->getMessage());
-            }
-            if ($result !== false) {
-                $this->success(__('Update successful'));
-            } else {
-                $this->error(__('No rows updated'));
-            }
-        }
-
-        $this->success('', [
-            'row' => $row
-        ]);
-    }
-
-    /**
      * 初始化租户数据
      */
     public function initData(): void

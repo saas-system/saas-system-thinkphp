@@ -13,20 +13,20 @@
         <Table ref="tableRef" />
 
         <!-- 表单 -->
-        <PopupForm ref="formRef" :form-data="addFormData" />
+        <PopupForm ref="formRef"/>
     </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, reactive, provide } from 'vue'
-import baTableClass from '/@/utils/baTable'
-import { add, url } from '/@/api/backend/security/dataRecycle'
+import { url } from '/@/api/backend/security/dataRecycle'
 import PopupForm from './popupForm.vue'
 import Table from '/@/components/table/index.vue'
 import TableHeader from '/@/components/table/header/index.vue'
 import { defaultOptButtons } from '/@/components/table'
 import { baTableApi } from '/@/api/common'
 import { useI18n } from 'vue-i18n'
+import { dataRecycleClass } from './index'
 
 defineOptions({
     name: 'security/dataRecycle',
@@ -35,13 +35,14 @@ defineOptions({
 const { t } = useI18n()
 const tableRef = ref()
 const formRef = ref()
-const baTable = new baTableClass(
+const baTable = new dataRecycleClass(
     new baTableApi(url),
     {
         column: [
             { type: 'selection', align: 'center', operator: false },
             { label: 'ID', prop: 'id', align: 'center', operator: 'LIKE', operatorPlaceholder: t('Fuzzy query'), width: 70 },
             { label: t('security.dataRecycle.Rule name'), prop: 'name', align: 'center', operator: 'LIKE', operatorPlaceholder: t('Fuzzy query') },
+            { label: t('security.dataRecycle.app'), prop: 'app', align: 'center', operator: 'LIKE', operatorPlaceholder: t('Fuzzy query') },
             {
                 label: t('security.dataRecycle.controller'),
                 prop: 'controller',
@@ -89,26 +90,9 @@ const baTable = new baTableClass(
         defaultItems: {
             status: '1',
         },
-    },
-    {
-        // 添加前获取控制器和数据表
-        toggleForm: ({ operate }) => {
-            if (operate == 'Add' || operate == 'Edit') {
-                baTable.form.loading = true
-                add().then((res) => {
-                    addFormData.tableList = res.data.tables
-                    addFormData.controllerList = res.data.controllers
-                    baTable.form.loading = false
-                })
-            }
-        },
     }
 )
 
-const addFormData = reactive({
-    tableList: {},
-    controllerList: {},
-})
 
 provide('baTable', baTable)
 
@@ -118,5 +102,13 @@ onMounted(() => {
     baTable.getIndex()
 })
 </script>
+
+<script lang="ts">
+import { defineComponent } from 'vue'
+export default defineComponent({
+    name: 'security/dataRecycle',
+})
+</script>
+
 
 <style scoped lang="scss"></style>

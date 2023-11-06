@@ -84,7 +84,8 @@ class SensitiveData extends Backend
                     $validate = str_replace("\\model\\", "\\validate\\", get_class($this->model));
                     if (class_exists($validate)) {
                         $validate = new $validate;
-                        if ($this->modelSceneValidate) $validate->scene('add');
+                        if ($this->modelSceneValidate)
+                            $validate->scene('add');
                         $validate->check($data);
                     }
                 }
@@ -109,10 +110,12 @@ class SensitiveData extends Backend
             }
         }
 
+        $app = $this->request->get('app', 'admin');
         // 放在add方法内，就不需要额外添加权限节点了
         $this->success('', [
             'tables'      => $this->getTableList(),
-            'controllers' => $this->getControllerList(),
+            'controllers' => $this->getControllerList($app),
+            'apps'        => $this->getAppList(),
         ]);
     }
 
@@ -146,7 +149,8 @@ class SensitiveData extends Backend
                     $validate = str_replace("\\model\\", "\\validate\\", get_class($this->model));
                     if (class_exists($validate)) {
                         $validate = new $validate;
-                        if ($this->modelSceneValidate) $validate->scene('edit');
+                        if ($this->modelSceneValidate)
+                            $validate->scene('edit');
                         $validate->check($data);
                     }
                 }
@@ -171,14 +175,16 @@ class SensitiveData extends Backend
             }
         }
 
+        $app = $this->request->get('app', $row->app);
         $this->success('', [
             'row'         => $row,
             'tables'      => $this->getTableList(),
-            'controllers' => $this->getControllerList(),
+            'controllers' => $this->getControllerList($app),
+            'apps'        => $this->getAppList(),
         ]);
     }
 
-    protected function getControllerList(): array
+    protected function getControllerList($app): array
     {
         $outExcludeController = [
             'Addon.php',
@@ -194,7 +200,7 @@ class SensitiveData extends Backend
             'user/ScoreLog.php',
         ];
         $outControllers       = [];
-        $controllers          = get_controller_list();
+        $controllers          = get_controller_list($app);
         foreach ($controllers as $key => $controller) {
             if (!in_array($controller, $outExcludeController)) {
                 $outControllers[$key] = $controller;
@@ -212,6 +218,7 @@ class SensitiveData extends Backend
             'token',
             'captcha',
             'platform_admin_group_access',
+            'tenant_admin_group_access',
             'config',
             // 无编辑功能
             'admin_log',
@@ -229,5 +236,13 @@ class SensitiveData extends Backend
             }
         }
         return $outTables;
+    }
+
+    protected function getAppList(): array
+    {
+        return [
+            'admin'  => '平台端 - admin',
+            'tenant' => '租户端 - tenant',
+        ];
     }
 }

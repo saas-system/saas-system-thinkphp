@@ -42,6 +42,7 @@ const baTable = new sensitiveDataClass(
             { type: 'selection', align: 'center', operator: false },
             { label: 'ID', prop: 'id', align: 'center', operator: 'LIKE', operatorPlaceholder: t('Fuzzy query'), width: 70 },
             { label: t('security.sensitiveData.Rule name'), prop: 'name', align: 'center', operator: 'LIKE', operatorPlaceholder: t('Fuzzy query') },
+            { label: t('security.sensitiveData.app'), prop: 'app', align: 'center', operator: 'LIKE', operatorPlaceholder: t('Fuzzy query') },
             {
                 label: t('security.sensitiveData.controller'),
                 prop: 'controller',

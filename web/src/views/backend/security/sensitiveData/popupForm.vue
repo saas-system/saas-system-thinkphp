@@ -34,8 +34,20 @@
                         :placeholder="t('security.sensitiveData.The rule name helps to identify the modified data later')"
                     />
                     <FormItem
+                        :label="t('security.sensitiveData.app')"
+                        type="select"
+                        v-model="baTable.form.items!.app"
+                        prop="app"
+                        :data="{ content: baTable.form.extend!.appList}"
+                        :placeholder="
+                            t('security.sensitiveData.The data listening mechanism will monitor the modification operations under this app')
+                        "
+                        :input-attr="{ onChange: baTable.onAppChange }"
+                    />
+                    <FormItem
                         :label="t('security.sensitiveData.controller')"
                         type="select"
+                        :key="baTable.form.extend!.controllerSelectKey"
                         v-model="baTable.form.items!.controller"
                         prop="controller"
                         :data="{ content: baTable.form.extend!.controllerList }"

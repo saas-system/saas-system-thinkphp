@@ -1,15 +1,10 @@
 import baTableClass from '/@/utils/baTable'
 import type { baTableApi } from '/@/api/common'
-import { getTableFieldList } from '/@/api/common'
-import { add } from '/@/api/backend/security/sensitiveData'
+import { add } from '/@/api/backend/security/dataRecycle'
 import { uuid } from '/@/utils/random'
 
-export interface DataFields {
-    name: string
-    value: string
-}
 
-export class sensitiveDataClass extends baTableClass {
+export class dataRecycleClass extends baTableClass {
     constructor(api: baTableApi, table: BaTable, form: BaTableForm = {}, before: BaTableBefore = {}, after: BaTableAfter = {}) {
         super(api, table, form, before, after)
     }
@@ -24,74 +19,29 @@ export class sensitiveDataClass extends baTableClass {
                 id: id,
             })
             .then((res) => {
-                const fields: string[] = []
-                const dataFields: DataFields[] = []
-                for (const key in res.data.row.data_fields) {
-                    fields.push(key)
-                    dataFields.push({
-                        name: key,
-                        value: res.data.row.data_fields[key] ?? '',
-                    })
-                }
-
                 this.form.extend = Object.assign(this.form.extend!, {
                     tableList: res.data.tables,
                     controllerList: res.data.controllers,
                     appList: res.data.apps,
                 })
 
-                if (res.data.row.data_table) {
-                    this.onTableChange(res.data.row.data_table)
-                    if (this.form.extend!.parentRef) this.form.extend!.parentRef.setDataFields(dataFields)
-                }
 
-                res.data.row.data_fields = fields
                 this.form.loading = false
                 this.form.items = res.data.row
                 this.runAfter('requestEdit', { res })
             })
     }
 
-    // 数据表改变事件
-    onTableChange = (table: string) => {
-        this.form.extend = Object.assign(this.form.extend!, {
-            fieldLoading: true,
-            fieldList: {},
-            fieldSelect: {},
-            fieldSelectKey: uuid(),
-        })
-
-        this.form.items!.data_fields = []
-        if (this.form.extend!.parentRef) this.form.extend!.parentRef.setDataFields([])
-
-        getTableFieldList(table).then((res) => {
-            this.form.items!.primary_key = res.data.pk
-            this.form.defaultItems!.primary_key = res.data.pk
-
-            const fieldSelect: anyObj = {}
-            for (const key in res.data.fieldList) {
-                fieldSelect[key] = (key ? key + ' - ' : '') + res.data.fieldList[key]
-            }
-
-            this.form.extend = Object.assign(this.form.extend!, {
-                fieldLoading: false,
-                fieldList: res.data.fieldList,
-                fieldSelect: fieldSelect,
-                fieldSelectKey: uuid(),
-            })
-        })
-    }
-
     /**
      * 重写打开表单方法
      */
     toggleForm = (operate = '', operateIds: string[] = []) => {
+        // console.log('open')
         this.runBefore('toggleForm', { operate, operateIds })
         if (this.form.ref) {
             this.form.ref.resetFields()
         }
-
-        if (this.form.extend!.parentRef) this.form.extend!.parentRef.setDataFields([])
+        // console.log(operate)
 
         if (operate == 'Edit') {
             if (!operateIds.length) {
@@ -127,8 +77,6 @@ export class sensitiveDataClass extends baTableClass {
         })
 
         this.form.items!.controller = ''
-        if (this.form.extend!.parentRef) this.form.extend!.parentRef.setDataFields([])
-
         add(this.form.items!.app).then((res) => {
             this.form.extend = Object.assign(this.form.extend!, {
                 controllerLoading: false,

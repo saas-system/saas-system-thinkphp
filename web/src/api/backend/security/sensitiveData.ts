@@ -2,9 +2,9 @@ import createAxios from '/@/utils/axios'
 
 export const url = '/admin/security.SensitiveData/'
 
-export function add() {
+export function add(appName?: string) {
     return createAxios({
-        url: url + 'add',
+        url: url + 'add?app=' + appName,
         method: 'get',
     })
 }

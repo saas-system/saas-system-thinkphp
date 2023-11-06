@@ -20,8 +20,28 @@ class SensitiveDataLog extends Model
         return $this->belongsTo(SensitiveData::class, 'sensitive_id');
     }
 
-    public function admin(): BelongsTo
+    public function tadmin()
     {
-        return $this->belongsTo(Admin::class, 'admin_id');
+        return $this->belongsTo(TenantAdmin::class, 'admin_id')->visible(['nickname', 'id']);
+    }
+
+    public function pmadmin()
+    {
+        return $this->belongsTo(Admin::class, 'admin_id')->visible(['nickname', 'id']);
+    }
+
+    /**
+     * 多态关联模型
+     *
+     * @return \think\model\relation\MorphTo
+     */
+    public function admin()
+    {
+        return $this->morphTo('admin');
+    }
+
+    public function tenant(): \think\model\relation\BelongsTo
+    {
+        return $this->belongsTo(Tenant::class, 'tenant_id');
     }
 }

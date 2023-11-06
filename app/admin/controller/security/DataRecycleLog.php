@@ -20,12 +20,63 @@ class DataRecycleLog extends Backend
 
     protected string|array $quickSearchField = 'recycle.name';
 
-    protected array $withJoinTable = ['recycle', 'admin'];
+    protected array $withJoinTable = ['recycle', 'tenant', 'pmadmin', 'tadmin'];
 
     public function initialize(): void
     {
         parent::initialize();
         $this->model = new DataRecycleLogModel();
+    }
+
+    /**
+     * 查看
+     */
+    public function index(): void
+    {
+        $this->request->filter(['strip_tags', 'trim']);
+        if ($this->request->param('select')) {
+            $this->select();
+        }
+
+        list($where, $alias, $limit, $order) = $this->queryBuilder(['admin.nickname']);
+
+        $query = $this->model
+            ->withJoin($this->withJoinTable, $this->withJoinType)
+            ->with('admin')
+            ->alias($alias);
+
+        $searchs = $this->request->get("search/a", []);
+
+        foreach ($searchs as $search) {
+            $field = $search['field'];
+
+            if ($field == 'admin.nickname') {
+                // $query->hasWhere('admin', function ($q) use ($search) {
+                //     $q->where('nickname', 'like', "%{$search['val']}%");
+                // });
+
+                $query->where(function ($q) use ($search) {
+                    $q->where('pmadmin.nickname', 'like', "%{$search['val']}%")
+                        ->whereOr('tadmin.nickname', 'like', "%{$search['val']}%");
+                });
+            }
+        }
+
+        $res = $query->where($where)
+            ->order($order)
+            ->paginate($limit);
+
+        foreach ($res->items() as $item) {
+            $tenant            = $item->tenant;
+            $item->tenant_name = $tenant ? $tenant->name : '平台';
+            $item->nickname    = $item->admin ? $item->admin->nickname : '';
+        }
+
+        $this->success('', [
+            'list'   => $res->items(),
+            'total'  => $res->total(),
+            'remark' => get_route_remark(),
+        ]);
     }
 
     /**

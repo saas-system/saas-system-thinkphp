@@ -20,7 +20,7 @@ class SensitiveDataLog extends Backend
 
     protected string|array $quickSearchField = 'sensitive.name';
 
-    protected array $withJoinTable = ['sensitive', 'admin'];
+    protected array $withJoinTable = ['sensitive', 'tenant', 'pmadmin', 'tadmin'];
 
     public function initialize(): void
     {
@@ -32,6 +32,9 @@ class SensitiveDataLog extends Backend
      * 查看
      * @throws Throwable
      */
+    /**
+     * 查看
+     */
     public function index(): void
     {
         $this->request->filter(['strip_tags', 'trim']);
@@ -39,18 +42,38 @@ class SensitiveDataLog extends Backend
             $this->select();
         }
 
-        list($where, $alias, $limit, $order) = $this->queryBuilder();
-        $res = $this->model
+        list($where, $alias, $limit, $order) = $this->queryBuilder(['admin.nickname']);
+        $query = $this->model
             ->withJoin($this->withJoinTable, $this->withJoinType)
-            ->alias($alias)
-            ->where($where)
+            ->with('admin')
+            ->alias($alias);
+
+        $searchs = $this->request->get("search/a", []);
+
+        foreach ($searchs as $search) {
+            $field = $search['field'];
+
+            if ($field == 'admin.nickname') {
+                // $query->hasWhere('admin', function ($q) use ($search) {
+                //     $q->where('nickname', 'like', "%{$search['val']}%");
+                // });
+
+                $query->where(function ($q) use ($search) {
+                    $q->where('pmadmin.nickname', 'like', "%{$search['val']}%")
+                        ->whereOr('tadmin.nickname', 'like', "%{$search['val']}%");
+                });
+            }
+        }
+
+        $res = $query->where($where)
             ->order($order)
             ->paginate($limit);
 
         foreach ($res->items() as $item) {
-            $item->id_value = $item['primary_key'] . '=' . $item->id_value;
+            $item->id_value    = $item['primary_key'] . '=' . $item->id_value;
+            $tenant            = $item->tenant;
+            $item->tenant_name = $tenant ? $tenant->name : '平台';
         }
-
         $this->success('', [
             'list'   => $res->items(),
             'total'  => $res->total(),

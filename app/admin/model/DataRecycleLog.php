@@ -20,8 +20,33 @@ class DataRecycleLog extends Model
         return $this->belongsTo(DataRecycle::class, 'recycle_id');
     }
 
-    public function admin(): BelongsTo
+    // public function admin(): BelongsTo
+    // {
+    //     return $this->belongsTo(Admin::class, 'admin_id');
+    // }
+
+    /**
+     * 多态关联模型
+     *
+     * @return \think\model\relation\MorphTo
+     */
+    public function admin()
     {
-        return $this->belongsTo(Admin::class, 'admin_id');
+        return $this->morphTo('admin');
+    }
+
+    public function tadmin()
+    {
+        return $this->belongsTo(TenantAdmin::class, 'admin_id')->visible(['nickname', 'id']);
+    }
+
+    public function pmadmin()
+    {
+        return $this->belongsTo(Admin::class, 'admin_id')->visible(['nickname', 'id']);
+    }
+
+    public function tenant(): \think\model\relation\BelongsTo
+    {
+        return $this->belongsTo(Tenant::class, 'tenant_id');
     }
 }

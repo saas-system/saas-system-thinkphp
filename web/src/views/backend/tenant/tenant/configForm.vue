@@ -43,7 +43,7 @@
         <template #footer>
             <div :style="'width: calc(100% - ' + baTable.form.labelWidth! / 1.8 + 'px)'">
                 <el-button @click="baTable.toggleForm('')">{{ t('Cancel') }}</el-button>
-                <el-button v-blur :loading="baTable.form.submitLoading" @click="baTable.onSubmit(formRef)" type="primary">
+                <el-button v-blur :loading="baTable.form.submitLoading" @click="submitForm(formRef)" type="primary">
                     {{ baTable.form.operateIds && baTable.form.operateIds.length > 1 ? t('Save and edit next item') : t('Save') }}
                 </el-button>
             </div>
@@ -58,6 +58,7 @@ import type baTableClass from '/@/utils/baTable'
 import FormItem from '/@/components/formItem/index.vue'
 import type { ElForm, FormItemRule } from 'element-plus'
 import { buildValidatorData } from '/@/utils/validate'
+import { updateTenantConfig } from "/@/api/backend/tenant/tenant";
 
 const formRef = ref<InstanceType<typeof ElForm>>()
 const baTable = inject('baTable') as baTableClass
@@ -71,6 +72,35 @@ const rules: Partial<Record<string, FormItemRule[]>> = reactive({
     tenant_pre: [buildValidatorData({ name: 'required', title: '租户前缀' })],
     number_pre: [buildValidatorData({ name: 'required', title: '卡号前缀' })],
 })
+
+
+/**
+ * 提交表单
+ * @param formEl 表单组件ref
+ */
+const submitForm = (formEl: InstanceType<typeof ElForm> | undefined = undefined) => {
+    const submitCallback = () => {
+        baTable.form.submitLoading = true
+        // 更新租户配置
+        updateTenantConfig(baTable.form.items || {}).then(() => {
+            baTable.toggleForm('')
+        }).finally(() => {
+            baTable.form.submitLoading = false
+        })
+    }
+
+    if (formEl) {
+        baTable.form.ref = formEl
+        formEl.validate((valid) => {
+            if (valid) {
+                submitCallback()
+            }
+        })
+    } else {
+        submitCallback()
+    }
+}
+
 </script>
 
 <style scoped lang="scss"></style>

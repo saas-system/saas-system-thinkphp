@@ -2,21 +2,21 @@
 
 namespace app\common\event;
 
-use app\admin\model\Admin;
+use app\admin\model\TenantAdmin;
 use Exception;
 use think\Request;
 use think\facade\Db;
 use think\facade\Log;
-use app\admin\library\Auth;
+use app\tenant\library\TenantAuth as Auth;
 use think\db\exception\PDOException;
 use app\admin\model\SensitiveDataLog;
 use app\admin\model\DataRecycle;
 use app\admin\model\DataRecycleLog;
 use app\admin\model\SensitiveData;
 
-class Security
+class TenantSecurity
 {
-    protected $listenAction = ['edit', 'del', 'config'];
+    protected $listenAction = ['edit', 'del'];
 
     public function handle(Request $request): bool
     {
@@ -29,7 +29,7 @@ class Security
             $dataIds = $request->param('ids');
             try {
                 $recycle = DataRecycle::where('status', '1')
-                    ->where('app', SensitiveData::APP_TYPE_PLATFORM)
+                    ->where('app', SensitiveData::APP_TYPE_TENANT)
                     ->where('controller_as', $request->controllerPath)
                     ->find();
                 if (!$recycle) {
@@ -42,10 +42,13 @@ class Security
                 $recycleDataArr = [];
                 $auth           = Auth::instance();
                 $adminId        = $auth->isLogin() ? $auth->id : 0;
+                $tenantId       = $auth->tenant_id ?? 0;
+
                 foreach ($recycleData as $recycleDatum) {
                     $recycleDataArr[] = [
                         'admin_id'    => $adminId,
-                        'admin_type'  => $adminId ? Admin::class : '',
+                        'admin_type'  => $adminId ? TenantAdmin::class : '',
+                        'tenant_id'   => $tenantId,
                         'recycle_id'  => $recycle['id'],
                         'data'        => json_encode($recycleDatum, JSON_UNESCAPED_UNICODE),
                         'data_table'  => $recycle['data_table'],
@@ -71,7 +74,7 @@ class Security
 
         try {
             $sensitiveData = SensitiveData::where('status', '1')
-                ->where('app', SensitiveData::APP_TYPE_PLATFORM)
+                ->where('app', SensitiveData::APP_TYPE_TENANT)
                 ->where('controller_as', $request->controllerPath)
                 ->find();
             if (!$sensitiveData) {
@@ -84,13 +87,17 @@ class Security
                 ->field(array_keys($sensitiveData['data_fields']))
                 ->where($sensitiveData['primary_key'], $dataId)
                 ->find();
+            if (!$editData) {
+                return true;
+            }
 
-            $auth    = Auth::instance();
-            $adminId = $auth->isLogin() ? $auth->id : 0;
-            $newData = $request->post();
-
+            $auth     = Auth::instance();
+            $adminId  = $auth->isLogin() ? $auth->id : 0;
+            $tenantId = $auth->tenant_id ?? 0;
+            $newData  = $request->post();
             foreach ($sensitiveData['data_fields'] as $field => $title) {
                 if (isset($editData[$field]) && isset($newData[$field]) && $editData[$field] != $newData[$field]) {
+
                     // 数组类型不判断
                     if (is_array($newData[$field])) {
                         continue;
@@ -110,7 +117,8 @@ class Security
 
                     $sensitiveDataLog[] = [
                         'admin_id'     => $adminId,
-                        'admin_type'   => $adminId ? Admin::class : '',
+                        'admin_type'   => $adminId ? TenantAdmin::class : '',
+                        'tenant_id'    => $tenantId,
                         'sensitive_id' => $sensitiveData['id'],
                         'data_table'   => $sensitiveData['data_table'],
                         'primary_key'  => $sensitiveData['primary_key'],

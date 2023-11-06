@@ -1,5 +1,6 @@
 export default {
     'Rule name': 'Rule name',
+    'app': 'App',
     controller: 'Controller',
     'data sheet': 'Data table',
     'Data table primary key': 'Data table primary key',

@@ -49,7 +49,8 @@ class DataRecycle extends Backend
                     $validate = str_replace("\\model\\", "\\validate\\", get_class($this->model));
                     if (class_exists($validate)) {
                         $validate = new $validate;
-                        if ($this->modelSceneValidate) $validate->scene('add');
+                        if ($this->modelSceneValidate)
+                            $validate->scene('add');
                         $validate->check($data);
                     }
                 }
@@ -67,9 +68,11 @@ class DataRecycle extends Backend
         }
 
         // 放在add方法内，就不需要额外添加权限节点了
+        $app = $this->request->get('app', 'admin');
         $this->success('', [
             'tables'      => $this->getTableList(),
-            'controllers' => $this->getControllerList(),
+            'controllers' => $this->getControllerList($app),
+            'apps'        => $this->getAppList(),
         ]);
     }
 
@@ -103,7 +106,8 @@ class DataRecycle extends Backend
                     $validate = str_replace("\\model\\", "\\validate\\", get_class($this->model));
                     if (class_exists($validate)) {
                         $validate = new $validate;
-                        if ($this->modelSceneValidate) $validate->scene('edit');
+                        if ($this->modelSceneValidate)
+                            $validate->scene('edit');
                         $validate->check($data);
                     }
                 }
@@ -119,13 +123,17 @@ class DataRecycle extends Backend
                 $this->error(__('No rows updated'));
             }
         }
+        $app = $this->request->get('app', $row->app);
 
         $this->success('', [
-            'row' => $row
+            'row'         => $row,
+            'tables'      => $this->getTableList(),
+            'controllers' => $this->getControllerList($app),
+            'apps'        => $this->getAppList(),
         ]);
     }
 
-    protected function getControllerList(): array
+    protected function getControllerList($app = 'admin'): array
     {
         $outExcludeController = [
             'Addon.php',
@@ -139,7 +147,7 @@ class DataRecycle extends Backend
             'user/ScoreLog.php',
         ];
         $outControllers       = [];
-        $controllers          = get_controller_list();
+        $controllers          = get_controller_list($app);
         foreach ($controllers as $key => $controller) {
             if (!in_array($controller, $outExcludeController)) {
                 $outControllers[$key] = $controller;
@@ -172,5 +180,13 @@ class DataRecycle extends Backend
             }
         }
         return $outTables;
+    }
+
+    protected function getAppList(): array
+    {
+        return [
+            'admin'  => '平台端 - admin',
+            'tenant' => '租户端 - tenant',
+        ];
     }
 }
