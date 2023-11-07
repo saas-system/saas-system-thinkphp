@@ -123,4 +123,6 @@ export interface SiteConfig {
         params?: anyObj
     }
     headNav: RouteRecordRaw[]
+    initialize: boolean
+    userInitialize: boolean
 }
