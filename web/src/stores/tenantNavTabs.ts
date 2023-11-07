@@ -100,7 +100,7 @@ export const useNavTabs = defineStore(
  */
 function encodeRoutesURI(data: RouteRecordRaw[]) {
     data.forEach((item) => {
-        if (item.meta?.type == 'iframe') {
+        if (item.meta?.menu_type == 'iframe') {
             item.path = '/tenant/iframe/' + encodeURIComponent(item.path)
         }
 
