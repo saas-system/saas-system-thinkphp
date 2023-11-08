@@ -194,8 +194,12 @@
                         <div v-if="state.goodsInfo.qq" class="developer-contact">
                             <h4 class="developer-info-title">{{ t('module.Contact developer') }}</h4>
                             <div class="contact-item">
-                                <a target="_blank" :href="'http://wpa.qq.com/msgrd?v=3&uin=' + state.goodsInfo.qq + '&site=qq&menu=yes'"
-                                    >QQ：{{ state.goodsInfo.qq }}</a
+                                <a
+                                    target="_blank"
+                                    :href="'http://wpa.qq.com/msgrd?v=3&uin=' + state.goodsInfo.qq + '&site=qq&menu=yes'"
+                                    rel="noreferrer noopener"
+                                    >
+                                    QQ：{{ state.goodsInfo.qq }}</a
                                 >
                             </div>
                         </div>
