@@ -22,7 +22,6 @@
     "topthink/think-throttle": "v2.0.0",
     "topthink/think-migration": "^3.0",
     "phpmailer/phpmailer": "^6.8",
-    "w7corp/easywechat": "^6.12",
     "nelexa/zip": "^4.0.0",
     "ext-calendar": "*",
     "ext-bcmath": "*",
@@ -36,7 +35,8 @@
     "phpoffice/phpspreadsheet": "^1.28",
     "ext-zlib": "*",
     "endroid/qr-code": "^4.6",
-    "overtrue/easy-sms": "^2.2"
+    "overtrue/easy-sms": "^2.2",
+    "voku/anti-xss": "^4.1"
   },
   "require-dev": {
     "symfony/var-dumper": "^5.4",

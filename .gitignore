@@ -9,6 +9,7 @@
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
+composer.lock
 
 # common
 /nbproject
@@ -49,3 +50,4 @@ pnpm-debug.log*
 !.gitkeep
 .svn
 .phpunit.result.cache
+
