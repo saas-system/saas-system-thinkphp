@@ -45,9 +45,6 @@ class Template extends Backend
      */
     public function index()
     {
-        // 设置过滤方法
-        $this->request->filter(['strip_tags', 'trim']);
-
         // 如果是select则转发到select方法,若select未重写,其实还是继续执行index
         if ($this->request->param('select')) {
             $this->select();

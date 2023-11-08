@@ -33,7 +33,6 @@ class DataRecycleLog extends Backend
      */
     public function index(): void
     {
-        $this->request->filter(['strip_tags', 'trim']);
         if ($this->request->param('select')) {
             $this->select();
         }
