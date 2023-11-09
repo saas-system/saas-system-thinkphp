@@ -47,15 +47,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch, useSlots } from 'vue'
-import { UploadInstance, UploadUserFile, UploadProps, genFileId, UploadRawFile, UploadFiles } from 'element-plus'
+import { ref, reactive, onMounted, watch, useSlots, nextTick } from 'vue'
+import { genFileId } from 'element-plus'
+import type { UploadInstance, UploadUserFile, UploadProps, UploadRawFile, UploadFiles } from 'element-plus'
 import { stringToArray } from '/@/components/baInput/helper'
 import { fullUrl, arrayFullUrl, getFileNameFromPath, getArrayKey } from '/@/utils/common'
 import { fileUpload } from '/@/api/common'
 import SelectFile from '/@/components/baInput/components/selectFile.vue'
 import { uuid } from '/@/utils/random'
 import { cloneDeep, isEmpty } from 'lodash-es'
-import { AxiosProgressEvent } from 'axios'
+import type { AxiosProgressEvent } from 'axios'
+import Sortable from 'sortablejs'
 
 type Writeable<T> = { -readonly [P in keyof T]: T[P] }
 interface Props {
@@ -181,12 +183,13 @@ const onElChange = (file: UploadFileExt, files: UploadFiles) => {
         })
         .finally(() => {
             state.uploading--
-            typeof state.events['onChange'] == 'function' && state.events['onChange'](file, files)
+            onChange(file, files)
         })
 }
 
 const onElRemove = (file: UploadUserFile, files: UploadFiles) => {
     typeof state.events['onRemove'] == 'function' && state.events['onRemove'](file, files)
+    onChange(file, files)
     emits('update:modelValue', getAllUrls())
 }
 
@@ -215,8 +218,33 @@ const onChoice = (files: string[]) => {
     files = oldValArr.concat(files)
     init(files)
     emits('update:modelValue', getAllUrls())
-    typeof state.events['onChange'] == 'function' && state.events['onChange'](files, state.fileList)
+    onChange(files, state.fileList)
     state.selectFile.show = false
+}
+
+/**
+ * 初始化文件/图片的排序功能
+ */
+const initSort = () => {
+    nextTick(() => {
+        let uploadListEl = upload.value?.$el.querySelector('.el-upload-list')
+        let uploadItemEl = uploadListEl.getElementsByClassName('el-upload-list__item')
+        if (uploadItemEl.length >= 2) {
+            Sortable.create(uploadListEl, {
+                animation: 200,
+                draggable: '.el-upload-list__item',
+                onEnd: (evt: Sortable.SortableEvent) => {
+                    if (evt.oldIndex != evt.newIndex) {
+                        state.fileList[evt.newIndex!] = [
+                            state.fileList[evt.oldIndex!],
+                            (state.fileList[evt.oldIndex!] = state.fileList[evt.newIndex!]),
+                        ][0]
+                        emits('update:modelValue', getAllUrls())
+                    }
+                },
+            })
+        }
+    })
 }
 
 onMounted(() => {
@@ -245,6 +273,8 @@ onMounted(() => {
     if (state.attr.limit) state.selectFile.limit = state.attr.limit
 
     init(props.modelValue)
+
+    initSort()
 })
 
 watch(
@@ -308,6 +338,11 @@ const formDataAppend = (fd: FormData) => {
         }
     }
     return fd
+}
+
+const onChange = (file: string | string[] | UploadFileExt, files: UploadFileExt[]) => {
+    initSort()
+    typeof state.events['onChange'] == 'function' && state.events['onChange'](file, files)
 }
 
 const getUploadRef = () => {
@@ -378,6 +413,16 @@ defineExpose({
 .ba-upload.file :deep(.el-upload-list),
 .ba-upload.files :deep(.el-upload-list) {
     margin-left: -10px;
+}
+.ba-upload.files,
+.ba-upload.images {
+    :deep(.el-upload-list__item) {
+        user-select: none;
+        .el-upload-list__item-actions,
+        .el-upload-list__item-name {
+            cursor: move;
+        }
+    }
 }
 .ml-6 {
     margin-left: 6px;
