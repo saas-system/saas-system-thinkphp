@@ -8,6 +8,7 @@ use think\facade\Db;
 use think\facade\Lang;
 use think\facade\Event;
 use think\facade\Config;
+use voku\helper\AntiXSS;
 use app\admin\model\Config as configModel;
 use think\exception\HttpResponseException;
 use Symfony\Component\HttpFoundation\IpUtils;
@@ -48,6 +49,20 @@ if (!function_exists('filter')) {
 
         // 特殊字符转实体
         return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, 'UTF-8');
+    }
+}
+
+if (!function_exists('clean_xss')) {
+
+    /**
+     * 清理XSS
+     * 通常只用于富文本，比 filter 慢
+     * @param string $string
+     * @return string
+     */
+    function clean_xss(string $string): string
+    {
+        return (new AntiXSS())->xss_clean($string);
     }
 }
 
