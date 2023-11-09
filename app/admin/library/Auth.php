@@ -12,7 +12,6 @@ use app\admin\model\AdminGroup;
 
 /**
  * 管理员权限类
- *
  * @property int $id         管理员ID
  * @property string $username   管理员用户名
  * @property string $nickname   管理员昵称
@@ -59,9 +58,16 @@ class Auth extends \ba\Auth
 
     /**
      * 令牌默认有效期
+     * 可在 config/buildadmin.php 内修改默认值
      * @var int
      */
     protected int $keepTime = 86400;
+
+    /**
+     * 刷新令牌有效期
+     * @var int
+     */
+    protected int $refreshTokenKeepTime = 2592000;
 
     /**
      * 允许输出的字段
@@ -72,7 +78,7 @@ class Auth extends \ba\Auth
 
     protected array $allowFields = ['id', 'username', 'nickname', 'avatar', 'last_login_time'];
 
-    public function __construct(array $config = [])
+    public function __construct()
     {
         $config = [
             'auth_group'        => 'platform_admin_group', // 用户组数据表名
@@ -81,6 +87,8 @@ class Auth extends \ba\Auth
         ];
 
         parent::__construct($config);
+
+        $this->setKeepTime((int)Config::get('buildadmin.admin_token_keep_time'));
     }
 
     /**
@@ -148,13 +156,13 @@ class Auth extends \ba\Auth
 
     /**
      * 管理员登录
-     * @param string $username
-     * @param string $password
-     * @param bool $keepTime
+     * @param string $username 用户名
+     * @param string $password 密码
+     * @param bool $keep 是否保持登录
      * @return bool
      * @throws Throwable
      */
-    public function login(string $username, string $password, bool $keepTime = false): bool
+    public function login(string $username, string $password, bool $keep = false): bool
     {
         $this->model = Admin::where('username', $username)->find();
         if (!$this->model) {
@@ -180,8 +188,8 @@ class Auth extends \ba\Auth
             Token::clear('admin-refresh', $this->model->id);
         }
 
-        if ($keepTime) {
-            $this->setRefreshToken(2592000);
+        if ($keep) {
+            $this->setRefreshToken($this->refreshTokenKeepTime);
         }
         $this->loginSuccessful();
         return true;
