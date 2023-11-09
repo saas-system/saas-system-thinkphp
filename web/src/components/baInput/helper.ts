@@ -74,7 +74,7 @@ export const fieldData: FieldData = {
         type: 'bigint',
         length: 16,
         precision: 0,
-        default: 'null',
+        default: 'empty string',
         ...npuaFalse(),
         null: true,
         unsigned: true,
