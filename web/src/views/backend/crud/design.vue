@@ -24,12 +24,7 @@
                         />
                     </div>
                     <div class="header-right">
-                        <el-link
-                            v-if="state.table.designChange.length"
-                            @click="state.showDesignChangeLog = true"
-                            class="design-change-log"
-                            type="danger"
-                        >
+                        <el-link v-if="crudState.type != 'create'" @click="state.showDesignChangeLog = true" class="design-change-log" type="primary">
                             {{ t('crud.crud.Table design change') }}
                         </el-link>
                         <el-button type="primary" :loading="state.loading.generate" @click="onGenerate" v-blur>
@@ -47,7 +42,7 @@
                                 <el-option
                                     v-for="(item, idx) in state.fields"
                                     :key="idx"
-                                    :label="item.name + (item.title ? '-' + item.title : '')"
+                                    :label="item.name + (item.comment ? '-' + item.comment : item.title)"
                                     :value="item.name"
                                 />
                             </el-select>
@@ -58,7 +53,7 @@
                                     <el-option
                                         v-for="(item, idx) in state.fields"
                                         :key="idx"
-                                        :label="item.name + (item.title ? '-' + item.title : '')"
+                                        :label="item.name + (item.comment ? '-' + item.comment : item.title)"
                                         :value="item.name"
                                     />
                                 </el-select>
@@ -78,7 +73,7 @@
                                 <el-option
                                     v-for="(item, idx) in state.fields"
                                     :key="idx"
-                                    :label="item.name + (item.title ? '-' + item.title : '')"
+                                    :label="item.name + (item.comment ? '-' + item.comment : item.title)"
                                     :value="item.name"
                                 />
                             </el-select>
@@ -88,7 +83,7 @@
                                 <el-option
                                     v-for="(item, idx) in state.fields"
                                     :key="idx"
-                                    :label="item.name + (item.title ? '-' + item.title : '')"
+                                    :label="item.name + (item.comment ? '-' + item.comment : item.title)"
                                     :value="item.name"
                                 />
                             </el-select>
@@ -197,12 +192,11 @@
                             <BaInput
                                 @pointerdown.stop
                                 class="design-field-name-input"
-                                v-model="field.name"
+                                :model-value="field.name"
                                 type="string"
                                 :attr="{
                                     size: 'small',
-                                    onFocus: () => onFieldBackup(field, index),
-                                    onChange: ($event: string) => onFieldNameChange($event, index),
+                                    onInput: ($event: string) => onFieldNameChange($event, index),
                                 }"
                             />
                         </div>
@@ -276,10 +270,9 @@
                             <FormItem
                                 :label="t('crud.crud.Field Name')"
                                 type="string"
-                                v-model="state.fields[state.activateField].name"
+                                :model-value="state.fields[state.activateField].name"
                                 :input-attr="{
-                                    onFocus: () => onFieldBackup(state.fields[state.activateField], state.activateField),
-                                    onChange: ($event: string) => onFieldNameChange($event, state.activateField)
+                                    onInput: ($event: string) => onFieldNameChange($event, state.activateField)
                                 }"
                             />
                             <template v-if="state.fields[state.activateField].dataType">
@@ -413,101 +406,103 @@
             :destroy-on-close="true"
             @keyup.enter="onSaveRemoteSelect"
         >
-            <div class="ba-operate-form" :style="'width: calc(100% - 80px)'">
-                <el-form
-                    ref="formRef"
-                    :model="state.remoteSelectPre.form"
-                    :rules="remoteSelectPreFormRules"
-                    v-loading="state.remoteSelectPre.loading"
-                    label-position="right"
-                    label-width="160px"
-                    v-if="state.remoteSelectPre.index != -1 && state.fields[state.remoteSelectPre.index]"
-                >
-                    <FormItem
-                        prop="table"
-                        type="select"
-                        :label="t('crud.crud.Associated Data Table')"
-                        v-model="state.remoteSelectPre.form.table"
-                        :key="JSON.stringify(state.remoteSelectPre.dbList)"
-                        :data="{
-                            content: state.remoteSelectPre.dbList,
-                        }"
-                        :input-attr="{ onChange: onJoinTableChange }"
-                    />
-                    <div v-loading="state.loading.remoteSelect">
+            <el-scrollbar max-height="60vh">
+                <div class="ba-operate-form" :style="'width: calc(100% - 80px)'">
+                    <el-form
+                        ref="formRef"
+                        :model="state.remoteSelectPre.form"
+                        :rules="remoteSelectPreFormRules"
+                        v-loading="state.remoteSelectPre.loading"
+                        label-position="right"
+                        label-width="160px"
+                        v-if="state.remoteSelectPre.index != -1 && state.fields[state.remoteSelectPre.index]"
+                    >
                         <FormItem
-                            prop="pk"
+                            prop="table"
                             type="select"
-                            :label="t('crud.crud.Drop down value field')"
-                            v-model="state.remoteSelectPre.form.pk"
-                            :placeholder="t('crud.crud.Please select the value field of the select component')"
-                            :key="'select-value' + JSON.stringify(state.remoteSelectPre.fieldList)"
+                            :label="t('crud.crud.Associated Data Table')"
+                            v-model="state.remoteSelectPre.form.table"
+                            :key="JSON.stringify(state.remoteSelectPre.dbList)"
                             :data="{
-                                content: state.remoteSelectPre.fieldList,
+                                content: state.remoteSelectPre.dbList,
                             }"
+                            :input-attr="{ onChange: onJoinTableChange }"
                         />
-                        <FormItem
-                            prop="label"
-                            type="select"
-                            :label="t('crud.crud.Drop down label field')"
-                            v-model="state.remoteSelectPre.form.label"
-                            :placeholder="t('crud.crud.Please select the label field of the select component')"
-                            :key="'select-label' + JSON.stringify(state.remoteSelectPre.fieldList)"
-                            :data="{
-                                content: state.remoteSelectPre.fieldList,
-                            }"
-                        />
-                        <FormItem
-                            v-if="state.fields[state.remoteSelectPre.index].designType == 'remoteSelect'"
-                            prop="joinField"
-                            type="selects"
-                            :label="t('crud.crud.Fields displayed in the table')"
-                            v-model="state.remoteSelectPre.form.joinField"
-                            :placeholder="t('crud.crud.Please select the fields displayed in the table')"
-                            :key="'join-field' + JSON.stringify(state.remoteSelectPre.fieldList)"
-                            :data="{
-                                content: state.remoteSelectPre.fieldList,
-                            }"
-                        />
-                        <FormItem
-                            prop="controllerFile"
-                            type="select"
-                            :label="t('crud.crud.Controller position')"
-                            v-model="state.remoteSelectPre.form.controllerFile"
-                            :placeholder="t('crud.crud.Please select the controller of the data table')"
-                            :key="'controller-file' + JSON.stringify(state.remoteSelectPre.controllerFileList)"
-                            :data="{
-                                content: state.remoteSelectPre.controllerFileList,
-                            }"
-                            :attr="{
-                                blockHelp: t(
-                                    'crud.crud.The remote pull-down will request the corresponding controller to obtain data, so it is recommended that you create the CRUD of the associated table'
-                                ),
-                            }"
-                        />
-                        <FormItem
-                            type="select"
-                            :label="t('crud.crud.Data Model Location')"
-                            v-model="state.remoteSelectPre.form.modelFile"
-                            :placeholder="t('crud.crud.Please select the data model location of the data table')"
-                            :key="'model-file' + JSON.stringify(state.remoteSelectPre.modelFileList)"
-                            :data="{
-                                content: state.remoteSelectPre.modelFileList,
-                            }"
-                            :attr="{
-                                blockHelp: t(
-                                    'crud.crud.If it is left blank, the model of the associated table will be generated automatically If the table already has a model, it is recommended to select it to avoid repeated generation'
-                                ),
-                            }"
-                        />
-                        <el-form-item :label="t('Reminder')">
-                            <div class="block-help">
-                                {{ t('crud.crud.Design remote select tips') }}
-                            </div>
-                        </el-form-item>
-                    </div>
-                </el-form>
-            </div>
+                        <div v-loading="state.loading.remoteSelect">
+                            <FormItem
+                                prop="pk"
+                                type="select"
+                                :label="t('crud.crud.Drop down value field')"
+                                v-model="state.remoteSelectPre.form.pk"
+                                :placeholder="t('crud.crud.Please select the value field of the select component')"
+                                :key="'select-value' + JSON.stringify(state.remoteSelectPre.fieldList)"
+                                :data="{
+                                    content: state.remoteSelectPre.fieldList,
+                                }"
+                            />
+                            <FormItem
+                                prop="label"
+                                type="select"
+                                :label="t('crud.crud.Drop down label field')"
+                                v-model="state.remoteSelectPre.form.label"
+                                :placeholder="t('crud.crud.Please select the label field of the select component')"
+                                :key="'select-label' + JSON.stringify(state.remoteSelectPre.fieldList)"
+                                :data="{
+                                    content: state.remoteSelectPre.fieldList,
+                                }"
+                            />
+                            <FormItem
+                                v-if="state.fields[state.remoteSelectPre.index].designType == 'remoteSelect'"
+                                prop="joinField"
+                                type="selects"
+                                :label="t('crud.crud.Fields displayed in the table')"
+                                v-model="state.remoteSelectPre.form.joinField"
+                                :placeholder="t('crud.crud.Please select the fields displayed in the table')"
+                                :key="'join-field' + JSON.stringify(state.remoteSelectPre.fieldList)"
+                                :data="{
+                                    content: state.remoteSelectPre.fieldList,
+                                }"
+                            />
+                            <FormItem
+                                prop="controllerFile"
+                                type="select"
+                                :label="t('crud.crud.Controller position')"
+                                v-model="state.remoteSelectPre.form.controllerFile"
+                                :placeholder="t('crud.crud.Please select the controller of the data table')"
+                                :key="'controller-file' + JSON.stringify(state.remoteSelectPre.controllerFileList)"
+                                :data="{
+                                    content: state.remoteSelectPre.controllerFileList,
+                                }"
+                                :attr="{
+                                    blockHelp: t(
+                                        'crud.crud.The remote pull-down will request the corresponding controller to obtain data, so it is recommended that you create the CRUD of the associated table'
+                                    ),
+                                }"
+                            />
+                            <FormItem
+                                type="select"
+                                :label="t('crud.crud.Data Model Location')"
+                                v-model="state.remoteSelectPre.form.modelFile"
+                                :placeholder="t('crud.crud.Please select the data model location of the data table')"
+                                :key="'model-file' + JSON.stringify(state.remoteSelectPre.modelFileList)"
+                                :data="{
+                                    content: state.remoteSelectPre.modelFileList,
+                                }"
+                                :attr="{
+                                    blockHelp: t(
+                                        'crud.crud.If it is left blank, the model of the associated table will be generated automatically If the table already has a model, it is recommended to select it to avoid repeated generation'
+                                    ),
+                                }"
+                            />
+                            <el-form-item :label="t('Reminder')">
+                                <div class="block-help">
+                                    {{ t('crud.crud.Design remote select tips') }}
+                                </div>
+                            </el-form-item>
+                        </div>
+                    </el-form>
+                </div>
+            </el-scrollbar>
             <template #footer>
                 <div :style="'width: calc(100% - 88px)'">
                     <el-button @click="onCancelRemoteSelect">{{ $t('Cancel') }}</el-button>
@@ -558,20 +553,23 @@
                 </div>
             </template>
             <el-scrollbar max-height="400px">
-                <el-timeline class="design-change-log-timeline">
-                    <el-timeline-item
-                        v-for="(item, idx) in state.table.designChange"
-                        :key="idx"
-                        :type="getTableDesignTimelineType(item.type)"
-                        :hollow="true"
-                        :hide-timestamp="true"
-                    >
-                        <div class="design-timeline-box">
-                            <el-checkbox v-model="item.sync" :label="getTableDesignChangeContent(item)" size="small" />
-                        </div>
-                    </el-timeline-item>
-                </el-timeline>
-                <span class="design-change-tips">{{ t('crud.crud.designChangeTips') }}</span>
+                <template v-if="state.table.designChange.length">
+                    <el-timeline class="design-change-log-timeline">
+                        <el-timeline-item
+                            v-for="(item, idx) in state.table.designChange"
+                            :key="idx"
+                            :type="getTableDesignTimelineType(item.type)"
+                            :hollow="true"
+                            :hide-timestamp="true"
+                        >
+                            <div class="design-timeline-box">
+                                <el-checkbox v-model="item.sync" :label="getTableDesignChangeContent(item)" size="small" />
+                            </div>
+                        </el-timeline-item>
+                    </el-timeline>
+                    <span class="design-change-tips">{{ t('crud.crud.designChangeTips') }}</span>
+                </template>
+                <div class="design-change-tips" v-else>暂无表设计变更</div>
                 <FormItem
                     :label="t('crud.crud.tableReBuild')"
                     class="rebuild-form-item"
@@ -600,10 +598,12 @@ import BaInput from '/@/components/baInput/index.vue'
 import FormItem from '/@/components/formItem/index.vue'
 import type { FieldItem, TableDesignChange, TableDesignChangeType } from '/@/views/backend/crud/index'
 import { cloneDeep, range, isEmpty } from 'lodash-es'
-import Sortable, { SortableEvent } from 'sortablejs'
+import Sortable from 'sortablejs'
+import type { SortableEvent } from 'sortablejs'
 import { useTemplateRefsList } from '@vueuse/core'
 import { changeStep, state as crudState, getTableAttr, fieldItem, designTypes, tableFieldsKey } from '/@/views/backend/crud/index'
-import { ElNotification, FormItemRule, FormInstance, ElMessageBox, TimelineItemProps, ElMessage, MessageHandler } from 'element-plus'
+import { ElNotification, ElMessageBox, ElMessage } from 'element-plus'
+import type { FormItemRule, FormInstance, TimelineItemProps, MessageHandler } from 'element-plus'
 import { getDatabaseList, getFileData, generateCheck, generate, parseFieldData, postLogStart } from '/@/api/backend/crud'
 import { getTableFieldList } from '/@/api/common'
 import { buildValidatorData, regularVarName } from '/@/utils/validate'
@@ -668,7 +668,6 @@ const state: {
         controller: boolean
     }
     draggingField: boolean
-    fieldBackup: Partial<FieldItem>
     showDesignChangeLog: boolean
     error: {
         tableName: string
@@ -726,7 +725,6 @@ const state: {
         controller: false,
     },
     draggingField: false,
-    fieldBackup: {},
     showDesignChangeLog: false,
     error: {
         tableName: '',
@@ -753,27 +751,11 @@ const onFieldDesignTypeChange = () => {
 }
 
 /**
- * 备份 state.fields 数据
+ * 字段名修改
  */
-const onFieldBackup = (field: FieldItem, index: number) => {
-    state.fieldBackup = cloneDeep(field)
-    state.fieldBackup.index = index
-}
-
-/**
- * 字段名修改，调用此函数前先调用 onFieldBackup 备份字段修改前的数据
- */
-const onFieldNameChange = async (val: string, index: number) => {
-    // 字段数据较大，赋值可能需要一点时间，此处等待字段数据备份完成
-    let count = 0
-    while (state.fieldBackup.index != index) {
-        count++
-        await new Promise((resolve) => setTimeout(resolve, 300))
-        if (count > 3) {
-            throw new Error(t('crud.crud.If the data is abnormal, repeat the previous step'))
-        }
-    }
-    const oldName = state.fieldBackup.name!
+const onFieldNameChange = (val: string, index: number) => {
+    const oldName = state.fields[index].name
+    state.fields[index].name = val
     for (const key in tableFieldsKey) {
         for (const idx in state.table[tableFieldsKey[key] as TableKey] as string[]) {
             if ((state.table[tableFieldsKey[key] as TableKey] as string[])[idx] == oldName) {
@@ -894,6 +876,9 @@ const onDelField = (index: number) => {
     }
 
     state.fields.splice(index, 1)
+
+    fieldNameCheck('ElMessage')
+    fieldNameDuplicationCheck('ElMessage')
 }
 
 const showRemoteSelectPre = (index: number, hideDelField = false) => {
@@ -1349,10 +1334,8 @@ const onSaveRemoteSelect = () => {
     const submitCallback = () => {
         // 修改字段名
         if (state.fields[state.remoteSelectPre.index].name == 'remote_select') {
-            onFieldBackup(state.fields[state.remoteSelectPre.index], state.remoteSelectPre.index)
             const newName =
                 state.remoteSelectPre.form.table + (state.fields[state.remoteSelectPre.index].designType == 'remoteSelect' ? '_id' : '_ids')
-            state.fields[state.remoteSelectPre.index].name = newName
             onFieldNameChange(newName, state.remoteSelectPre.index)
         }
 
