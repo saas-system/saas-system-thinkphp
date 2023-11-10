@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { nextTick, onMounted, reactive, ref } from 'vue'
-import { useRoute, useRouter, onBeforeRouteUpdate, RouteLocationNormalized } from 'vue-router'
+import { useRoute, useRouter, onBeforeRouteUpdate, type RouteLocationNormalized } from 'vue-router'
 import { useConfig } from '/@/stores/config'
 import { useNavTabs } from '/@/stores/navTabs'
 import { useTemplateRefsList } from '@vueuse/core'
@@ -30,6 +30,7 @@ import useCurrentInstance from '/@/utils/useCurrentInstance'
 import Contextmenu from '/@/components/contextmenu/index.vue'
 import horizontalScroll from '/@/utils/horizontalScroll'
 import { getFirstRoute, routePush } from '/@/utils/router'
+import { adminBaseRoutePath } from '/@/router/static/adminBase'
 
 const route = useRoute()
 const router = useRouter()
@@ -97,7 +98,7 @@ const toLastTab = () => {
     if (lastTab) {
         router.push(lastTab)
     } else {
-        router.push('/admin')
+        router.push(adminBaseRoutePath)
     }
 }
 
@@ -128,6 +129,9 @@ const closeAllTab = (menu: RouteLocationNormalized) => {
     let firstRoute = getFirstRoute(navTabs.state.tabsViewRoutes)
     if (firstRoute && firstRoute.path == menu.path) {
         return closeOtherTab(menu)
+    }
+    if (firstRoute && firstRoute.path == navTabs.state.activeRoute?.path) {
+        return closeOtherTab(navTabs.state.activeRoute)
     }
     navTabs.closeTabs(false)
     if (firstRoute) routePush(firstRoute.path)
