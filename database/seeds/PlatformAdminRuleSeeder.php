@@ -175,7 +175,7 @@ class PlatformAdminRuleSeeder extends Seeder
                         'component' => '/src/views/backend/auth/group/index.vue',
                         'keepalive' => 1,
                         'extend'    => 'none',
-                        'remark'    => '',
+                        'remark'    => 'Remark lang',
                         'weigh'     => 98,
                         'status'    => 1,
                         'sublist'   => MenuService::getCommonMenuData('auth/group'),
