@@ -4,7 +4,6 @@ namespace app\common\library;
 
 use Throwable;
 use app\admin\model\AdminRule;
-use app\admin\model\UserRule;
 
 /**
  * 后台菜单类
@@ -22,7 +21,7 @@ class Menu
     public static function create(array $menu, int|string $parent = 0, string $mode = 'cover', string $position = 'backend'): void
     {
         $pid        = 0;
-        $model      = $position == 'backend' ? new AdminRule() : new UserRule();
+        $model      = $position == 'backend' ?? new AdminRule();
         $parentRule = $model->where((is_numeric($parent) ? 'id' : 'name'), $parent)->find();
         if ($parentRule) {
             $pid = $parentRule['id'];
@@ -73,7 +72,7 @@ class Menu
         if (!$id) {
             return true;
         }
-        $model    = $position == 'backend' ? new AdminRule() : new UserRule();
+        $model    = $position == 'backend' ?? new AdminRule();
         $menuRule = $model->where((is_numeric($id) ? 'id' : 'name'), $id)->find();
         if (!$menuRule) {
             return true;
@@ -102,7 +101,7 @@ class Menu
      */
     public static function enable(string|int $id, string $position = 'backend'): bool
     {
-        $model    = $position == 'backend' ? new AdminRule() : new UserRule();
+        $model    = $position == 'backend' ?? new AdminRule();
         $menuRule = $model->where((is_numeric($id) ? 'id' : 'name'), $id)->find();
         if (!$menuRule) {
             return false;
@@ -121,7 +120,7 @@ class Menu
      */
     public static function disable(string|int $id, string $position = 'backend'): bool
     {
-        $model    = $position == 'backend' ? new AdminRule() : new UserRule();
+        $model    = $position == 'backend' ?? new AdminRule();
         $menuRule = $model->where((is_numeric($id) ? 'id' : 'name'), $id)->find();
         if (!$menuRule) {
             return false;
