@@ -1,25 +1,5 @@
 <template>
     <div class="nav-menus" :class="configStore.layout.layoutMode">
-<!--        <el-dropdown
-            @visible-change="onCurrentNavMenu($event, 'lang')"
-            class="h100"
-            size="large"
-            :hide-timeout="50"
-            placement="bottom"
-            trigger="click"
-            :hide-on-click="true"
-        >
-            <div class="nav-menu-item pt2" :class="state.currentNavMenu == 'lang' ? 'hover' : ''">
-                <Icon :color="configStore.getColorVal('headerBarTabColor')" class="nav-menu-icon" name="local-lang" size="18" />
-            </div>
-            <template #dropdown>
-                <el-dropdown-menu class="dropdown-menu-box">
-                    <el-dropdown-item v-for="item in configStore.lang.langArray" :key="item.name" @click="editDefaultLang(item.name)">
-                        {{ item.value }}
-                    </el-dropdown-item>
-                </el-dropdown-menu>
-            </template>
-        </el-dropdown>-->
         <div @click="onFullScreen" class="nav-menu-item" :class="state.isFullScreen ? 'hover' : ''">
             <Icon
                 :color="configStore.getColorVal('headerBarTabColor')"
@@ -64,7 +44,7 @@
             <template #reference>
                 <div class="admin-info" :class="state.currentNavMenu == 'adminInfo' ? 'hover' : ''">
                     <el-avatar :size="25" fit="fill">
-                        <img :src="adminInfo.avatar" alt="" />
+                        <img :src="fullUrl(adminInfo.avatar)" alt="" />
                     </el-avatar>
                     <div class="admin-name">{{ adminInfo.nickname }}</div>
                 </div>
@@ -72,7 +52,7 @@
             <div>
                 <div class="admin-info-base">
                     <el-avatar :size="70" fit="fill">
-                        <img :src="adminInfo.avatar" alt="" />
+                        <img :src="fullUrl(adminInfo.avatar)" alt="" />
                     </el-avatar>
                     <div class="admin-info-other">
                         <div class="admin-info-name">{{ adminInfo.nickname }}</div>
@@ -94,7 +74,6 @@
 
 <script lang="ts" setup>
 import { reactive } from 'vue'
-import { editDefaultLang } from '/@/lang'
 import screenfull from 'screenfull'
 import { useConfig } from '/@/stores/config'
 import { ElMessage } from 'element-plus'
@@ -107,6 +86,7 @@ import router from '/@/router'
 import { routePush } from '/@/utils/router'
 import { logout } from '/@/api/tenant/index'
 import { postTenantClearCache} from '/@/api/common'
+import { fullUrl } from '/@/utils/common'
 
 const { t } = useI18n()
 
