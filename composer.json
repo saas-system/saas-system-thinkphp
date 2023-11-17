@@ -22,12 +22,6 @@
     "topthink/think-throttle": "v2.0.0",
     "topthink/think-migration": "^3.0",
     "phpmailer/phpmailer": "^6.8",
-    "nelexa/zip": "^4.0.0",
-    "ext-calendar": "*",
-    "ext-bcmath": "*",
-    "ext-iconv": "*",
-    "ext-json": "*",
-    "ext-gd": "*",
     "firebase/php-jwt": "^6.5",
     "aliyuncs/oss-sdk-php": "^2.6",
     "nesbot/carbon": "^2.67",
@@ -36,7 +30,13 @@
     "ext-zlib": "*",
     "endroid/qr-code": "^4.6",
     "overtrue/easy-sms": "^2.2",
-    "voku/anti-xss": "^4.1"
+    "voku/anti-xss": "^4.1",
+    "nelexa/zip": "^4.0.0",
+    "ext-calendar": "*",
+    "ext-bcmath": "*",
+    "ext-iconv": "*",
+    "ext-json": "*",
+    "ext-gd": "*"
   },
   "require-dev": {
     "symfony/var-dumper": "^5.4",
@@ -53,10 +53,7 @@
     }
   },
   "config": {
-    "preferred-install": "dist",
-    "allow-plugins": {
-      "easywechat-composer/easywechat-composer": true
-    }
+    "preferred-install": "dist"
   },
   "scripts": {
     "post-autoload-dump": [
