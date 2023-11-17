@@ -47,7 +47,12 @@ const init = () => {
      */
     index().then((res) => {
         siteConfig.dataFill(res.data.siteConfig)
-        adminInfo.dataFill(res.data.adminInfo)
+        siteConfig.setInitialize(true)
+        if (!isEmpty(res.data.adminInfo)) {
+            adminInfo.dataFill(res.data.adminInfo)
+            siteConfig.setUserInitialize(true)
+        }
+
 
         if (res.data.menus) {
             handleTenantRoute(res.data.menus)

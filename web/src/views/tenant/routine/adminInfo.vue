@@ -10,6 +10,7 @@
                         @change="onAvatarBeforeUpload"
                         :auto-upload="false"
                         accept="image/gif, image/jpg, image/jpeg, image/bmp, image/png, image/webp"
+                        v-if="isEmpty(state.adminInfo)"
                     >
                         <el-image :src="fullUrl(state.adminInfo.avatar)" class="avatar">
                             <template #error>
@@ -113,6 +114,7 @@ import { buildValidatorData } from '/@/utils/validate'
 import { fileUpload } from '/@/api/common'
 import { useTenantAdminInfo } from '/@/stores/tenantAdminInfo'
 import { timeFormat } from '/@/utils/common'
+import {isEmpty} from "lodash-es";
 
 const { t } = useI18n()
 const formRef = ref<InstanceType<typeof ElForm>>()

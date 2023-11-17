@@ -33,6 +33,7 @@
             </template>
         </el-dropdown>
         <el-popover
+            v-if="siteConfig.userInitialize"
             @show="onCurrentNavMenu(true, 'adminInfo')"
             @hide="onCurrentNavMenu(false, 'adminInfo')"
             placement="bottom-end"
@@ -40,6 +41,7 @@
             :width="260"
             trigger="click"
             popper-class="admin-info-box"
+            v-model:visible="state.showAdminInfoPopover"
         >
             <template #reference>
                 <div class="admin-info" :class="state.currentNavMenu == 'adminInfo' ? 'hover' : ''">
@@ -87,11 +89,13 @@ import { routePush } from '/@/utils/router'
 import { logout } from '/@/api/tenant/index'
 import { postTenantClearCache} from '/@/api/common'
 import { fullUrl } from '/@/utils/common'
+import { useSiteConfig } from '/@/stores/siteConfig'
 
 const { t } = useI18n()
 
 const adminInfo = useTenantAdminInfo()
 const configStore = useConfig()
+const siteConfig = useSiteConfig()
 
 const state = reactive({
     isFullScreen: false,
@@ -115,6 +119,7 @@ const onFullScreen = () => {
 }
 
 const onAdminInfo = () => {
+    state.showAdminInfoPopover = false
     routePush({ name: 'routine/adminInfo' })
 }
 
