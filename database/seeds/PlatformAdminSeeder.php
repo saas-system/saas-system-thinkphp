@@ -41,7 +41,7 @@ class PlatformAdminSeeder extends Seeder
                 'username'        => 'admin',
                 'nickname'        => 'Admin',
                 'avatar'          => '',
-                'email'           => 'admin@buildadmin.com',
+                'email'           => '',
                 'mobile'          => '18888888888',
                 'login_failure'   => 0,
                 'last_login_time' => 1680347634,

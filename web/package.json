@@ -5,7 +5,6 @@
     "scripts": {
         "dev": "vite --force",
         "build": "vite build && esno ./src/utils/build.ts",
-        "build-tenant": "vite build --mode tenant && esno ./src/utils/build.ts",
         "lint": "eslint --ext .js,.jsx,.ts,.vue src",
         "lint-fix": "eslint --ext .js,.jsx,.ts,.vue src --fix",
         "format": "npx prettier --write ."

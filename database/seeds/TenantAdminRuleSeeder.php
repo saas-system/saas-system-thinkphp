@@ -49,7 +49,7 @@ class TenantAdminRuleSeeder extends Seeder
             [
                 'type'      => 'menu',
                 'title'     => '控制台',
-                'name'      => 'dashboard/dashboard',
+                'name'      => 'dashboard',
                 'path'      => 'dashboard',
                 'icon'      => 'fa fa-dashboard',
                 'menu_type' => 'tab',
@@ -60,6 +60,13 @@ class TenantAdminRuleSeeder extends Seeder
                 'remark'    => 'remark_text',
                 'weigh'     => 999,
                 'status'    => 0,
+                'sublist'   => [
+                    [
+                        'type'      => 'button',
+                        'title'     => '查看',
+                        'name'      => 'dashboard/index',
+                    ],
+                ]
             ],
             [
                 'type'      => 'menu_dir',

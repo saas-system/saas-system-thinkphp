@@ -32,13 +32,13 @@ class PlatformAdminRuleSeeder extends Seeder
         });
     }
 
-    protected function getPlatformMenu()
+    protected function getPlatformMenu(): array
     {
-        $newMenu = [
+        return [
             [
-                'type'      => 'menu',
+                'type'      => 'menu_dir',
                 'title'     => '控制台',
-                'name'      => 'dashboard/dashboard',
+                'name'      => 'dashboard',
                 'path'      => 'dashboard',
                 'icon'      => 'fa fa-dashboard',
                 'menu_type' => 'tab',
@@ -49,6 +49,13 @@ class PlatformAdminRuleSeeder extends Seeder
                 'remark'    => 'Remark lang',
                 'weigh'     => 999,
                 'status'    => 1,
+                'sublist'   => [
+                    [
+                        'type'      => 'button',
+                        'title'     => '查看',
+                        'name'      => 'dashboard/index',
+                    ],
+                ]
             ],
             // 租户管理
             [
@@ -472,7 +479,6 @@ class PlatformAdminRuleSeeder extends Seeder
                         'status'    => 1,
                         'sublist'   => MenuService::getCommonMenuData('sms/template'),
                     ],
-
                     [
                         'type'      => 'menu',
                         'title'     => '短信发送记录',
@@ -493,12 +499,10 @@ class PlatformAdminRuleSeeder extends Seeder
             ],
 
         ];
-
-        return $newMenu;
     }
 
 
-    protected function truncateData()
+    protected function truncateData(): void
     {
 
         $sql = 'truncate table platform_admin_rule';
