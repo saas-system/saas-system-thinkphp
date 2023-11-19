@@ -3,6 +3,7 @@
 namespace app\admin\library\module;
 
 use Throwable;
+use ba\Version;
 use ba\Depends;
 use ba\Exception;
 use ba\Filesystem;
@@ -106,19 +107,13 @@ class Manage
         if (!$orderId) {
             throw new Exception('Order not found');
         }
-        // 下载
-        $installed  = Server::installedList($this->installDir);
-        foreach ($installed as $item) {
-            $installedIds[] = $item['uid'];
-        }
-        unset($installed);
+        // 下载 - 系统版本号要求、已安装模块的互斥和依赖检测
         $zipFile = Server::download($this->uid, $this->installDir, [
             'sysVersion'    => Config::get('buildadmin.version'),
             'nuxtVersion'   => Server::getNuxtVersion(),
             'ba-user-token' => $token,
             'order_id'      => $orderId,
-            // 传递已安装模块，做互斥检测
-            'installed'     => $installedIds ?? [],
+            'installed'     => Server::getInstalledIds($this->installDir),
         ]);
 
         // 删除旧版本代码
@@ -147,7 +142,7 @@ class Manage
      * @return array 模块的基本信息
      * @throws Throwable
      */
-    public function upload(string $file): array
+    public function upload(string $token, string $file): array
     {
         $file = Filesystem::fsFit(root_path() . 'public' . $file);
         if (!is_file($file)) {
@@ -173,22 +168,55 @@ class Manage
             // 基本配置不完整
             throw new Exception('Basic configuration of the Module is incomplete');
         }
+
+        // 安装预检 - 系统版本号要求、已安装模块的互斥和依赖检测
+        try {
+            Server::installPreCheck([
+                'uid'           => $info['uid'],
+                'sysVersion'    => Config::get('buildadmin.version'),
+                'nuxtVersion'   => Server::getNuxtVersion(),
+                'ba-user-token' => $token,
+                'installed'     => Server::getInstalledIds($this->installDir),
+                'server'        => 1,
+            ]);
+        } catch (Throwable $e) {
+            Filesystem::delDir($copyToDir);
+            throw $e;
+        }
+
         $this->uid        = $info['uid'];
         $this->modulesDir = $this->installDir . $info['uid'] . DIRECTORY_SEPARATOR;
 
+        $upgrade = false;
         if (is_dir($this->modulesDir)) {
-            $info = $this->getInfo();
-            if ($info && isset($info['uid'])) {
-                Filesystem::delDir($copyToDir);
-                // 基本配置不完整
-                throw new Exception('Module already exists');
+            $oldInfo = $this->getInfo();
+            if ($oldInfo && !empty($oldInfo['uid'])) {
+                $versions = explode('.', $oldInfo['version']);
+                if (isset($versions[2])) {
+                    $versions[2]++;
+                }
+                $nextVersion = implode('.', $versions);
+                $upgrade     = Version::compare($nextVersion, $info['version']);
+                if (!$upgrade) {
+                    Filesystem::delDir($copyToDir);
+                    // 模块已经存在
+                    throw new Exception('Module already exists');
+                }
             }
 
-            if (!Filesystem::dirIsEmpty($this->modulesDir)) {
+            if (!Filesystem::dirIsEmpty($this->modulesDir) && !$upgrade) {
                 Filesystem::delDir($copyToDir);
                 // 模块目录被占
                 throw new Exception('The directory required by the module is occupied');
             }
+        }
+
+        $newInfo = ['state' => self::WAIT_INSTALL];
+        if ($upgrade) {
+            $newInfo['update'] = 1;
+
+            // 清理旧版本代码
+            Filesystem::delDir($this->modulesDir);
         }
 
         // 放置新模块
@@ -198,9 +226,7 @@ class Manage
         $this->checkPackage();
 
         // 设置为待安装状态
-        $this->setInfo([
-            'state' => self::WAIT_INSTALL,
-        ]);
+        $this->setInfo($newInfo);
 
         return $info;
     }
@@ -355,7 +381,8 @@ class Manage
         $zipDir  = false;
         if (is_file($zipFile)) {
             try {
-                $zipDir = Filesystem::unzip($zipFile);
+                $zipDir = $this->backupsDir . $this->uid . '-install' . DIRECTORY_SEPARATOR;
+                Filesystem::unzip($zipFile, $zipDir);
             } catch (Exception) {
                 // skip
             }
@@ -401,9 +428,14 @@ class Manage
         }
 
         // 备份
+        $dependJsonFiles   = [
+            'composer'       => 'composer.json',
+            'webPackage'     => 'web' . DIRECTORY_SEPARATOR . 'package.json',
+            'webNuxtPackage' => 'web-nuxt' . DIRECTORY_SEPARATOR . 'package.json',
+        ];
         $dependWaitInstall = [];
         if ($delComposerDepend) {
-            $conflictFile[]      = 'composer.json';
+            $conflictFile[]      = $dependJsonFiles['composer'];
             $dependWaitInstall[] = [
                 'pm'      => false,
                 'command' => 'composer.update',
@@ -411,7 +443,7 @@ class Manage
             ];
         }
         if ($delNpmDepend) {
-            $conflictFile[]      = 'web' . DIRECTORY_SEPARATOR . 'package.json';
+            $conflictFile[]      = $dependJsonFiles['webPackage'];
             $dependWaitInstall[] = [
                 'pm'      => true,
                 'command' => 'web-install',
@@ -419,7 +451,7 @@ class Manage
             ];
         }
         if ($delNuxtNpmDepend) {
-            $conflictFile[]      = 'web-nuxt' . DIRECTORY_SEPARATOR . 'package.json';
+            $conflictFile[]      = $dependJsonFiles['webNuxtPackage'];
             $dependWaitInstall[] = [
                 'pm'      => true,
                 'command' => 'nuxt-install',
@@ -427,6 +459,19 @@ class Manage
             ];
         }
         if ($conflictFile) {
+            // 如果是模块自带文件需要备份，加上模块目录前缀
+            $overwriteDir = Server::getOverwriteDir();
+            foreach ($conflictFile as $key => $item) {
+                $paths = explode(DIRECTORY_SEPARATOR, $item);
+                if (in_array($paths[0], $overwriteDir) || in_array($item, $dependJsonFiles)) {
+                    $conflictFile[$key] = $item;
+                } else {
+                    $conflictFile[$key] = Filesystem::fsFit(str_replace(root_path(), '', $this->modulesDir . $item));
+                }
+                if (!is_file(root_path() . $conflictFile[$key])) {
+                    unset($conflictFile[$key]);
+                }
+            }
             $backupsZip = $this->backupsDir . $this->uid . '-disable-' . date('YmdHis') . '.zip';
             Filesystem::zip($conflictFile, $backupsZip);
         }
@@ -447,14 +492,27 @@ class Manage
             }
         }
 
-        // 删除模块文件
+        // 配置了不删除的文件
         $protectedFiles = Server::getConfig($this->modulesDir, 'protectedFiles');
         foreach ($protectedFiles as &$protectedFile) {
             $protectedFile = Filesystem::fsFit(root_path() . $protectedFile);
         }
+        // 模块文件列表
         $moduleFile = Server::getFileList($this->modulesDir);
-        foreach ($moduleFile as $item) {
-            $file = Filesystem::fsFit(root_path() . $item);
+
+        // 删除模块文件
+        foreach ($moduleFile as &$file) {
+            // 纯净模式下，模块文件将被删除，此处直接检查模块目录中是否有该文件并恢复（不检查是否开启纯净模式，因为开关可能被调整）
+            $moduleFilePath = Filesystem::fsFit($this->modulesDir . $file);
+            $file           = Filesystem::fsFit(root_path() . $file);
+            if (!file_exists($file)) continue;
+            if (!file_exists($moduleFilePath)) {
+                if (!is_dir(dirname($moduleFilePath))) {
+                    mkdir(dirname($moduleFilePath), 0755, true);
+                }
+                copy($file, $moduleFilePath);
+            }
+
             if (in_array($file, $protectedFiles)) {
                 continue;
             }
@@ -466,19 +524,30 @@ class Manage
 
         // 恢复备份文件
         if ($zipDir) {
+            $unrecoverableFiles = [
+                Filesystem::fsFit(root_path() . 'composer.json'),
+                Filesystem::fsFit(root_path() . 'web/package.json'),
+                Filesystem::fsFit(root_path() . 'web-nuxt/package.json'),
+            ];
             foreach (
-                $iterator = new RecursiveIteratorIterator(
+                new RecursiveIteratorIterator(
                     new RecursiveDirectoryIterator($zipDir, FilesystemIterator::SKIP_DOTS),
                     RecursiveIteratorIterator::SELF_FIRST
                 ) as $item
             ) {
-                $backupsFile = Filesystem::fsFit(root_path() . $iterator->getSubPathName());
+                $backupsFile = Filesystem::fsFit(root_path() . str_replace($zipDir, '', $item->getPathname()));
+
+                // 在模块包中，同时不在 $protectedFiles 列表的文件不恢复，这些文件可能是模块升级时备份的
+                if (in_array($backupsFile, $moduleFile) && !in_array($backupsFile, $protectedFiles)) {
+                    continue;
+                }
+
                 if ($item->isDir()) {
                     if (!is_dir($backupsFile)) {
                         mkdir($backupsFile, 0755, true);
                     }
                 } else {
-                    if ($backupsFile != Filesystem::fsFit(root_path() . 'composer.json') && $backupsFile != Filesystem::fsFit(root_path() . 'web/package.json')) {
+                    if (!in_array($backupsFile, $unrecoverableFiles)) {
                         copy($item, $backupsFile);
                     }
                 }
@@ -616,6 +685,9 @@ class Manage
                 if ($key == 'dependencies' || $key == 'devDependencies') {
                     $coverFiles[] = 'web' . DIRECTORY_SEPARATOR . 'package.json';
                 }
+                if ($key == 'nuxtDependencies' || $key == 'nuxtDevDependencies') {
+                    $coverFiles[] = 'web-nuxt' . DIRECTORY_SEPARATOR . 'package.json';
+                }
             }
         }
 
@@ -689,12 +761,12 @@ class Manage
                 continue;
             }
             foreach (
-                $iterator = new RecursiveIteratorIterator(
+                new RecursiveIteratorIterator(
                     new RecursiveDirectoryIterator($baseDir, FilesystemIterator::SKIP_DOTS),
                     RecursiveIteratorIterator::SELF_FIRST
                 ) as $item
             ) {
-                $destDirItem = $destDir . DIRECTORY_SEPARATOR . $iterator->getSubPathName();
+                $destDirItem = Filesystem::fsFit($destDir . DIRECTORY_SEPARATOR . str_replace($baseDir, '', $item->getPathname()));
                 if ($item->isDir()) {
                     Filesystem::mkdir($destDirItem);
                 } else {
@@ -703,6 +775,10 @@ class Manage
                         copy($item, $destDirItem);
                     }
                 }
+            }
+            // 纯净模式
+            if (Config::get('buildadmin.module_pure_install')) {
+                Filesystem::delDir($baseDir);
             }
         }
         return true;
