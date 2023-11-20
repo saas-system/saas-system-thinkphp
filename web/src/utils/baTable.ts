@@ -1,11 +1,12 @@
-import { reactive } from 'vue'
+import { reactive, watch } from 'vue'
 import { auth, getArrayKey } from '/@/utils/common'
 import type { baTableApi } from '/@/api/common'
 import Sortable from 'sortablejs'
 import { findIndexRow } from '/@/components/table'
-import { ElNotification, FormInstance, TableColumnCtx } from 'element-plus'
-import { onBeforeRouteUpdate, useRoute } from 'vue-router'
-import { cloneDeep, isUndefined } from 'lodash-es'
+import { ElNotification } from 'element-plus'
+import type { FormInstance, TableColumnCtx } from 'element-plus'
+import { useRoute } from 'vue-router'
+import { cloneDeep } from 'lodash-es'
 import { i18n } from '/@/lang/index'
 
 export default class baTable {
@@ -64,9 +65,6 @@ export default class baTable {
         this.table = Object.assign(this.table, table)
         this.before = before
         this.after = after
-
-        const route = useRoute()
-        this.initComSearch(!isUndefined(route) ? route.query : {})
     }
 
     /**
@@ -196,9 +194,9 @@ export default class baTable {
 
         if (this.runBefore('onSubmit', { formEl: formEl, operate: operate, items: this.form.items! }) === false) return
 
-        // Object.keys(this.form.items!).forEach((item) => {
-        //     if (this.form.items![item] === null) delete this.form.items![item]
-        // })
+        Object.keys(this.form.items!).forEach((item) => {
+            if (this.form.items![item] === null) delete this.form.items![item]
+        })
 
         // 表单验证通过后执行的api请求操作
         const submitCallback = () => {
@@ -261,14 +259,14 @@ export default class baTable {
                 'page-size-change',
                 () => {
                     this.table.filter!.limit = data.size
-                    this.getIndex()
+                    this.onTableHeaderAction('refresh', { event: 'page-size-change', ...data })
                 },
             ],
             [
                 'current-page-change',
                 () => {
                     this.table.filter!.page = data.page
-                    this.getIndex()
+                    this.onTableHeaderAction('refresh', { event: 'current-page-change', ...data })
                 },
             ],
             [
@@ -280,7 +278,7 @@ export default class baTable {
                     }
                     if (newOrder != this.table.filter!.order) {
                         this.table.filter!.order = newOrder
-                        this.getIndex()
+                        this.onTableHeaderAction('refresh', { event: 'sort-change', ...data })
                     }
                 },
             ],
@@ -318,7 +316,7 @@ export default class baTable {
                 'com-search',
                 () => {
                     this.table.filter!.search = data as comSearchData[]
-                    this.getIndex()
+                    this.onTableHeaderAction('refresh', { event: 'com-search', data: data })
                 },
             ],
             [
@@ -345,6 +343,7 @@ export default class baTable {
             [
                 'refresh',
                 () => {
+                    // 刷新表格在大多数情况下无需置空 data，但任需防范表格列组件的 :key 不会被更新的问题，比如关联表的数据列
                     this.table.data = []
                     this.getIndex()
                 },
@@ -381,8 +380,7 @@ export default class baTable {
             [
                 'quick-search',
                 () => {
-                    this.table.filter!.quickSearch = data.keyword
-                    this.getIndex()
+                    this.onTableHeaderAction('refresh', { event: 'quick-search', ...data })
                 },
             ],
             [
@@ -474,11 +472,25 @@ export default class baTable {
     mount = () => {
         if (this.runBefore('mount') === false) return
 
-        // 监听路由变化,响应通用搜索更新
-        onBeforeRouteUpdate((to) => {
-            this.initComSearch(to.query)
-            this.getIndex()
-        })
+        const route = useRoute()
+        this.table.routePath = route.path
+
+        // 初始化公共搜索数据
+        this.initComSearch(route?.query ? route.query : {})
+
+        // 路由未改变，而 query 改变了，重新筛选数据
+        let routeFlag = route.path + Object.entries(route.query).toString()
+        watch(
+            () => route.query,
+            () => {
+                const newRouteFlag = route.path + Object.entries(route.query).toString()
+                if (route.path == this.table.routePath && routeFlag != newRouteFlag) {
+                    this.initComSearch(route.query)
+                    this.onTableHeaderAction('refresh', { event: 'route-query-change', query: route.query })
+                    routeFlag = newRouteFlag
+                }
+            }
+        )
     }
 
     /**

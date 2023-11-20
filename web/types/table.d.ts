@@ -44,6 +44,8 @@ declare global {
         dblClickNotEditColumn?: (string | undefined)[]
         // 是否展开所有子项，树状表格专用属性
         expandAll?: boolean
+        // 当前表格所在页面的路由 path
+        routePath?: string
         // 表格扩展数据，随意定义，以便一些自定义数据可以随baTable实例传递
         extend?: anyObj
     }
@@ -83,48 +85,42 @@ declare global {
         // 获取表格数据前
         getIndex?: () => boolean | void
         // 删除前
-        postDel?: ({ids}: { ids: string[] }) => boolean | void
+        postDel?: ({ ids }: { ids: string[] }) => boolean | void
         // 编辑请求前
-        requestEdit?: ({id}: { id: string }) => boolean | void
+        requestEdit?: ({ id }: { id: string }) => boolean | void
         // 双击表格具体操作执行前
-        onTableDblclick?: ({row, column}: { row: TableRow; column: TableColumn }) => boolean | void
+        onTableDblclick?: ({ row, column }: { row: TableRow; column: TableColumn }) => boolean | void
         // 表单切换前
-        toggleForm?: ({operate, operateIds}: { operate: string; operateIds: string[] }) => boolean | void
+        toggleForm?: ({ operate, operateIds }: { operate: string; operateIds: string[] }) => boolean | void
         // 表单提交前
-        onSubmit?: ({formEl, operate, items}: {
-            formEl: FormInstance | undefined;
-            operate: string;
-            items: anyObj
-        }) => boolean | void
+        onSubmit?: ({ formEl, operate, items }: { formEl: FormInstance | undefined; operate: string; items: anyObj }) => boolean | void
         // 表格内事件响应前
-        onTableAction?: ({event, data}: { event: string; data: anyObj }) => boolean | void
+        onTableAction?: ({ event, data }: { event: string; data: anyObj }) => boolean | void
         // 表格顶部菜单事件响应前
-        onTableHeaderAction?: ({event, data}: { event: string; data: anyObj }) => boolean | void
+        onTableHeaderAction?: ({ event, data }: { event: string; data: anyObj }) => boolean | void
         // 表格初始化前
         mount?: () => boolean | void
-
         [key: string]: Function | undefined
     }
 
     /* BaTable后置处理函数(后置埋点) */
     interface BaTableAfter {
         // 表格数据请求后
-        getIndex?: ({res}: { res: ApiResponse }) => void
+        getIndex?: ({ res }: { res: ApiResponse }) => void
         // 删除请求后
-        postDel?: ({res}: { res: ApiResponse }) => void
+        postDel?: ({ res }: { res: ApiResponse }) => void
         // 编辑表单请求后
-        requestEdit?: ({res}: { res: ApiResponse }) => void
+        requestEdit?: ({ res }: { res: ApiResponse }) => void
         // 双击单元格操作执行后
-        onTableDblclick?: ({row, column}: { row: TableRow; column: TableColumn }) => void
+        onTableDblclick?: ({ row, column }: { row: TableRow; column: TableColumn }) => void
         // 表单切换后
-        toggleForm?: ({operate, operateIds}: { operate: string; operateIds: string[] }) => void
+        toggleForm?: ({ operate, operateIds }: { operate: string; operateIds: string[] }) => void
         // 表单提交后
-        onSubmit?: ({res}: { res: ApiResponse }) => void
+        onSubmit?: ({ res }: { res: ApiResponse }) => void
         // 表格事件响应后
-        onTableAction?: ({event, data}: { event: string; data: anyObj }) => void
+        onTableAction?: ({ event, data }: { event: string; data: anyObj }) => void
         // 表格顶部事件菜单响应后
-        onTableHeaderAction?: ({event, data}: { event: string; data: anyObj }) => void
-
+        onTableHeaderAction?: ({ event, data }: { event: string; data: anyObj }) => void
         [key: string]: Function | undefined
     }
 
@@ -233,16 +229,7 @@ declare global {
     }
 
     /* 表头支持的按钮 */
-    type HeaderOptButton =
-        'refresh'
-        | 'add'
-        | 'edit'
-        | 'delete'
-        | 'unfold'
-        | 'recycle bin'
-        | 'comSearch'
-        | 'quickSearch'
-        | 'columnDisplay'
+    type HeaderOptButton = 'refresh' | 'add' | 'edit' | 'delete' | 'unfold' | 'recycle bin' | 'comSearch' | 'quickSearch' | 'columnDisplay'
 
     /* 通用搜索操作符支持的值 */
     type OperatorStr =
@@ -261,14 +248,13 @@ declare global {
         | 'NULL' // 是否为NULL，将生成单个复选框
         | 'NOT NULL'
         | 'FIND_IN_SET'
-        // 不推荐使用，因为部分符号不利于网络传输
+        // 不推荐使用的，因为部分符号不利于网络传输
         | '='
         | '<>'
         | '>'
         | '>='
         | '<'
         | '<='
-
 
     /* 链接打开方式 */
     type aTarget = '_blank' | '_self'
