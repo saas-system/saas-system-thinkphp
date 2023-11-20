@@ -3,6 +3,7 @@ return [
     'Order not found'                                           => '订单找不到啦！',
     'Module already exists'                                     => '模块已存在！',
     'package download failed'                                   => '包下载失败！',
+    'package check failed'                                      => '包检查失败！',
     'No permission to write temporary files'                    => '没有权限写入临时文件！',
     'Zip file not found'                                        => '找不到压缩包文件',
     'Unable to open the zip file'                               => '无法打开压缩包文件',
@@ -23,4 +24,5 @@ return [
     'Update module'                                             => '更新模块',
     'Change module state'                                       => '改变模块状态',
     'Upload install module'                                     => '上传安装模块',
+    'Please login to the official website account first'        => '请先使用BuildAdmin官网账户登录到模块市场~',
 ];

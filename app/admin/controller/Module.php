@@ -27,7 +27,7 @@ class Module extends Backend
         ]);
     }
 
-    public function state()
+    public function state(): void
     {
         $uid = $this->request->get("uid/s", '');
         if (!$uid) {
@@ -38,7 +38,7 @@ class Module extends Backend
         ]);
     }
 
-    public function install()
+    public function install(): void
     {
         AdminLog::setTitle(__('Install module'));
         $uid     = $this->request->get("uid/s", '');
@@ -60,7 +60,7 @@ class Module extends Backend
         ]);
     }
 
-    public function dependentInstallComplete()
+    public function dependentInstallComplete(): void
     {
         $uid = $this->request->get("uid/s", '');
         if (!$uid) {
@@ -76,7 +76,7 @@ class Module extends Backend
         $this->success();
     }
 
-    public function changeState()
+    public function changeState(): void
     {
         AdminLog::setTitle(__('Change module state'));
         $uid   = $this->request->post("uid/s", '');
@@ -97,7 +97,7 @@ class Module extends Backend
         ]);
     }
 
-    public function uninstall()
+    public function uninstall(): void
     {
         AdminLog::setTitle(__('Unload module'));
         $uid = $this->request->get("uid/s", '');
@@ -114,7 +114,7 @@ class Module extends Backend
         $this->success();
     }
 
-    public function update()
+    public function update(): void
     {
         AdminLog::setTitle(__('Update module'));
         $uid     = $this->request->get("uid/s", '');
@@ -133,16 +133,17 @@ class Module extends Backend
         $this->success();
     }
 
-    public function upload()
+    public function upload(): void
     {
         AdminLog::setTitle(__('Upload install module'));
-        $file = $this->request->get("file/s", '');
-        if (!$file) {
-            $this->error(__('Parameter error'));
-        }
+        $file  = $this->request->get("file/s", '');
+        $token = $this->request->get("token/s", '');
+        if (!$file) $this->error(__('Parameter error'));
+        if (!$token) $this->error(__('Please login to the official website account first'));
+
         $info = [];
         try {
-            $info = Manage::instance()->upload($file);
+            $info = Manage::instance()->upload($token, $file);
         } catch (Exception $e) {
             $this->error(__($e->getMessage()), $e->getData(), $e->getCode());
         } catch (Throwable $e) {
