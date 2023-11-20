@@ -34,7 +34,7 @@
                     <FormItem :label="t('tenant.tenant.logo')" type="image" v-model="baTable.form.items!.logo" prop="logo" />
                     <FormItem :label="t('tenant.tenant.area_name')" type="city" v-model="baTable.form.items!.area_ids"  prop="area_ids" />
                     <FormItem :label="t('tenant.tenant.address')" type="string" v-model="baTable.form.items!.address" prop="address" :placeholder="t('Please input field', { field: t('tenant.tenant.address') })" />
-                    <FormItem :label="t('tenant.tenant.expire_time')" v-if="baTable.form.operate=='Add'" type="date" :input-attr="{onFocus: expireTimeFocus, shortcuts: addShortcuts, format: 'YYYY-MM-DD'}" v-model="baTable.form.items!.expire_time" prop="expire_time" :placeholder="t('Please select field', { field: t('tenant.tenant.expire_time') })" />
+                    <FormItem :label="t('tenant.tenant.expire_time')" v-if="baTable.form.operate=='Add'" type="date" :input-attr="{shortcuts: addShortcuts, format: 'YYYY-MM-DD'}" v-model="baTable.form.items!.expire_time" prop="expire_time" :placeholder="t('Please select field', { field: t('tenant.tenant.expire_time') })" />
                     <FormItem :label="t('tenant.tenant.expire_time')" v-else-if="baTable.form.operate=='Edit'" type="date" :input-attr="{onFocus: expireTimeFocus, shortcuts: editShortcuts, format: 'YYYY-MM-DD'}" v-model="baTable.form.items!.expire_time" prop="expire_time" :placeholder="t('Please select field', { field: t('tenant.tenant.expire_time') })" />
                     <FormItem :label="t('tenant.tenant.memo')" type="textarea" v-model="baTable.form.items!.memo" prop="memo" :placeholder="t('Please input field', { field: '备注' })" />
                     <FormItem :label="t('tenant.tenant.status')" type="radio" v-model="baTable.form.items!.status" prop="status" :data="{ content: { 0: t('tenant.tenant.status 0'), 1: t('tenant.tenant.status 1') } }" :placeholder="t('Please select field', { field: t('tenant.tenant.status') })" />
@@ -82,7 +82,7 @@ const expireTimeFocus = () => {
         return false
     }
     state.count++;
-    state.expire_time = baTable.form.items.expire_time
+    state.expire_time = baTable.form.items!.expire_time
 }
 
 // 增加日期的快捷方式
@@ -118,7 +118,7 @@ const editShortcuts = [
             let date = state.expire_time && new Date(state.expire_time).getTime() > new Date().getTime() ? new Date(state.expire_time) : new Date()
             date.setFullYear(date.getFullYear() + 1)
             return date
-        },
+        }
     },
     {
         text: '恢复默认',

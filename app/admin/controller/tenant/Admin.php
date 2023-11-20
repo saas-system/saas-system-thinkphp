@@ -2,7 +2,6 @@
 
 namespace app\admin\controller\tenant;
 
-use app\admin\model\TenantAdminGroup;
 use app\common\controller\Backend;
 use think\db\exception\PDOException;
 use think\exception\ValidateException;
@@ -22,7 +21,7 @@ class Admin extends Backend
      */
     protected object $model;
 
-    protected array|string $preExcludeFields = ['create_time', 'updatetime', 'password', 'salt', 'login_failure', 'last_login_time', 'last_login_ip'];
+    protected array|string $preExcludeFields = ['create_time', 'update_time', 'password', 'salt', 'login_failure', 'last_login_time', 'last_login_ip'];
 
     protected array|string $quickSearchField = ['mobile', 'username', 'nickname'];
 
@@ -96,13 +95,8 @@ class Admin extends Backend
             $salt   = Random::build('alnum', 16);
             $passwd = encrypt_password($data['password'] ?? '123456', $salt);
 
-            $data['group_arr'] = [TenantAdminGroup::where(['tenant_id' => $data['tenant_id'], 'pid' => 0])->value('id')];
-            $data              = $this->excludeFields($data);
-            $result            = false;
-            if ($data['group_arr']) {
-                $this->checkGroupAuth($data['group_arr']);
-            }
-
+            $data   = $this->excludeFields($data);
+            $result = false;
             Db::startTrans();
             try {
                 $data['salt']     = $salt;
@@ -112,8 +106,9 @@ class Admin extends Backend
                     $groupAccess = [];
                     foreach ($data['group_arr'] as $datum) {
                         $groupAccess[] = [
-                            'uid'      => $this->model->id,
-                            'group_id' => $datum,
+                            'uid'       => $this->model->id,
+                            'group_id'  => $datum,
+                            'tenant_id' => $data['tenant_id'],
                         ];
                     }
                     Db::name('tenant_admin_group_access')->insertAll($groupAccess);
@@ -175,6 +170,19 @@ class Admin extends Backend
                 $this->model->resetPassword($data['id'], $data['password']);
             }
 
+            if (implode(',', $row->group_arr) !== implode(',', $data['group_arr'])) {
+                $groupAccess = [];
+                foreach ($data['group_arr'] as $datum) {
+                    $groupAccess[] = [
+                        'uid'       => $row->id,
+                        'group_id'  => $datum,
+                        'tenant_id' => $data['tenant_id'],
+                    ];
+                }
+                Db::name('tenant_admin_group_access')->where(['uid' => $row->id])->delete();
+                Db::name('tenant_admin_group_access')->insertAll($groupAccess);
+            }
+
             $data   = $this->excludeFields($data);
             $result = false;
             Db::startTrans();
@@ -208,18 +216,5 @@ class Admin extends Backend
     public function del(array $ids = []): void
     {
         $this->error('禁止删除');
-    }
-
-    public function checkGroupAuth(array $groups)
-    {
-        if ($this->auth->isSuperAdmin()) {
-            return;
-        }
-        $authGroups = $this->auth->getAllAuthGroups('allAuthAndOthers');
-        foreach ($groups as $group) {
-            if (!in_array($group, $authGroups)) {
-                $this->error(__('You have no permission to add an administrator to this group!'));
-            }
-        }
     }
 }

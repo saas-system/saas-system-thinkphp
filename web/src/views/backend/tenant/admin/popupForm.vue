@@ -2,6 +2,7 @@
     <!-- 对话框表单 -->
     <el-dialog
         class="ba-operate-dialog"
+        :destroy-on-close="true"
         :close-on-click-modal="false"
         @open="openForm"
         :model-value="['Add', 'Edit'].includes(baTable.form.operate!)"
@@ -29,7 +30,20 @@
                     :label-width="baTable.form.labelWidth + 'px'"
                     :rules="rules"
                 >
-                    <FormItem label="租户" type="remoteSelect" v-model="baTable.form.items!.tenant_id" prop="tenant_id" :input-attr="{ pk: 'tenant.id', field: 'name', 'remote-url': 'admin/tenant.Tenant/index',disabled:false }" :placeholder="t('Please select field', { field: '租户' })" />
+                    <FormItem label="租户" type="remoteSelect" v-model="baTable.form.items!.tenant_id" prop="tenant_id" :input-attr="{ pk: 'tenant.id', field: 'name', 'remote-url': 'admin/tenant.Tenant/index',disabled: true }" :placeholder="t('Please select field', { field: '租户' })" />
+                    <FormItem
+                        label="角色组"
+                        v-model="baTable.form.items!.group_arr"
+                        prop="group_arr"
+                        type="remoteSelect"
+                        :key="('group-' + baTable.form.items!.id)"
+                        :input-attr="{
+                            multiple: true,
+                            params: { isTree: true },
+                            field: 'name',
+                            'remote-url': 'admin/tenant.Group/index?tenant_id=' + baTable.form.items!.tenant_id
+                        }"
+                    />
                     <FormItem label="用户名" type="string" v-model="baTable.form.items!.username" prop="username" :placeholder="t('Please input field', { field: '用户名' })" />
                     <FormItem label="手机号" type="string" v-model="baTable.form.items!.mobile" prop="mobile" :placeholder="t('Please input field', { field: '手机号' })" />
                     <FormItem label="昵称" type="string" v-model="baTable.form.items!.nickname" prop="nickname" :placeholder="t('Please input field', { field: '昵称' })" />

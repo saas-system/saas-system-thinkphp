@@ -40,14 +40,14 @@ class TenantAdmin extends Model
 
     public function getGroupArrAttr($value, $row)
     {
-        return Db::name('platform_admin_group_access')
+        return Db::name('tenant_admin_group_access')
             ->where('uid', $row['id'])
             ->column('group_id');
     }
 
     public function getGroupNameArrAttr($value, $row)
     {
-        $groupAccess = Db::name('platform_admin_group_access')
+        $groupAccess = Db::name('tenant_admin_group_access')
             ->where('uid', $row['id'])
             ->column('group_id');
         return TenantAdminGroup::whereIn('id', $groupAccess)->column('name');
