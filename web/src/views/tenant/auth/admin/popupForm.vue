@@ -16,13 +16,13 @@
             <div
                 class="ba-operate-form"
                 :class="'ba-' + baTable.form.operate + '-form'"
-                :style="'width: calc(100% - ' + baTable.form.labelWidth! / 2 + 'px)'"
+                :style="config.layout.shrink ? '':'width: calc(100% - ' + baTable.form.labelWidth! / 2 + 'px)'"
             >
                 <el-form
                     ref="formRef"
                     @keyup.enter="baTable.onSubmit(formRef)"
                     :model="baTable.form.items"
-                    label-position="right"
+                    :label-position="config.layout.shrink ? 'top' : 'right'"
                     :label-width="baTable.form.labelWidth + 'px'"
                     :rules="rules"
                     v-if="!baTable.form.loading"
@@ -119,7 +119,9 @@ import type { ElForm, FormItemRule } from 'element-plus'
 import FormItem from '/@/components/formItem/index.vue'
 import { authGroup } from '/@/api/tenant/controllerUrls'
 import { useTenantAdminInfo } from '/@/stores/tenantAdminInfo'
+import { useConfig } from '/@/stores/config'
 
+const config = useConfig()
 const adminInfo = useTenantAdminInfo()
 const formRef = ref<InstanceType<typeof ElForm>>()
 const baTable = inject('baTable') as baTableClass

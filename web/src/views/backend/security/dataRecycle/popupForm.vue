@@ -15,14 +15,14 @@
             <div
                 class="ba-operate-form"
                 :class="'ba-' + baTable.form.operate + '-form'"
-                :style="'width: calc(100% - ' + baTable.form.labelWidth! / 2 + 'px)'"
+                :style="config.layout.shrink ? '':'width: calc(100% - ' + baTable.form.labelWidth! / 2 + 'px)'"
             >
                 <el-form
                     v-if="!baTable.form.loading"
                     ref="formRef"
                     @keyup.enter="baTable.onSubmit(formRef)"
                     :model="baTable.form.items"
-                    label-position="right"
+                    :label-position="config.layout.shrink ? 'top' : 'right'"
                     :label-width="baTable.form.labelWidth + 'px'"
                     :rules="rules"
                 >
@@ -91,14 +91,16 @@
 <script setup lang="ts">
 import { reactive, ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
+import type baTableClass from '/@/utils/baTable'
 import FormItem from '/@/components/formItem/index.vue'
 import type { FormInstance, FormItemRule } from 'element-plus'
 import { buildValidatorData } from '/@/utils/validate'
 import { getTablePk } from '/@/api/common'
-import  { dataRecycleClass } from './index'
+import { useConfig } from '/@/stores/config'
 
+const config = useConfig()
 const formRef = ref<FormInstance>()
-const baTable = inject('baTable') as dataRecycleClass
+const baTable = inject('baTable') as baTableClass
 
 const { t } = useI18n()
 
