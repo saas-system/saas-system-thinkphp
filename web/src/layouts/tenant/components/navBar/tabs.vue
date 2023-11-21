@@ -30,6 +30,7 @@ import useCurrentInstance from '/@/utils/useCurrentInstance'
 import Contextmenu from '/@/components/contextmenu/index.vue'
 import horizontalScroll from '/@/utils/horizontalScroll'
 import { getFirstRoute, routePush } from '/@/utils/router'
+import {tenantBaseRoutePath} from "/@/router/static/tenantBase";
 
 const route = useRoute()
 const router = useRouter()
@@ -97,7 +98,7 @@ const toLastTab = () => {
     if (lastTab) {
         router.push(lastTab.path)
     } else {
-        router.push('/tenant')
+        router.push(tenantBaseRoutePath)
     }
 }
 

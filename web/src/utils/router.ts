@@ -6,8 +6,8 @@ import { useConfig } from '/@/stores/config'
 import { useNavTabs } from '/@/stores/navTabs'
 import { useNavTabs as useTenantNavTabs } from '/@/stores/tenantNavTabs'
 import { closeShade } from '/@/utils/pageShade'
-import adminBaseRoute from '/@/router/static/adminBase'
-import tenantBaseRoute from '/@/router/static/tenantBase'
+import adminBaseRoute, {adminBaseRoutePath} from '/@/router/static/adminBase'
+import tenantBaseRoute, {tenantBaseRoutePath} from '/@/router/static/tenantBase'
 import { i18n } from '/@/lang/index'
 import { isAdminApp } from '/@/utils/common'
 import { compact, reverse } from 'lodash-es'
@@ -233,7 +233,7 @@ export const addRouteItem = (viewsComponent: Record<string, any>, route: any, pa
     let path = '',
         component
     if (route.menu_type == 'iframe') {
-        path = (isAdminApp() ? '/admin' : '/user') + '/iframe/' + encodeURIComponent(route.url)
+        path = (isAdminApp() ? adminBaseRoutePath : tenantBaseRoutePath) + '/iframe/' + encodeURIComponent(route.url)
         component = () => import('/@/layouts/common/router-view/iframe.vue')
     } else {
         path = parentName ? route.path : '/' + route.path
