@@ -1,9 +1,9 @@
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
-import { UserConfig, ConfigEnv, ProxyOptions, loadEnv } from 'vite'
+import { loadEnv } from 'vite'
+import type { UserConfig, ConfigEnv, ProxyOptions } from 'vite'
 import { isProd } from '/@/utils/vite'
 import { svgBuilder } from '/@/components/icon/svg/index'
-import * as process from "process";
 
 const pathResolve = (dir: string): any => {
     return resolve(__dirname, '.', dir)
@@ -35,7 +35,7 @@ const viteConfig = ({ mode }: ConfigEnv): UserConfig => {
         resolve: { alias },
         base: VITE_BASE_PATH,
         server: {
-            host: process.cwd(),
+            port: parseInt(VITE_PORT),
             open: VITE_OPEN != 'false',
             proxy: proxy,
         },
@@ -52,23 +52,7 @@ const viteConfig = ({ mode }: ConfigEnv): UserConfig => {
                         vue: ['vue', 'vue-router', 'pinia', 'vue-i18n', 'element-plus'],
                         echarts: ['echarts'],
                     },
-                }
-            },
-        },
-        css: {
-            postcss: {
-                plugins: [
-                    {
-                        postcssPlugin: 'internal:charset-removal',
-                        AtRule: {
-                            charset: (atRule) => {
-                                if (atRule.name === 'charset') {
-                                    atRule.remove()
-                                }
-                            },
-                        },
-                    },
-                ],
+                },
             },
         },
     }

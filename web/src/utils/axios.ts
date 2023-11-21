@@ -1,6 +1,6 @@
 import axios from 'axios'
 import type { AxiosRequestConfig, Method } from 'axios'
-import { ElLoading, LoadingOptions, ElNotification } from 'element-plus'
+import { ElLoading, LoadingOptions, type ElNotification } from 'element-plus'
 import { useConfig } from '/@/stores/config'
 import { isAdminApp, isTenantApp } from '/@/utils/common'
 import router from '/@/router/index'

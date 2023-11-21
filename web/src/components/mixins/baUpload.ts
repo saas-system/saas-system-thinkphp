@@ -4,7 +4,7 @@ import { UploadRawFile } from 'element-plus'
 import { randomNum, shortUuid } from '/@/utils/random'
 import { fullUrl } from '/@/utils/common'
 import { isAdminApp } from '/@/utils/common'
-import { AxiosRequestConfig } from 'axios'
+import type { AxiosRequestConfig } from 'axios'
 import jsSHA from 'jssha'
 
 export const state = () => {

@@ -3,7 +3,7 @@ import { reactive } from 'vue'
 import { i18n } from '../lang'
 import { defineStore } from 'pinia'
 import { STORE_TAB_VIEW_CONFIG } from '/@/stores/constant/cacheKey'
-import { NavTabs } from '/@/stores/interface/index'
+import type { NavTabs } from '/@/stores/interface/index'
 import { RouteLocationNormalized, RouteRecordRaw } from 'vue-router'
 
 export const useNavTabs = defineStore(

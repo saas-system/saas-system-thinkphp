@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { TENANT_ADMIN_INFO } from '/@/stores/constant/cacheKey'
-import { AdminInfo } from '/@/stores/interface'
+import type { AdminInfo } from '/@/stores/interface'
 
 export const useTenantAdminInfo = defineStore('tenantAdminInfo', {
     state: (): AdminInfo => {
@@ -11,9 +11,10 @@ export const useTenantAdminInfo = defineStore('tenantAdminInfo', {
             avatar: '',
             last_login_time: '',
             token: '',
-            refreshToken: '',
+            refresh_token: '',
             // 是否是superAdmin，用于判定是否显示终端按钮等，不做任何权限判断
             super: false,
+            debug: false,
         }
     },
     actions: {
@@ -22,13 +23,14 @@ export const useTenantAdminInfo = defineStore('tenantAdminInfo', {
         },
         removeToken() {
             this.token = ''
-            this.refreshToken = ''
+            this.refresh_token = ''
         },
-        setToken(token: string, type: 'token' | 'refreshToken') {
-            this[type] = token
+        setToken(token: string, type: 'auth' | 'refresh') {
+            const field = type == 'auth' ? 'token' : 'refresh_token'
+            this[field] = token
         },
         getToken(type: 'auth' | 'refresh' = 'auth') {
-            return type === 'auth' ? this.token : this.refreshToken
+            return type === 'auth' ? this.token : this.refresh_token
         },
         setSuper(val: boolean) {
             this.super = val

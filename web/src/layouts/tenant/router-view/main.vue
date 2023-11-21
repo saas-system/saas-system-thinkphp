@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { reactive, onMounted, watch, onBeforeMount, onUnmounted, nextTick } from 'vue'
-import { useRoute, RouteLocationNormalized } from 'vue-router'
+import { useRoute, type RouteLocationNormalized } from 'vue-router'
 import { mainHeight as layoutMainScrollbarStyle } from '/@/utils/layout'
 import useCurrentInstance from '/@/utils/useCurrentInstance'
 import { useConfig } from '/@/stores/config'

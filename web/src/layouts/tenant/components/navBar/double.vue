@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onMounted, reactive, ref } from 'vue'
-import { useRoute, onBeforeRouteUpdate, RouteLocationNormalizedLoaded } from 'vue-router'
+import { useRoute, onBeforeRouteUpdate, type RouteLocationNormalizedLoaded } from 'vue-router'
 import { currentRouteTopActivity } from '/@/layouts/tenant/components/menus/helper'
 import MenuTree from '/@/layouts/tenant/components/menus/menuTree.vue'
 import NavMenus from '/@/layouts/tenant/components/navMenus.vue'

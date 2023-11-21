@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
-import { RouteRecordRaw } from "vue-router"
-import { SiteConfig } from '/@/stores/interface'
+import type { SiteConfig } from '/@/stores/interface'
 
 export const useSiteConfig = defineStore('siteConfig', {
     state: (): SiteConfig => {
