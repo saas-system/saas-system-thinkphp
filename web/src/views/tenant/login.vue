@@ -51,7 +51,6 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, reactive, ref, nextTick } from 'vue'
 import type { ElForm, ElInput } from 'element-plus'
-import { ElNotification } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useConfig } from '/@/stores/config'
 import { useTenantAdminInfo } from '/@/stores/tenantAdminInfo'
@@ -60,11 +59,12 @@ import { uuid } from '/@/utils/random'
 import { buildValidatorData } from '/@/utils/validate'
 import router from '/@/router'
 import clickCaptcha from '/@/components/clickCaptcha'
-
+import toggleDark from "/@/utils/useDark"
 let timer: number
 
 const config = useConfig()
 const adminInfo = useTenantAdminInfo()
+toggleDark(config.layout.isDark)
 
 const formRef = ref<InstanceType<typeof ElForm>>()
 const usernameRef = ref<InstanceType<typeof ElInput>>()
@@ -132,10 +132,6 @@ const onSubmit = (captchaInfo = '') => {
     login('post', form)
         .then((res) => {
             adminInfo.dataFill(res.data.userInfo)
-            ElNotification({
-                message: res.msg,
-                type: 'success',
-            })
             router.push({ path: res.data.routePath })
         })
         .finally(() => {

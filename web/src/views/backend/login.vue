@@ -51,7 +51,6 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, reactive, ref, nextTick } from 'vue'
 import type { FormInstance, InputInstance } from 'element-plus'
-import { ElNotification } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useConfig } from '/@/stores/config'
 import { useAdminInfo } from '/@/stores/adminInfo'
@@ -138,10 +137,6 @@ const onSubmit = (captchaInfo = '') => {
     login('post', form)
         .then((res) => {
             adminInfo.dataFill(res.data.userInfo)
-            ElNotification({
-                message: res.msg,
-                type: 'success',
-            })
             router.push({ path: res.data.routePath })
         })
         .finally(() => {
