@@ -1,15 +1,17 @@
-import axios from 'axios'
 import type { AxiosRequestConfig, Method } from 'axios'
-import { ElLoading, type LoadingOptions, ElNotification } from 'element-plus'
-import { useConfig } from '/@/stores/config'
-import { isAdminApp, isTenantApp } from '/@/utils/common'
-import router from '/@/router/index'
+import axios from 'axios'
+import { ElLoading, ElNotification, type LoadingOptions } from 'element-plus'
 import { refreshToken } from '/@/api/common'
-import { useUserInfo } from '/@/stores/userInfo'
+import { i18n } from '/@/lang/index'
+import router from '/@/router/index'
+import { adminBaseRoutePath } from '/@/router/static/adminBase'
+import { tenantBaseRoutePath } from "/@/router/static/tenantBase";
 import { useAdminInfo } from '/@/stores/adminInfo'
 import { useTenantAdminInfo } from '/@/stores/tenantAdminInfo'
+import { useConfig } from '/@/stores/config'
+import { useUserInfo } from '/@/stores/userInfo'
+import { isAdminApp, isTenantApp } from '/@/utils/common'
 
-import { i18n } from '/@/lang/index'
 
 window.requests = []
 window.tokenRefreshing = false
@@ -205,20 +207,24 @@ function createAxios<Data = any, T = ApiPromise<Data>>(axiosConfig: AxiosRequest
                             message: response.data.msg,
                         })
                     }
-                    // 自动跳转到路由name或path，仅限server端返回302的情况
+                    // 自动跳转到路由name或path
                     if (response.data.code == 302) {
-                        if (isAdminApp()) {
-                            adminInfo.removeToken()
-                        } else if (isTenantApp()) {
-                            tenantAdminInfo.removeToken()
-                        } else {
-                            userInfo.removeToken()
+                        router.push({ path: response.data.data.routePath ?? '', name: response.data.data.routeName ?? '' })
+                    }
+                    if (response.data.code == 303) {
+                        const isAdminAppFlag = isAdminApp()
+                        let routerPath = isAdminAppFlag ? adminBaseRoutePath : tenantBaseRoutePath
+
+                        // 需要登录，清理token，转到登录页
+                        if (response.data.data.type == 'need login') {
+                            if (isAdminAppFlag) {
+                                adminInfo.removeToken()
+                            } else {
+                                tenantAdminInfo.removeToken()
+                            }
+                            routerPath += '/login'
                         }
-                        if (response.data.data.routeName) {
-                            router.push({ name: response.data.data.routeName })
-                        } else if (response.data.data.routePath) {
-                            router.push({ path: response.data.data.routePath })
-                        }
+                        router.push({ path: routerPath })
                     }
                     // code不等于1, 页面then内的具体逻辑就不执行了
                     return Promise.reject(response.data)

@@ -155,8 +155,8 @@ class Backend extends Api
             $this->auth->init($token);
             if (!$this->auth->isLogin()) {
                 $this->error(__('Please login first'), [
-                    'routePath' => '/platform/login'
-                ], 302);
+                    'type' => $this->auth::NEED_LOGIN
+                ], $this->auth::LOGIN_RESPONSE_CODE);
             }
             if (!action_in_arr($this->noNeedPermission)) {
                 if (!$this->auth->check($routePath)) {
