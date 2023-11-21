@@ -1,6 +1,6 @@
 import axios from 'axios'
 import type { AxiosRequestConfig, Method } from 'axios'
-import { ElLoading, LoadingOptions, type ElNotification } from 'element-plus'
+import { ElLoading, type LoadingOptions, ElNotification } from 'element-plus'
 import { useConfig } from '/@/stores/config'
 import { isAdminApp, isTenantApp } from '/@/utils/common'
 import router from '/@/router/index'
@@ -122,7 +122,7 @@ function createAxios<Data = any, T = ApiPromise<Data>>(axiosConfig: AxiosRequest
                                         response.headers.batoken = `${res.data.token}`
                                         window.requests.forEach((cb) => cb(res.data.token, 'admin-refresh'))
                                     } else if (res.data.type == 'tenant-refresh') {
-                                        tenantAdminInfo.setToken(res.data.token, 'token')
+                                        tenantAdminInfo.setToken(res.data.token, 'auth')
                                         response.headers.tetoken = `${res.data.token}`
                                         window.requests.forEach((cb) => cb(res.data.token, 'tenant-refresh'))
 

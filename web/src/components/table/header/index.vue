@@ -72,7 +72,7 @@
             <slot name="quickSearchPrepend"></slot>
             <el-input
                 v-if="props.buttons.includes('quickSearch')"
-                v-model="state.quickSearch"
+                v-model="baTable.table.filter!.quickSearch"
                 class="xs-hidden quick-search"
                 @input="debounce(onSearchInput, 500)()"
                 :placeholder="quickSearchPlaceholder ? quickSearchPlaceholder : t('Search')"
@@ -85,6 +85,7 @@
                         :class="props.buttons.includes('comSearch') ? 'right-border' : ''"
                         color="#dcdfe6"
                         plain
+                        v-blur
                     >
                         <Icon size="14" name="el-icon-Grid" />
                     </el-button>
@@ -114,6 +115,7 @@
                         @click="baTable.table.showComSearch = !baTable.table.showComSearch"
                         color="#dcdfe6"
                         plain
+                        v-blur
                     >
                         <Icon size="14" name="el-icon-Search" />
                     </el-button>
@@ -124,8 +126,8 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, computed, inject } from 'vue'
-import { debounce, auth } from '/@/utils/common'
+import { computed, inject } from 'vue'
+import { debounce } from '/@/utils/common'
 import type baTableClass from '/@/utils/baTable'
 import ComSearch from '/@/components/table/comSearch/index.vue'
 import { useI18n } from 'vue-i18n'
@@ -144,10 +146,6 @@ const props = withDefaults(defineProps<Props>(), {
     quickSearchPlaceholder: '',
 })
 
-const state = reactive({
-    quickSearch: '',
-})
-
 const columnDisplay = computed(() => {
     let columnDisplayArr = []
     for (let item of baTable.table.column) {
@@ -163,7 +161,7 @@ const onAction = (event: string, data: anyObj = {}) => {
 }
 
 const onSearchInput = () => {
-    baTable.onTableHeaderAction('quick-search', { keyword: state.quickSearch })
+    baTable.onTableHeaderAction('quick-search', { keyword: baTable.table.filter!.quickSearch })
 }
 
 const onChangeShowColumn = (value: string | number | boolean, field: string) => {
@@ -239,7 +237,7 @@ html.dark {
             background-color: var(--el-color-info-light-7);
         }
         button {
-            background-color: #898a8d;
+            background-color: var(--ba-bg-color-overlay);
             el-icon {
                 color: white !important;
             }
