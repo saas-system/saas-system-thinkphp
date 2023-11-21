@@ -5,7 +5,7 @@ export default {
     notFound: 'Page not found',
     noPower: 'No access permission',
     noTitle: 'No title',
-    Loading: 'Loading...',
-    User: 'Member Center',
-    userLogin: 'Menber Login',
+    loading: 'Loading...',
+    user: 'Member Center',
+    userLogin: 'Member Login',
 }

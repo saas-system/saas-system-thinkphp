@@ -17,7 +17,7 @@ import {Session} from '/@/utils/storage'
 import {index} from '/@/api/tenant'
 import { handleTenantRoute,getFirstRoute, routePush } from '/@/utils/router'
 import router from '/@/router/index'
-import {tenantBaseRoute} from '/@/router/static'
+import {tenantBaseRoutePath} from '/@/router/static/tenantBase'
 import {useEventListener} from '@vueuse/core'
 import {BEFORE_RESIZE_LAYOUT} from '/@/stores/constant/cacheKey'
 import {isEmpty} from 'lodash-es'
@@ -60,7 +60,7 @@ const init = () => {
             // 预跳转到上次路径
             if (route.params.to) {
                 const lastRoute = JSON.parse(route.params.to as string)
-                if (lastRoute.path != tenantBaseRoute.path) {
+                if (lastRoute.path != tenantBaseRoutePath) {
                     let query = !isEmpty(lastRoute.query) ? lastRoute.query : {}
                     routePush({path: lastRoute.path, query: query})
                     return

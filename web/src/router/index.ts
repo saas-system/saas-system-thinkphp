@@ -1,7 +1,9 @@
 import {createRouter, createWebHashHistory} from 'vue-router'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-import {staticRoutes, adminBaseRoute, tenantBaseRoute} from '/@/router/static'
+import staticRoutes from '/@/router/static'
+import {adminBaseRoutePath} from '/@/router/static/adminBase'
+import {tenantBaseRoutePath} from '/@/router/static/tenantBase'
 import {loading} from '/@/utils/loading'
 import langAutoLoadMap from '/@/lang/autoload'
 import {mergeMessage} from '/@/lang/index'
@@ -32,13 +34,13 @@ router.beforeEach((to, from, next) => {
     if (isAdminApp(to.fullPath)) {
         prefix = './backend/' + config.lang.defaultLang
         // 去除 path 中的 /platform
-        const adminPath = to.path.slice(to.path.indexOf(adminBaseRoute.path) + adminBaseRoute.path.length)
+        const adminPath = to.path.slice(to.path.indexOf(adminBaseRoutePath) + adminBaseRoutePath.length)
         if (adminPath) loadPath.push(prefix + adminPath + '.ts')
 
     } else if (isTenantApp(to.fullPath)) {
         prefix = './tenant/' + config.lang.defaultLang
         // 去除 path 中的 /tenant
-        const tenantPath = to.path.slice(to.path.indexOf(tenantBaseRoute.path) + tenantBaseRoute.path.length)
+        const tenantPath = to.path.slice(to.path.indexOf(tenantBaseRoutePath) + tenantBaseRoutePath.length)
         if (tenantPath) loadPath.push(prefix + tenantPath + '.ts')
 
     }

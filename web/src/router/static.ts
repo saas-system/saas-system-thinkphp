@@ -1,4 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router'
+import { adminBaseRoutePath } from '/@/router/static/adminBase'
+import { tenantBaseRoutePath } from '/@/router/static/tenantBase'
 
 const pageTitle = (name: string): string => {
     return `pagesTitle.${name}`
@@ -18,8 +20,8 @@ const staticRoutes: Array<RouteRecordRaw> = [
         },
     },
     {
-        // 管理员登录页
-        path: '/platform/login',
+        // 管理员登录页 - 不放在 adminBaseRoute.children 因为登录页不需要使用后台的布局
+        path: adminBaseRoutePath + '/login',
         name: 'adminLogin',
         component: () => import('/@/views/backend/login.vue'),
         meta: {
@@ -28,7 +30,7 @@ const staticRoutes: Array<RouteRecordRaw> = [
     },
     {
         // 租户登录页
-        path: '/tenant/login',
+        path: tenantBaseRoutePath + '/login',
         name: 'tenantLogin',
         component: () => import('/@/views/tenant/login.vue'),
         meta: {
@@ -50,7 +52,7 @@ const staticRoutes: Array<RouteRecordRaw> = [
     },
     {
         // 后台找不到页面了-可能是路由未加载上
-        path: '/platform:path(.*)*',
+        path: adminBaseRoutePath + ':path(.*)*',
         redirect: (to) => {
             return {
                 name: 'adminMainLoading',
@@ -65,7 +67,7 @@ const staticRoutes: Array<RouteRecordRaw> = [
     },
     {
         // 租户端找不到页面了-可能是路由未加载上
-        path: '/tenant:path(.*)*',
+        path: tenantBaseRoutePath + ':path(.*)*',
         redirect: (to) => {
             return {
                 name: 'tenantMainLoading',
@@ -89,80 +91,9 @@ const staticRoutes: Array<RouteRecordRaw> = [
     },
 ]
 
-// console.log(' HI: ', import.meta.env);
-// const mode = import.meta.env.MODE
-//
-// const compont = 'backend';
-// if (mode == 'tenant') {
-//     staticRoutes.push({
-//         // 首页
-//         path: '/',
-//         name: '/',
-//         component: () => import('/@/layouts/tenant/index.vue'),
-//         meta: {
-//             title: pageTitle('home'),
-//         },
-//     })
-// }else{
-//     staticRoutes.push({
-//         // 首页
-//         path: '/',
-//         name: '/',
-//         component: () => import('/@/layouts/backend/index.vue'),
-//         meta: {
-//             title: pageTitle('home'),
-//         },
-//     })
-// }
 
-/*
- * 后台基础静态路由
- */
-const adminBaseRoute: RouteRecordRaw = {
-    path: '/platform',
-    name: 'platform',
-    component: () => import('/@/layouts/backend/index.vue'),
-    redirect: '/platform/loading',
-    meta: {
-        title: pageTitle('platform'),
-    },
-    children: [
-        {
-            path: 'loading/:to?',
-            name: 'adminMainLoading',
-            component: () => import('/@/layouts/common/components/loading.vue'),
-            meta: {
-                title: pageTitle('Loading'),
-            },
-        },
-    ],
+const staticFiles: Record<string, Record<string, RouteRecordRaw>> = import.meta.glob('./static/*.ts', { eager: true })
+for (const key in staticFiles) {
+    if (staticFiles[key].default) staticRoutes.push(staticFiles[key].default)
 }
-
-/*
- * 租户端基础静态路由
- */
-const tenantBaseRoute: RouteRecordRaw = {
-    path: '/tenant',
-    name: 'tenant',
-    component: () => import('/@/layouts/tenant/index.vue'),
-    redirect: '/tenant/loading',
-    meta: {
-        title: pageTitle('tenant'),
-    },
-    children: [
-        {
-            path: 'loading/:to?',
-            name: 'tenantMainLoading',
-            component: () => import('/@/layouts/common/components/loading.vue'),
-            meta: {
-                title: pageTitle('Loading'),
-            },
-        },
-    ],
-}
-
-
-staticRoutes.push(adminBaseRoute)
-staticRoutes.push(tenantBaseRoute)
-
-export { staticRoutes, adminBaseRoute, tenantBaseRoute }
+export default staticRoutes

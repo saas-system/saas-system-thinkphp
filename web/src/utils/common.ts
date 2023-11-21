@@ -4,14 +4,14 @@ import * as elIcons from '@element-plus/icons-vue'
 import router from '/@/router/index'
 import Icon from '/@/components/icon/index.vue'
 import { useNavTabs } from '/@/stores/navTabs'
-import { useNavTabs as useTenantNavTabs } from '/@/stores/tenantNavTabs'
 import { useMemberCenter } from '/@/stores/memberCenter'
 import type { FormInstance } from 'element-plus'
 import { useSiteConfig } from '../stores/siteConfig'
 import { useTitle } from '@vueuse/core'
 import { i18n } from '../lang'
 import { getUrl } from './axios'
-import { adminBaseRoute } from '/@/router/static'
+import { adminBaseRoutePath } from '/@/router/static/adminBase'
+import { tenantBaseRoutePath } from '/@/router/static/tenantBase'
 import { trim, trimStart } from 'lodash-es'
 import type { TranslateOptions } from 'vue-i18n'
 
@@ -267,7 +267,10 @@ export const __ = (key: string, named?: Record<string, unknown>, options?: Trans
     let langPath = ''
     const path = getCurrentRoutePath()
     if (isAdminApp()) {
-        langPath = path.slice(path.indexOf(adminBaseRoute.path) + adminBaseRoute.path.length)
+        langPath = path.slice(path.indexOf(adminBaseRoutePath) + adminBaseRoutePath.length)
+        langPath = trim(langPath, '/').replaceAll('/', '.')
+    } else if (isTenantApp()) {
+        langPath = path.slice(path.indexOf(tenantBaseRoutePath) + tenantBaseRoutePath.length)
         langPath = trim(langPath, '/').replaceAll('/', '.')
     } else {
         langPath = trim(path, '/').replaceAll('/', '.')
