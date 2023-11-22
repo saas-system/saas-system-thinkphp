@@ -1,6 +1,5 @@
 <template>
     <div class="layout-logo">
-        <img v-if="!config.layout.menuCollapse" class="logo-img" src="~assets/logo.png" alt="logo" />
         <div v-if="!config.layout.menuCollapse" :style="{ color: config.getColorVal('menuActiveColor') }" class="website-name">
             {{ siteConfig.siteName }}
         </div>
