@@ -36,7 +36,10 @@
     "ext-bcmath": "*",
     "ext-iconv": "*",
     "ext-json": "*",
-    "ext-gd": "*"
+    "ext-gd": "*",
+    "sxqibo/fast-ip": "^1.0",
+    "sxqibo/fast-wallet": "^1.0",
+    "sxqibo/fast-payment": "^2.0"
   },
   "require-dev": {
     "symfony/var-dumper": "^5.4",
@@ -53,7 +56,10 @@
     }
   },
   "config": {
-    "preferred-install": "dist"
+    "preferred-install": "dist",
+    "allow-plugins": {
+      "easywechat-composer/easywechat-composer": false
+    }
   },
   "scripts": {
     "post-autoload-dump": [
