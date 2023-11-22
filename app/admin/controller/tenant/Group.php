@@ -32,9 +32,9 @@ class Group extends Backend
 
     /**
      * 远程select初始化传值
-     * @var array
+     * @var array|string
      */
-    protected array $initValue;
+    protected array|string $initValue;
 
     /**
      * 搜索关键词
