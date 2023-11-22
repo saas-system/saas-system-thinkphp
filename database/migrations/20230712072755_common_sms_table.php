@@ -26,7 +26,7 @@ class CommonSmsTable extends Migrator
      * Remember to call "create()" or "update()" and NOT "save()" when working
      * with the Table class.
      */
-    public function change()
+    public function change(): void
     {
         $table = $this->table('sms_template', ['collation' => 'utf8mb4_unicode_ci', 'comment' => '公共 -短信模版表']);
         $table->addColumn('title', 'string', ['limit' => 100, 'default' => '', 'comment' => '模版标题'])

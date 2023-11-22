@@ -19,13 +19,13 @@ class PlatformConfigSeeder extends Seeder
     }
 
 
-    protected function truncateData()
+    protected function truncateData(): void
     {
         $sql = 'truncate table platform_config';
         \think\facade\Db::execute($sql);
     }
 
-    protected function initConfigData()
+    protected function initConfigData(): void
     {
         $data = [
             [

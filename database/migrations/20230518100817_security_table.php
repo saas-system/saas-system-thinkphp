@@ -26,7 +26,7 @@ class SecurityTable extends Migrator
      * Remember to call "create()" or "update()" and NOT "save()" when working
      * with the Table class.
      */
-    public function change()
+    public function change(): void
     {
         $table = $this->table('security_data_recycle', ['collation' => 'utf8mb4_unicode_ci', 'comment' => '回收规则表']);
         $table->addColumn('name', 'string', ['limit' => 50, 'null' => false, 'default' => '', 'comment' => '规则名称'])

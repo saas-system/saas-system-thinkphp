@@ -20,7 +20,7 @@ class PlatformAdminSeeder extends Seeder
         $this->createAdminGroupAccess();
     }
 
-    protected function truncateData()
+    protected function truncateData(): void
     {
         $sqlList = [
             'truncate table platform_admin',
@@ -33,7 +33,7 @@ class PlatformAdminSeeder extends Seeder
         }
     }
 
-    protected function createAdminData()
+    protected function createAdminData(): void
     {
         $data = [
             [
@@ -59,7 +59,7 @@ class PlatformAdminSeeder extends Seeder
         $table->insert($data)->save();
     }
 
-    protected function createAdminGroup()
+    protected function createAdminGroup(): void
     {
         $data = [
             [
@@ -77,7 +77,7 @@ class PlatformAdminSeeder extends Seeder
         $table->insert($data)->save();
     }
 
-    protected function createAdminGroupAccess()
+    protected function createAdminGroupAccess(): void
     {
         $data = [
             [

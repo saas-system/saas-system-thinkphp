@@ -26,7 +26,7 @@ class CommonTable extends Migrator
      * Remember to call "create()" or "update()" and NOT "save()" when working
      * with the Table class.
      */
-    public function change()
+    public function change(): void
     {
         $table = $this->table('area', ['collation' => 'utf8mb4_unicode_ci', 'comment' => '公共 - 地区表']);
         $table->addColumn('name', 'string', ['limit' => 100, 'null' => true, 'comment' => '名称'])

@@ -26,7 +26,7 @@ class PlatformAuthTable extends Migrator
      * Remember to call "create()" or "update()" and NOT "save()" when working
      * with the Table class.
      */
-    public function change()
+    public function change(): void
     {
         $table = $this->table('platform_admin_group', ['collation' => 'utf8mb4_unicode_ci', 'comment' => '平台 - 管理分组表']);
         $table->addColumn('pid', 'integer', ['limit' => 10, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '上级分组'])

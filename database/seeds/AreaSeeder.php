@@ -20,7 +20,7 @@ class AreaSeeder extends Seeder
         $this->initAreaData();
     }
 
-    protected function truncateData()
+    protected function truncateData(): void
     {
         $sqlList = [
             'truncate table area'
@@ -31,7 +31,7 @@ class AreaSeeder extends Seeder
         }
     }
 
-    protected function initAreaData()
+    protected function initAreaData(): void
     {
         $sqlPath = root_path() . 'database/area.sql';
         $this->handleSql($sqlPath);
@@ -40,7 +40,7 @@ class AreaSeeder extends Seeder
     /**
      * 执行sql
      */
-    public function handleSql($sqlPath)
+    public function handleSql($sqlPath): bool
     {
         // 判断是否存在安装sql文件
         if (!is_file($sqlPath)) {

@@ -26,7 +26,7 @@ class PlatformConfigTable extends Migrator
      * Remember to call "create()" or "update()" and NOT "save()" when working
      * with the Table class.
      */
-    public function change()
+    public function change(): void
     {
         $table = $this->table('platform_config', ['collation' => 'utf8mb4_unicode_ci', 'comment' => '平台 - 系统配置']);
         $table->addColumn('name', 'string', ['limit' => 30, 'default' => '', 'comment' => '变量名'])

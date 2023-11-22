@@ -26,7 +26,7 @@ class TenantUserTable extends Migrator
      * Remember to call "create()" or "update()" and NOT "save()" when working
      * with the Table class.
      */
-    public function change()
+    public function change(): void
     {
         // 用户表
         $table = $this->table('tenant_user', ['collation' => 'utf8mb4_unicode_ci', 'comment' => '租户 - 用户表']);

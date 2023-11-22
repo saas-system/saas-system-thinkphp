@@ -26,7 +26,7 @@ class TenantAppversionTable extends Migrator
      * Remember to call "create()" or "update()" and NOT "save()" when working
      * with the Table class.
      */
-    public function change()
+    public function change(): void
     {
         $table = $this->table('tenant_app_version', ['collation' => 'utf8mb4_unicode_ci', 'comment' => '租户 - APP版本表']);
         $table->addColumn('version', 'string', ['limit' => 30, 'null' => false, 'default' => '', 'comment' => '版本名称'])

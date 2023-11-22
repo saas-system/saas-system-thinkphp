@@ -26,7 +26,7 @@ class PlatformAdminTable extends Migrator
      * Remember to call "create()" or "update()" and NOT "save()" when working
      * with the Table class.
      */
-    public function change()
+    public function change(): void
     {
         $table = $this->table('platform_admin', ['collation' => 'utf8mb4_unicode_ci', 'comment' => '平台 - 管理员表']);
         $table->addColumn('username', 'string', ['limit' => 20, 'null' => false, 'default' => '', 'comment' => '用户名'])

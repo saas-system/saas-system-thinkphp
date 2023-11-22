@@ -32,7 +32,7 @@ class TenantAdminRuleSeeder extends Seeder
         }
     }
 
-    protected function initMenuRule()
+    protected function initMenuRule(): void
     {
         $menuList       = $this->getMenu();
         $extendMenuList = $this->getExtendMenuData();
@@ -43,9 +43,9 @@ class TenantAdminRuleSeeder extends Seeder
         });
     }
 
-    protected function getMenu()
+    protected function getMenu(): array
     {
-        $newMenu = [
+        return [
             [
                 'type'      => 'menu',
                 'title'     => '控制台',
@@ -200,8 +200,6 @@ class TenantAdminRuleSeeder extends Seeder
             ],
 
         ];
-
-        return $newMenu;
     }
 
     /**
@@ -209,9 +207,9 @@ class TenantAdminRuleSeeder extends Seeder
      *
      * @return array[]
      */
-    protected function getExtendMenuData()
+    protected function getExtendMenuData(): array
     {
-        $newMenu = [
+        return [
             // 会员管理
             [
                 'type'      => 'menu_dir',
@@ -247,11 +245,9 @@ class TenantAdminRuleSeeder extends Seeder
                 ],
             ],
         ];
-
-        return $newMenu;
     }
 
-    protected function truncateData()
+    protected function truncateData(): void
     {
 
         $sql = 'truncate table tenant_admin_rule';
