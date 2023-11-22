@@ -36,7 +36,7 @@ class Common extends Api
     /**
      * 点选验证码
      */
-    public function clickCaptcha()
+    public function clickCaptcha(): void
     {
         $id      = $this->request->request('id/s');
         $captcha = new ClickCaptcha();
@@ -47,7 +47,7 @@ class Common extends Api
      * 点选验证码检查
      * @throws Throwable
      */
-    public function checkClickCaptcha()
+    public function checkClickCaptcha(): void
     {
         $id      = $this->request->post('id/s');
         $info    = $this->request->post('info/s');
@@ -58,7 +58,7 @@ class Common extends Api
         $this->error();
     }
 
-    public function refreshToken()
+    public function refreshToken(): void
     {
         $refreshToken = $this->request->post('refreshToken');
         $refreshToken = Token::get($refreshToken, false);

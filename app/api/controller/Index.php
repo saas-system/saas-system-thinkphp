@@ -13,7 +13,7 @@ class Index extends Api
         parent::initialize();
     }
 
-    public function index()
+    public function index(): void
     {
         $this->success('success');
     }

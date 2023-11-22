@@ -328,7 +328,7 @@ class Crud extends Backend
      * 删除CRUD记录和生成的文件
      * @throws Throwable
      */
-    public function delete()
+    public function delete(): void
     {
         $id   = $this->request->post('id');
         $info = CrudLog::find($id)->toArray();
@@ -371,7 +371,7 @@ class Crud extends Backend
      * 获取文件路径数据
      * @throws Throwable
      */
-    public function getFileData()
+    public function getFileData(): void
     {
         $table       = $this->request->get('table');
         $commonModel = $this->request->get('commonModel/b');
@@ -437,7 +437,7 @@ class Crud extends Backend
      * 检查是否已有CRUD记录
      * @throws Throwable
      */
-    public function checkCrudLog()
+    public function checkCrudLog(): void
     {
         $table   = $this->request->get('table');
         $crudLog = Db::name('crud_log')
@@ -453,7 +453,7 @@ class Crud extends Backend
      * 解析字段数据
      * @throws Throwable
      */
-    public function parseFieldData()
+    public function parseFieldData(): void
     {
         AdminLog::setTitle(__('Parse field data'));
         $type  = $this->request->post('type');
@@ -487,7 +487,7 @@ class Crud extends Backend
      * 生成前检查
      * @throws Throwable
      */
-    public function generateCheck()
+    public function generateCheck(): void
     {
         $table          = $this->request->post('table');
         $controllerFile = $this->request->post('controllerFile', '');
@@ -519,7 +519,7 @@ class Crud extends Backend
         $this->success();
     }
 
-    public function databaseList()
+    public function databaseList(): void
     {
         $tablePrefix     = config('database.connections.mysql.prefix');
         $outExcludeTable = [
@@ -557,7 +557,7 @@ class Crud extends Backend
      * @param $field
      * @throws Throwable
      */
-    private function parseJoinData($field)
+    private function parseJoinData($field): void
     {
         $dictEn   = [];
         $dictZhCn = [];
@@ -686,7 +686,7 @@ class Crud extends Backend
     /**
      * 解析模型方法（设置器、获取器等）
      */
-    private function parseModelMethods($field, &$modelData)
+    private function parseModelMethods($field, &$modelData): void
     {
         // fieldType
         if ($field['designType'] == 'array') {
@@ -743,7 +743,7 @@ class Crud extends Backend
     /**
      * 控制器/模型等文件的一些杂项属性解析
      */
-    private function parseSundryData($field, $table)
+    private function parseSundryData($field, $table): void
     {
         if ($field['designType'] == 'editor') {
             $this->formVueData['bigDialog']     = 'true'; // form 使用较宽的 Dialog
