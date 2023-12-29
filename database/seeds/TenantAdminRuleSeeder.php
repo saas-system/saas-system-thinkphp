@@ -7,7 +7,7 @@ use think\migration\Seeder;
 /**
  * 租户菜单初始化seeder
  */
-class TenantAdminRuleSeeder extends Seeder
+class TenantMenuRuleSeeder extends Seeder
 {
     /**
      * Run Method.
@@ -250,7 +250,7 @@ class TenantAdminRuleSeeder extends Seeder
     protected function truncateData(): void
     {
 
-        $sql = 'truncate table tenant_admin_rule';
+        $sql = 'truncate table tenant_menu_rule';
         \think\facade\Db::execute($sql);
     }
 }

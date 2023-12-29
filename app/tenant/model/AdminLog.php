@@ -89,8 +89,8 @@ class AdminLog extends BaseModel
         }
         $title = $title ?: self::$title;
         if (!$title) {
-            $controllerTitle = AdminRule::where('name', $controller)->value('title');
-            $title           = AdminRule::where('name', $path)->value('title');
+            $controllerTitle = MenuRule::where('name', $controller)->value('title');
+            $title           = MenuRule::where('name', $path)->value('title');
             $title           = $title ?: __('Unknown') . '(' . $action . ')';
             $title           = $controllerTitle ? ($controllerTitle . '-' . $title) : $title;
         }

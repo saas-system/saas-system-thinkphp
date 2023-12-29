@@ -59,6 +59,7 @@ import { buildValidatorData } from '/@/utils/validate'
 import router from '/@/router'
 import clickCaptcha from '/@/components/clickCaptcha'
 import toggleDark from "/@/utils/useDark"
+import {adminBaseRoutePath} from "/@/router/static/adminBase";
 let timer: number
 
 const config = useConfig()
@@ -136,7 +137,7 @@ const onSubmit = (captchaInfo = '') => {
     login('post', form)
         .then((res) => {
             adminInfo.dataFill(res.data.userInfo)
-            router.push({ path: res.data.routePath })
+            router.push({ path: adminBaseRoutePath})
         })
         .finally(() => {
             state.submitLoading = false

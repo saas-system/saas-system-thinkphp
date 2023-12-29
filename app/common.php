@@ -129,7 +129,7 @@ if (!function_exists('get_route_remark')) {
         $actionName     = request()->action(true);
         $path           = str_replace('.', '/', $controllerName);
 
-        $remark = Db::name('platform_admin_rule')
+        $remark = Db::name('platform_menu_rule')
             ->where('name', $path)
             ->whereOr('name', $path . '/' . $actionName)
             ->value('remark');
@@ -149,7 +149,7 @@ if (!function_exists('get_tenant_route_remark')) {
         $actionName     = request()->action(true);
         $path           = str_replace('.', '/', $controllerName);
 
-        $remark = Db::name('tenant_admin_rule')
+        $remark = Db::name('tenant_menu_rule')
             ->where('name', $path)
             ->whereOr('name', $path . '/' . $actionName)
             ->value('remark');

@@ -5,11 +5,11 @@ namespace app\admin\model;
 use think\Model;
 
 /**
- * AdminRule 模型
+ * MenuRule 模型
  */
-class AdminRule extends Model
+class MenuRule extends Model
 {
-    protected $table = 'platform_admin_rule';
+    protected $table = 'platform_menu_rule';
 
     protected $autoWriteTimestamp = true;
 

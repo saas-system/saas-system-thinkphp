@@ -8,7 +8,7 @@ use think\Exception;
 use ba\TableManager;
 use think\facade\Db;
 use app\common\library\Menu;
-use app\admin\model\AdminRule;
+use app\admin\model\MenuRule;
 use app\admin\model\CrudLog;
 use ba\Exception as BaException;
 use Phinx\Db\Adapter\MysqlAdapter;
@@ -40,7 +40,7 @@ class Helper
             'admin'       => ['auth', 'admin'],
             'admin_group' => ['auth', 'group'],
             'attachment'  => ['routine', 'attachment'],
-            'admin_rule'  => ['auth', 'rule'],
+            'menu_rule'  => ['auth', 'rule'],
         ],
         'model'      => [],
         'validate'   => [],
@@ -211,7 +211,7 @@ class Helper
             'admin'       => ['auth', 'admin'],
             'admin_group' => ['auth', 'group'],
             'attachment'  => ['routine', 'attachment'],
-            'admin_rule'  => ['auth', 'rule'],
+            'menu_rule'  => ['auth', 'rule'],
         ],
     ];
 
@@ -911,10 +911,10 @@ class Helper
     public static function createMenu($webViewsDir, $tableComment): void
     {
         $menuName = self::getMenuName($webViewsDir);
-        if (!AdminRule::where('name', $menuName)->value('id')) {
+        if (!MenuRule::where('name', $menuName)->value('id')) {
             $pid = 0;
             foreach ($webViewsDir['path'] as $item) {
-                $pMenu = AdminRule::where('name', $item)->value('id');
+                $pMenu = MenuRule::where('name', $item)->value('id');
                 if ($pMenu) {
                     $pid = $pMenu;
                     continue;
@@ -926,7 +926,7 @@ class Helper
                     'name'  => $item,
                     'path'  => $item,
                 ];
-                $menu = AdminRule::create($menu);
+                $menu = MenuRule::create($menu);
                 $pid  = $menu->id;
             }
 

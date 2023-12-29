@@ -45,7 +45,7 @@ class PlatformAuthTable extends Migrator
             ->addIndex(['group_id'], ['name' => 'group_id'])
             ->create();
 
-        $table = $this->table('platform_admin_rule', ['collation' => 'utf8mb4_unicode_ci', 'comment' => '平台 - 菜单和权限规则表']);
+        $table = $this->table('platform_menu_rule', ['collation' => 'utf8mb4_unicode_ci', 'comment' => '平台 - 菜单和权限规则表']);
         $table->addColumn('pid', 'integer', ['limit' => 10, 'signed' => false, 'default' => 0, 'comment' => '上级菜单'])
             ->addColumn('type', 'enum', ['values' => ['menu_dir', 'menu', 'button'], 'default' => 'menu', 'comment' => '类型:menu_dir=菜单目录,menu=菜单项,button=页面按钮'])
             ->addColumn('title', 'string', ['limit' => 50, 'default' => '', 'comment' => '标题'])

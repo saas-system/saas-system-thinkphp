@@ -5,7 +5,7 @@ namespace app\tenant\controller\auth;
 use ba\Tree;
 use Exception;
 use think\facade\Db;
-use app\tenant\model\AdminRule;
+use app\tenant\model\MenuRule;
 use app\tenant\model\AdminGroup;
 use app\common\controller\TenantBackend as Backend;
 use think\db\exception\PDOException;
@@ -103,7 +103,7 @@ class Group extends Backend
 
             $data = $this->excludeFields($data);
             if (is_array($data['rules']) && $data['rules']) {
-                $rules      = AdminRule::select();
+                $rules      = MenuRule::select();
                 $superAdmin = true;
                 foreach ($rules as $rule) {
                     if (!in_array($rule['id'], $data['rules'])) {
@@ -173,7 +173,7 @@ class Group extends Backend
 
             $data = $this->excludeFields($data);
             if (is_array($data['rules']) && $data['rules']) {
-                $rules      = AdminRule::select();
+                $rules      = MenuRule::select();
                 $superAdmin = true;
                 foreach ($rules as $rule) {
                     if (!in_array($rule['id'], $data['rules'])) {
@@ -219,7 +219,7 @@ class Group extends Backend
         }
 
         // 读取所有pid，全部从节点数组移除，父级选择状态由子级决定
-        $pids  = AdminRule::field('pid')
+        $pids  = MenuRule::field('pid')
             ->distinct(true)
             ->where('id', 'in', $row->rules)
             ->select()->toArray();
@@ -327,7 +327,7 @@ class Group extends Backend
                 } else {
                     $rules = explode(',', $datum['rules']);
                     if ($rules) {
-                        $rulesFirstTitle = AdminRule::where('id', $rules[0])->value('title');
+                        $rulesFirstTitle = MenuRule::where('id', $rules[0])->value('title');
                         $datum['rules']  = count($rules) == 1 ? $rulesFirstTitle : $rulesFirstTitle . '等 ' . count($rules) . ' 项';
                     }
                 }

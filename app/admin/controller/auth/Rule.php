@@ -4,7 +4,7 @@ namespace app\admin\controller\auth;
 
 use ba\Tree;
 use Throwable;
-use app\admin\model\AdminRule;
+use app\admin\model\MenuRule;
 use app\common\controller\Backend;
 
 class Rule extends Backend
@@ -15,7 +15,7 @@ class Rule extends Backend
 
     /**
      * @var object
-     * @phpstan-var AdminRule
+     * @phpstan-var MenuRule
      */
     protected object $model;
 
@@ -51,7 +51,7 @@ class Rule extends Backend
     public function initialize(): void
     {
         parent::initialize();
-        $this->model = new AdminRule();
+        $this->model = new MenuRule();
         $this->tree  = Tree::instance();
 
         $isTree          = $this->request->param('isTree', true);

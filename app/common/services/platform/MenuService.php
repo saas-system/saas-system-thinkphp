@@ -2,8 +2,8 @@
 
 namespace app\common\services\platform;
 
-use app\admin\model\AdminRule as PlatformMenuRule;
-use app\tenant\model\AdminRule as TenantMenuRule;
+use app\admin\model\MenuRule as PlatformMenuRule;
+use app\tenant\model\MenuRule as TenantMenuRule;
 use think\db\exception\PDOException;
 use think\Exception;
 

@@ -7,7 +7,7 @@ use think\migration\Seeder;
 /**
  * 平台菜单初始化seeder
  */
-class PlatformAdminRuleSeeder extends Seeder
+class PlatformMenuRuleSeeder extends Seeder
 {
     /**
      * Run Method.
@@ -531,7 +531,7 @@ class PlatformAdminRuleSeeder extends Seeder
     protected function truncateData(): void
     {
 
-        $sql = 'truncate table platform_admin_rule';
+        $sql = 'truncate table platform_menu_rule';
         \think\facade\Db::execute($sql);
     }
 

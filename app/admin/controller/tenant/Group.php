@@ -3,7 +3,7 @@
 namespace app\admin\controller\tenant;
 
 use ba\Tree;
-use app\tenant\model\AdminRule;
+use app\tenant\model\MenuRule;
 use app\admin\model\TenantAdminGroup;
 use app\common\controller\Backend;
 
@@ -15,6 +15,8 @@ class Group extends Backend
      * allAuthAndOthers=管理员拥有该分组所有权限并拥有额外权限时允许
      */
     protected string $authMethod = 'allAuthAndOthers';
+
+    protected array $noNeedLogin = ['index'];
 
     /**
      * @var TenantAdminGroup
@@ -32,9 +34,9 @@ class Group extends Backend
 
     /**
      * 远程select初始化传值
-     * @var array
+     * @var string
      */
-    protected array $initValue;
+    protected string $initValue;
 
     /**
      * 搜索关键词
@@ -60,7 +62,7 @@ class Group extends Backend
         $this->tree  = Tree::instance();
 
         $isTree          = $this->request->param('isTree', true);
-        $this->initValue = $this->request->get("initValue/a", '');
+        $this->initValue = $this->request->get("initValue", '');
         $this->keyword   = $this->request->request("quickSearch");
 
         // 有初始化值时不组装树状（初始化出来的值更好看）
@@ -122,7 +124,7 @@ class Group extends Backend
                 } else {
                     $rules = explode(',', $datum['rules']);
                     if ($rules) {
-                        $rulesFirstTitle = AdminRule::where('id', $rules[0])->value('title');
+                        $rulesFirstTitle = MenuRule::where('id', $rules[0])->value('title');
                         $datum['rules']  = count($rules) == 1 ? $rulesFirstTitle : $rulesFirstTitle . '等 ' . count($rules) . ' 项';
                     }
                 }
