@@ -16,8 +16,6 @@ class Group extends Backend
      */
     protected string $authMethod = 'allAuthAndOthers';
 
-    protected array $noNeedLogin = ['index'];
-
     /**
      * @var TenantAdminGroup
      */
