@@ -4,7 +4,15 @@ namespace app\admin\model;
 
 use Throwable;
 use think\Model;
+use think\facade\Cache;
 
+/**
+ * 系统配置模型
+ * @property mixed $content
+ * @property mixed $rule
+ * @property mixed $extend
+ * @property mixed $allow_del
+ */
 class Config extends Model
 {
     // 表名
@@ -26,7 +34,7 @@ class Config extends Model
      * 入库前
      * @throws Throwable
      */
-    public static function onBeforeInsert($model)
+    public static function onBeforeInsert(Config $model): void
     {
         if (!in_array($model->getData('type'), $model->needContent)) {
             $model->content = null;
@@ -43,6 +51,15 @@ class Config extends Model
             if ($extend) $model->extend = json_encode($extend);
         }
         $model->allow_del = 1;
+    }
+
+    /**
+     * 写入后
+     */
+    public static function onAfterWrite(Model $model): void
+    {
+        // 清理配置缓存
+        Cache::tag(self::$cacheTag)->clear();
     }
 
     public function getValueAttr($value, $row)
