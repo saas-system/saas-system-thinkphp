@@ -1,12 +1,11 @@
 {
-  "name": "wonderful-code/buildadmin",
-  "description": "Build your admin framework",
+  "name": "sxqibo/saas-system",
+  "description": "saas-system",
   "type": "project",
   "keywords": [
-    "buildadmin",
+    "saas-system",
     "thinkphp"
   ],
-  "homepage": "https://uni.buildadmin.com",
   "license": "Apache-2.0",
   "authors": [
     {
@@ -30,17 +29,17 @@
     "phpoffice/phpspreadsheet": "^1.28",
     "ext-zlib": "*",
     "endroid/qr-code": "^4.6",
-    "overtrue/easy-sms": "^2.2",
     "voku/anti-xss": "^4.1",
     "nelexa/zip": "^4.0.0",
+    "sxqibo/fast-ip": "^1.0",
+    "sxqibo/fast-wallet": "^1.0",
+    "sxqibo/fast-payment": "^2.0",
+    "sxqibo/fast-sms": "^1.0",
     "ext-calendar": "*",
     "ext-bcmath": "*",
     "ext-iconv": "*",
     "ext-json": "*",
-    "ext-gd": "*",
-    "sxqibo/fast-ip": "^1.0",
-    "sxqibo/fast-wallet": "^1.0",
-    "sxqibo/fast-payment": "^2.0"
+    "ext-gd": "*"
   },
   "require-dev": {
     "symfony/var-dumper": "^5.4",
