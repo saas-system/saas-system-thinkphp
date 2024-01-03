@@ -59,8 +59,13 @@
         </div>
         <div class="install-tis-box">
             <div class="install-tis">
+                <<<<<<< HEAD
+                {{ t('module.please') }}{{ state.common.moduleState == moduleInstallState.DISABLE ? '' : t('module.After installation 1')
+                }}{{ t('module.Manually clean up the system and browser cache') }}
+                =======
                 {{ t('module.please') }}{{ state.common.moduleState == moduleInstallState.DISABLE ? '' : t('module.After installation 1') }}
                 {{ t('module.Manually clean up the system and browser cache, and refresh the page') }}
+                >>>>>>> parent of 0b77b81c (refactor:在模块安装/卸载完成之后主动重启 Vite 热更新服务)
             </div>
         </div>
         <div class="install-tis-box">
@@ -119,9 +124,19 @@ const onSubmitInstallDone = () => {
         terminal.addTaskPM('web-build', false, '', (res: number) => {
             if (res == taskStatus.Success) {
                 terminal.toggle(false)
+                <<<<<<< HEAD
+                if (import.meta.hot && state.common.moduleState != moduleInstallState.DISABLE) {
+                    import.meta.hot.send('custom:reload-hot', { type: 'modules' })
+                }
             }
         })
+    } else if (import.meta.hot && state.common.moduleState != moduleInstallState.DISABLE) {
+        import.meta.hot.send('custom:reload-hot', { type: 'modules' })
+        =======
     }
+})
+>>>>>>> parent of 0b77b81c (refactor:在模块安装/卸载完成之后主动重启 Vite 热更新服务)
+}
 }
 
 const onConfirmDepend = () => {
