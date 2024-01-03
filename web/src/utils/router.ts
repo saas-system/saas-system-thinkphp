@@ -96,7 +96,7 @@ export const onClickMenu = (menu: RouteRecordRaw) => {
 export const handleAdminRoute = (routes: any) => {
     const viewsComponent = import.meta.glob('/src/views/backend/**/*.vue')
     addRouteAll(viewsComponent, routes, adminBaseRoute.name as string)
-    const menuAdminBaseRoute = '/' + (adminBaseRoute.name as string) + '/'
+    const menuAdminBaseRoute = (adminBaseRoute.path as string) + '/'
 
     // 更新stores中的路由菜单数据
     const navTabs = useNavTabs()
@@ -109,7 +109,7 @@ export const handleAdminRoute = (routes: any) => {
 export const handleTenantRoute = (routes: any) => {
     const viewsComponent = import.meta.glob('/src/views/tenant/**/*.vue')
     addRouteAll(viewsComponent, routes, tenantBaseRoute.name as string)
-    const menuAdminBaseRoute = '/' + (tenantBaseRoute.name as string) + '/'
+    const menuAdminBaseRoute = (tenantBaseRoute.path as string) + '/'
 
     // 更新stores中的路由菜单数据
     const navTabs = useTenantNavTabs()
