@@ -58,6 +58,11 @@ function createAxios<Data = any, T = ApiPromise<Data>>(axiosConfig: AxiosRequest
         responseType: 'json',
     })
 
+    // 自定义后台入口
+    if (adminBaseRoutePath != '/platform' && isAdminApp() && /^\/platform\//.test(axiosConfig.url!)) {
+        axiosConfig.url = axiosConfig.url!.replace(/^\/platform\//, adminBaseRoutePath + '.php/')
+    }
+
     options = Object.assign(
         {
             CancelDuplicateRequest: true, // 是否开启取消重复请求, 默认为 true
