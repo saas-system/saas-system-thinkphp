@@ -46,7 +46,7 @@ class Index extends Backend
     {
         // 检查登录态
         if ($this->auth->isLogin()) {
-            $this->success(__('You have already logged in. There is no need to log in again~'), [
+            $this->success(__('You have already logged in. There is no need to log in again~~'), [
                 'routePath' => '/tenant'
             ], 302);
         }
