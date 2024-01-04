@@ -92,7 +92,6 @@ const checkMobile = () => {
 
 // 表单验证规则
 const rules = reactive({
-    // mobile: [buildValidatorData({ name: 'required', message: t('login.Please enter an account') }), buildValidatorData({ name: 'mobile' })],
     username: [buildValidatorData({ name: 'required', message: t('login.Please enter an account') })],
     password: [buildValidatorData({ name: 'required', message: t('login.Please input a password') }), buildValidatorData({ name: 'password' })],
 })

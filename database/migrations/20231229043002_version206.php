@@ -23,7 +23,7 @@ class Version206 extends Migrator
                     'weigh' => 1,
                 ],
             ];
-            $table = $this->table('config');
+            $table = $this->table('platform_config');
             $table->insert($rows)->saveData();
         }
     }

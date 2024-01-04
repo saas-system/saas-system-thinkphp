@@ -2,6 +2,7 @@
     "name": "build-admin",
     "version": "2.0.5",
     "license": "Apache-2.0",
+    "type": "module",
     "scripts": {
         "dev": "vite --force",
         "build": "vite build && esno ./src/utils/build.ts",
@@ -16,7 +17,7 @@
         "countup.js": "2.8.0",
         "echarts": "5.4.3",
         "element-plus": "2.4.4",
-        "esno": "0.16.3",
+        "esno": "4.0.0",
         "font-awesome": "4.7.0",
         "lodash-es": "4.17.21",
         "mitt": "3.0.1",
@@ -29,10 +30,7 @@
         "vue": "3.3.13",
         "vue-i18n": "9.2.2",
         "vue-qr": "4.0.9",
-        "vue-router": "4.2.5",
-        "jssha": "^3.3.0",
-        "@wangeditor/editor": "^5.1.1",
-        "@wangeditor/editor-for-vue": "^5.1.12"
+        "vue-router": "4.2.5"
     },
     "devDependencies": {
         "@types/lodash-es": "4.17.12",

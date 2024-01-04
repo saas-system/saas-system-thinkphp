@@ -5,9 +5,18 @@
 - 前端安装
 ```
 cd web
-npm install
-npm run dev
+pnpm i
+pnpm dev
 ```
 
+- 运行
+- 
+
 ## 平台端说明
+```
+网址： http://localhost:1818/
+用户名：admin
+密码： 123123
+```
 ## 租户端说明
+平台端创建租户管理员和密码进行登录
