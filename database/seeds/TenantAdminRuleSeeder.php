@@ -7,7 +7,7 @@ use think\migration\Seeder;
 /**
  * 租户菜单初始化seeder
  */
-class TenantMenuRuleSeeder extends Seeder
+class TenantAdminRuleSeeder extends Seeder
 {
     /**
      * Run Method.

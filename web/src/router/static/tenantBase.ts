@@ -8,12 +8,12 @@ export const tenantBaseRoutePath = '/tenant'
  */
 const tenantBaseRoute: RouteRecordRaw = {
     path: tenantBaseRoutePath,
-    name: 'admin',
-    component: () => import('/@/layouts/backend/index.vue'),
+    name: 'tenant',
+    component: () => import('/@/layouts/tenant/index.vue'),
     // 直接重定向到 loading 路由
     redirect: tenantBaseRoutePath + '/loading',
     meta: {
-        title: `pagesTitle.admin`,
+        title: `pagesTitle.tenant`,
     },
     children: [
         {
