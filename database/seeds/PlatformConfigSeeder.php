@@ -63,7 +63,7 @@ class PlatformConfigSeeder extends Seeder
                 'title'     => 'Record number',
                 'tip'       => '域名备案号',
                 'type'      => 'string',
-                'value'     => '渝ICP备8888888号-1',
+                'value'     => '晋ICP备8888888号-1',
                 'content'   => "",
                 'rule'      => '',
                 'extend'    => '',
