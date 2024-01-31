@@ -25,30 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit();
 }
 
-$rootPath = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR;
-$server   = isset($_REQUEST['server']) || isset($_SERVER['HTTP_SERVER']) || substr($_SERVER['REQUEST_URI'], 1, 9) == 'index.php';
-
-if (!$server) {
-    // // 用户访问前端
-    //
-    // // 安装检测-s
-    // if (!is_file($rootPath . 'install.lock') && is_file($rootPath . 'install' . DIRECTORY_SEPARATOR . 'index.html')) {
-    //     header("location:" . DIRECTORY_SEPARATOR . 'install' . DIRECTORY_SEPARATOR);
-    //     exit();
-    // }
-    // // 安装检测-e
-    //
-    // /*
-    //  * 检测是否已编译前端-s
-    //  * 如果存在 index.html 则访问 index.html
-    //  */
-    // if (is_file($rootPath . 'index.html')) {
-    //     header("location:" . DIRECTORY_SEPARATOR . 'index.html');
-    //     exit();
-    // }
-    // 检测是否已编译前端-e
-}
-
 require __DIR__ . '/../vendor/autoload.php';
 
 // 执行HTTP应用并响应
