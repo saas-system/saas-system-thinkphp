@@ -40,6 +40,7 @@ class AdminLog extends Backend
             ->withJoin($this->withJoinTable, $this->withJoinType)
             ->alias($alias)
             ->where($where)
+            ->where('admin.is_platform_admin', 0) // 只查出租户端管理员
             ->order($order)
             ->paginate($limit);
 

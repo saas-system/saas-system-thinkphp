@@ -42,6 +42,7 @@ class TenantAdminTable extends Migrator
             ->addColumn('salt', 'string', ['limit' => 30, 'null' => false, 'default' => '', 'comment' => '密码盐'])
             ->addColumn('motto', 'string', ['limit' => 255, 'null' => false, 'default' => '', 'comment' => '签名'])
             ->addColumn('status', 'enum', ['values' => ['1', '0'], 'null' => false, 'default' => '1', 'comment' => '状态:0=禁用,1=启用'])
+            ->addColumn('is_platform_admin', 'boolean', ['default' => false, 'comment' => '是否平台管理员用户：0=否 1=是'])
             ->addColumn('create_time', 'integer', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '创建时间'])
             ->addColumn('update_time', 'integer', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '更新时间'])
             ->addIndex(['username'], ['unique' => true, 'name' => 'username'])

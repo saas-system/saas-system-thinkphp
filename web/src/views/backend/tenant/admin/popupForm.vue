@@ -50,6 +50,7 @@
                     <FormItem label="密码" type="string" v-model="baTable.form.items!.password" prop="password"  placeholder="默认密码为123456，为空则不修改" />
                     <FormItem label="头像" type="image" v-model="baTable.form.items!.avatar" prop="avatar"/>
                     <FormItem label="邮箱" type="string" v-model="baTable.form.items!.email" prop="email" :placeholder="t('Please input field', { field: '邮箱' })" />
+                    <FormItem label="平台管理员" type="switch" v-model="baTable.form.items!.is_platform_admin" prop="is_platform_admin" :data="{ content: { 1: '是', 0: '否' } }"/>
                     <FormItem label="状态" type="radio" v-model="baTable.form.items!.status" prop="status" :data="{ content: { 1: '启用', 0: '禁用' } }" />
                 </el-form>
             </div>
