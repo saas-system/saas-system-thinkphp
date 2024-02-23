@@ -33,7 +33,6 @@
                     <FormItem :label="'微信小程序秘钥'" type="string" v-model="baTable.form.items!.mini_secret_id" prop="mini_secret_id" :placeholder="t('Please input field', { field: '微信小程序秘钥' })"/>
                     <FormItem :label="'小程序二维码'" type="image" v-model="baTable.form.items!.mini_logo" prop="mini_logo" />
                     <FormItem :label="'租户前缀'" type="string" v-model="baTable.form.items!.tenant_pre" prop="tenant_pre" :placeholder="t('Please input field', { field: '租户前缀' })"/>
-                    <FormItem :label="'卡号前缀'" type="number" prop="number_pre" :input-attr="{ step: 1 }" v-model.number="baTable.form.items!.number_pre" :placeholder="t('Please input field', { field: '卡号前缀' })"/>
                     <FormItem label="过期提醒人员" type="remoteSelects" v-model="baTable.form.items!.remind_admin_ids" prop="remind_admin_ids"
                               :input-attr="{ pk: 'tenant_admin.id', field: 'nickname', 'remote-url': 'admin/tenant.Admin/index',disabled:false, params: { tenant_id:baTable.form.items!.tenant_id}}"
                               :placeholder="t('Please select field', { field: '管理员' })" />
@@ -67,10 +66,7 @@ const { t } = useI18n()
 
 const rules: Partial<Record<string, FormItemRule[]>> = reactive({
     tenant_id: [buildValidatorData({ name: 'required', title: '租户' })],
-    mini_app_id: [buildValidatorData({ name: 'required', title: '微信小程序ID' })],
-    mini_secret_id: [buildValidatorData({ name: 'required', title: '微信小程序秘钥' })],
     tenant_pre: [buildValidatorData({ name: 'required', title: '租户前缀' })],
-    number_pre: [buildValidatorData({ name: 'required', title: '卡号前缀' })],
 })
 
 
@@ -84,6 +80,7 @@ const submitForm = (formEl: InstanceType<typeof ElForm> | undefined = undefined)
         // 更新租户配置
         updateTenantConfig(baTable.form.items || {}).then(() => {
             baTable.toggleForm('')
+            baTable.onTableHeaderAction('refresh', {})
         }).finally(() => {
             baTable.form.submitLoading = false
         })

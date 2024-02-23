@@ -65,7 +65,7 @@ export function updateTenantConfig(data: object) {
             data: data
         },
         {
-            showSuccessMessage: false,
+            showSuccessMessage: true,
         }
     )
 }
