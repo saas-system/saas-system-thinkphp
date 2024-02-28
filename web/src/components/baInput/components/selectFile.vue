@@ -44,6 +44,7 @@ import { useI18n } from 'vue-i18n'
 import Table from '/@/components/table/index.vue'
 import TableHeader from '/@/components/table/header/index.vue'
 import baTableClass from '/@/utils/baTable'
+import { isTenantApp } from '/@/utils/common'
 import { previewRenderFormatter } from '/@/views/backend/routine/attachment'
 import { baTableApi } from '/@/api/common'
 
@@ -89,7 +90,7 @@ const optBtn: OptButton[] = [
         },
     },
 ]
-const baTable = new baTableClass(new baTableApi('/admin/routine.Attachment/'), {
+const baTable = new baTableClass(new baTableApi((isTenantApp() ? '/tenant' : '/admin') + '/routine.Attachment/'), {
     column: [
         {
             type: 'selection',
@@ -107,7 +108,7 @@ const baTable = new baTableClass(new baTableApi('/admin/routine.Attachment/'), {
             align: 'center',
             operator: false,
         },
-        { label: t('Id'), prop: 'id', align: 'center', operator: 'LIKE', operatorPlaceholder: t('Fuzzy query'), width: 70 },
+        { label: t('Id'), prop: 'id', align: 'center', operator: '=', sortable: true, width: 70 },
         { label: t('utils.Breakdown'), prop: 'topic', align: 'center', operator: 'LIKE', operatorPlaceholder: t('Fuzzy query') },
         {
             label: t('utils.preview'),
