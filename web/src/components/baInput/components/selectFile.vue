@@ -174,7 +174,7 @@ const baTable = new baTableClass(new baTableApi((isTenantApp() ? '/tenant' : '/a
             operator: false,
         },
     ],
-    defaultOrder: { prop: 'last_upload_time', order: 'desc' },
+    defaultOrder: { prop: 'id', order: 'desc' },
 })
 
 provide('baTable', baTable)

@@ -16,7 +16,7 @@ class Attachment extends Backend
 
     protected array $withJoinTable = ['admin', 'user'];
 
-    protected string|array $defaultSortField = 'lastuploadtime,desc';
+    protected string|array $defaultSortField = 'id,desc';
 
     public function initialize(): void
     {
