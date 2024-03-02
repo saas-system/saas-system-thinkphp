@@ -59,8 +59,8 @@
         </div>
         <div class="install-tis-box">
             <div class="install-tis">
-                {{ t('module.please') }}{{ state.common.moduleState == moduleInstallState.DISABLE ? '' : t('module.After installation 1') }}
-                {{ t('module.Manually clean up the system and browser cache, and refresh the page') }}
+                {{ t('module.please') }}{{ state.common.moduleState == moduleInstallState.DISABLE ? '' : t('module.After installation 1')
+                }}{{ t('module.Manually clean up the system and browser cache') }}
             </div>
         </div>
         <div class="install-tis-box">
@@ -119,8 +119,13 @@ const onSubmitInstallDone = () => {
         terminal.addTaskPM('web-build', false, '', (res: number) => {
             if (res == taskStatus.Success) {
                 terminal.toggle(false)
+                if (import.meta.hot && state.common.moduleState != moduleInstallState.DISABLE) {
+                    import.meta.hot.send('custom:reload-hot', { type: 'modules' })
+                }
             }
         })
+    } else if (import.meta.hot && state.common.moduleState != moduleInstallState.DISABLE) {
+        import.meta.hot.send('custom:reload-hot', { type: 'modules' })
     }
 }
 

@@ -272,7 +272,7 @@
                                 type="string"
                                 :model-value="state.fields[state.activateField].name"
                                 :input-attr="{
-                                    onInput: ($event: string) => onFieldNameChange($event, state.activateField)
+                                    onInput: ($event: string) => onFieldNameChange($event, state.activateField),
                                 }"
                             />
                             <template v-if="state.fields[state.activateField].dataType">
@@ -608,11 +608,9 @@ import { getDatabaseList, getFileData, generateCheck, generate, parseFieldData, 
 import { getTableFieldList } from '/@/api/common'
 import { buildValidatorData, regularVarName } from '/@/utils/validate'
 import { getArrayKey } from '/@/utils/common'
-import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
-const router = useRouter()
 const designWindowRef = ref()
 const formRef = ref<FormInstance>()
 const tabsRefs = useTemplateRefsList<HTMLElement>()
@@ -942,7 +940,15 @@ const startGenerate = () => {
     })
         .then(() => {
             setTimeout(() => {
-                router.go(0)
+                // 要求 Vite 服务端重启
+                if (import.meta.hot) {
+                    import.meta.hot.send('custom:reload-hot', { type: 'crud' })
+                } else {
+                    ElNotification({
+                        type: 'error',
+                        message: t('crud.crud.Vite hot warning'),
+                    })
+                }
             }, 1000)
         })
         .finally(() => {
@@ -1563,7 +1569,7 @@ const getTableDesignTimelineType = (type: TableDesignChangeType): TimelineItemPr
 }
 .field-item {
     display: inline-block;
-    padding: 4px 18px;
+    padding: 3px 16px;
     border: 1px dashed var(--el-border-color);
     border-radius: var(--el-border-radius-base);
     margin: 6px;

@@ -4,7 +4,15 @@ namespace app\admin\model;
 
 use Throwable;
 use think\Model;
+use think\facade\Cache;
 
+/**
+ * 系统配置模型
+ * @property mixed $content
+ * @property mixed $rule
+ * @property mixed $extend
+ * @property mixed $allow_del
+ */
 class Config extends Model
 {
     // 表名
@@ -26,7 +34,7 @@ class Config extends Model
      * 入库前
      * @throws Throwable
      */
-    public static function onBeforeInsert($model)
+    public static function onBeforeInsert(Config $model): void
     {
         if (!in_array($model->getData('type'), $model->needContent)) {
             $model->content = null;
@@ -45,9 +53,18 @@ class Config extends Model
         $model->allow_del = 1;
     }
 
+    /**
+     * 写入后
+     */
+    public static function onAfterWrite(Model $model): void
+    {
+        // 清理配置缓存
+        Cache::tag(self::$cacheTag)->clear();
+    }
+
     public function getValueAttr($value, $row)
     {
-        if (!isset($row['type'])) return $value;
+        if (!isset($row['type']) || $value == '0') return $value;
         if (in_array($row['type'], $this->jsonDecodeType)) {
             return empty($value) ? [] : json_decode($value, true);
         } elseif ($row['type'] == 'switch') {
@@ -55,12 +72,8 @@ class Config extends Model
         } elseif ($row['type'] == 'editor') {
             return !$value ? '' : htmlspecialchars_decode($value);
         } elseif (in_array($row['type'], ['city', 'remoteSelects'])) {
-            if ($value == '') {
-                return [];
-            }
-            if (!is_array($value)) {
-                return explode(',', $value);
-            }
+            if (!$value) return [];
+            if (!is_array($value)) return explode(',', $value);
             return $value;
         } else {
             return $value ?: '';

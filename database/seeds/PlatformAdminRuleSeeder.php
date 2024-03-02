@@ -7,7 +7,7 @@ use think\migration\Seeder;
 /**
  * 平台菜单初始化seeder
  */
-class PlatformMenuRuleSeeder extends Seeder
+class PlatformAdminRuleSeeder extends Seeder
 {
     /**
      * Run Method.

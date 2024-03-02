@@ -82,6 +82,7 @@ const baTable = new baTableClass(
             { label: '登录时间', prop: 'last_login_time', align: 'center', render: 'datetime', operator: false, sortable: 'custom', width: 160, timeFormat: 'yyyy-mm-dd hh:MM:ss' },
             { label: '登录IP', prop: 'last_login_ip', align: 'center', operatorPlaceholder: t('Fuzzy query'), operator: 'LIKE', sortable: false },
             { label: '状态', prop: 'status', align: 'center', render: 'switch', operator: '=', sortable: false, replaceValue: { 1: '启用', 0: '禁用' } },
+            { label: '平台管理员', prop: 'is_platform_admin', render: 'switch', align: 'center', width: 100, operator: '=', sortable: false, replaceValue: { 1: '是', 0: '否' } },
             { label: '创建时间', prop: 'createtime', align: 'center', render: 'datetime', operator: false, sortable: 'custom', width: 160, timeFormat: 'yyyy-mm-dd hh:MM:ss' },
             { label: t('Operate'), align: 'center', width: 100, render: 'buttons', buttons: optButtons, operator: false }
         ],

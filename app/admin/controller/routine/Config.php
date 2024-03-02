@@ -2,8 +2,8 @@
 
 namespace app\admin\controller\routine;
 
+use ba\Filesystem;
 use Throwable;
-use think\facade\Cache;
 use app\common\library\Email;
 use PHPMailer\PHPMailer\PHPMailer;
 use app\common\controller\Backend;
@@ -19,6 +19,12 @@ class Config extends Backend
     protected object $model;
 
     protected array $noNeedLogin = ['index'];
+
+    protected array $filePath = [
+        'appConfig'           => 'config/app.php',
+        'webAdminBase'        => 'web/src/router/static/adminBase.ts',
+        'backendEntranceStud' => 'app/admin/library/stubs/backendEntrance.stud',
+    ];
 
     public function initialize(): void
     {
@@ -86,6 +92,65 @@ class Config extends Backend
                 }
             }
 
+            // 自定义后台入口
+            if ($item->name == 'backend_entrance') {
+                $backendEntrance = get_sys_config('backend_entrance');
+                if ($backendEntrance == $data[$item->name]) {
+
+                    // 后台规则，大小写数字
+                    if (!preg_match("/^\/[a-zA-Z0-9]+$/", $data[$item->name])) {
+                        $this->error(__('Backend entrance rule'));
+                    }
+
+                    // 修改 adminBaseRoutePath
+                    $adminBaseFilePath = Filesystem::fsFit(root_path(). $this->filePath['webAdminBase']);
+                    $adminBaseContent = @file_get_contents($adminBaseFilePath);
+                    if (!$adminBaseContent) $this->error(__('Configuration write failed: %s', [$this->filePath['webAdminBase']]));
+
+                    $adminBaseContent = str_replace("export const adminBaseRoutePath = '$backendEntrance'", "export const adminBaseRoutePath = '{$data[$item->name]}'", $adminBaseContent);
+                    $result = @file_get_contents($adminBaseFilePath, $adminBaseContent);
+                    if (!$result) $this->error(__('Configuration write failed: %s', [$this->filePath['webAdminBase']]));
+
+                    // 去除后台入口开头的斜杠
+                    $oldBackendEntrance = ltrim($backendEntrance, '/');
+                    $newBackendEntrance = ltrim($data[$item->name], '/');
+
+                    // 禁止 admin 应用访问
+                    $denyAppList = config('app.deny_app_list');
+                    if (($newBackendEntrance == 'platform' && in_array('platform', $denyAppList)) || !in_array('platform', $denyAppList)) {
+                        $appConfigFilePath = Filesystem::fsFit(root_path() . $this->filePath['appConfig']);
+                        $appConfigContent  = @file_get_contents($appConfigFilePath);
+                        if (!$appConfigContent) $this->error(__('Configuration write failed: %s', [$this->filePath['appConfig']]));
+
+                        $denyAppListStr = '';
+                        foreach ($denyAppList as $appName) {
+                            if ($newBackendEntrance == 'platform' && $appName == 'platform') continue;
+                            $denyAppListStr .= "'$appName', ";
+                        }
+                        if ($newBackendEntrance != 'platform') $denyAppListStr .= "'platform', ";
+                        $denyAppListStr = rtrim($denyAppListStr, ', ');
+                        $denyAppListStr = "[$denyAppListStr]";
+
+                        $appConfigContent = preg_replace("/'deny_app_list'(\s+)=>(\s+)(.*)/", "'deny_app_list'\$1=>\$2$denyAppListStr,", $appConfigContent);
+                        $result           = @file_put_contents($appConfigFilePath, $appConfigContent);
+                        if (!$result) $this->error(__('Configuration write failed: %s', [$this->filePath['appConfig']]));
+                    }
+
+                    // 建立API入口文件
+                    $oldBackendEntranceFile = Filesystem::fsFit(public_path() . $oldBackendEntrance . '.php');
+                    $newBackendEntranceFile = Filesystem::fsFit(public_path() . $newBackendEntrance . '.php');
+                    if (file_exists($oldBackendEntranceFile)) @unlink($oldBackendEntranceFile);
+
+                    if ($newBackendEntrance != 'platform') {
+                        $backendEntranceStub = @file_get_contents(Filesystem::fsFit(root_path() . $this->filePath['backendEntranceStub']));
+                        if (!$backendEntranceStub) $this->error(__('Configuration write failed: %s', [$this->filePath['backendEntranceStub']]));
+
+                        $result = @file_put_contents($newBackendEntranceFile, $backendEntranceStub);
+                        if (!$result) $this->error(__('Configuration write failed: %s', [$newBackendEntranceFile]));
+                    }
+                }
+            }
+
             $result = false;
             $this->model->startTrans();
             try {
@@ -99,7 +164,6 @@ class Config extends Backend
                     }
                 }
                 $result = $this->model->saveAll($configValue);
-                Cache::tag(ConfigModel::$cacheTag)->clear();
                 $this->model->commit();
             } catch (Throwable $e) {
                 $this->model->rollback();
@@ -136,7 +200,6 @@ class Config extends Backend
                     }
                 }
                 $result = $this->model->save($data);
-                Cache::tag(ConfigModel::$cacheTag)->clear();
                 $this->model->commit();
             } catch (Throwable $e) {
                 $this->model->rollback();

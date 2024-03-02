@@ -22,7 +22,7 @@
                         class="table-header-operate"
                         type="primary"
                     >
-                        <Icon name="fa fa-check"/>
+                        <Icon name="fa fa-check" />
                         <span class="table-header-operate-text">{{ t('utils.choice') }}</span>
                     </el-button>
                 </el-tooltip>
@@ -33,7 +33,7 @@
                 </div>
             </TableHeader>
 
-            <Table ref="tableRef" @selection-change="onSelectionChange"/>
+            <Table ref="tableRef" @selection-change="onSelectionChange" />
         </el-dialog>
     </div>
 </template>
@@ -44,7 +44,7 @@ import { useI18n } from 'vue-i18n'
 import Table from '/@/components/table/index.vue'
 import TableHeader from '/@/components/table/header/index.vue'
 import baTableClass from '/@/utils/baTable'
-import { isAdminApp } from '/@/utils/common'
+import { isTenantApp } from '/@/utils/common'
 import { previewRenderFormatter } from '/@/views/backend/routine/attachment'
 import { baTableApi } from '/@/api/common'
 
@@ -90,8 +90,7 @@ const optBtn: OptButton[] = [
         },
     },
 ]
-
-const baTable = new baTableClass(new baTableApi(isAdminApp() ? '/admin/routine.Attachment/' : 'tenant/routine.Attachment/'), {
+const baTable = new baTableClass(new baTableApi((isTenantApp() ? '/tenant' : '/admin') + '/routine.Attachment/'), {
     column: [
         {
             type: 'selection',
@@ -109,7 +108,7 @@ const baTable = new baTableClass(new baTableApi(isAdminApp() ? '/admin/routine.A
             align: 'center',
             operator: false,
         },
-        { label: t('Id'), prop: 'id', align: 'center', operator: 'LIKE', operatorPlaceholder: t('Fuzzy query'), width: 70 },
+        { label: t('Id'), prop: 'id', align: 'center', operator: '=', sortable: true, width: 70 },
         { label: t('utils.Breakdown'), prop: 'topic', align: 'center', operator: 'LIKE', operatorPlaceholder: t('Fuzzy query') },
         {
             label: t('utils.preview'),
@@ -175,7 +174,7 @@ const baTable = new baTableClass(new baTableApi(isAdminApp() ? '/admin/routine.A
             operator: false,
         },
     ],
-    defaultOrder: { prop: 'last_upload_time', order: 'desc' },
+    defaultOrder: { prop: 'id', order: 'desc' },
 })
 
 provide('baTable', baTable)
@@ -233,15 +232,12 @@ watch(
 .ba-upload-select-dialog .el-dialog__body {
     padding: 10px 20px;
 }
-
 .table-header-operate-text {
     margin-left: 6px;
 }
-
 .ml-10 {
     margin-left: 10px;
 }
-
 .selection-count {
     color: var(--el-color-primary);
     font-weight: bold;

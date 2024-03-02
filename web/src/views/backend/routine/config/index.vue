@@ -108,11 +108,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, onActivated, onDeactivated, onUnmounted } from 'vue'
 import FormItem from '/@/components/formItem/index.vue'
 import { index, postData, del, postSendTestMail } from '/@/api/backend/routine/config'
 import { ElMessageBox, ElNotification } from 'element-plus'
 import type { FormInstance, FormItemRule } from 'element-plus'
+import { adminBaseRoutePath } from '/@/router/static/adminBase'
 import AddFrom from './add.vue'
 import { routePush } from '/@/utils/router'
 import { buildValidatorData, type buildValidatorParams } from '/@/utils/validate'
@@ -225,6 +226,11 @@ const onSubmit = () => {
                         ;(siteConfig.$state[key as keyof SiteConfig] as any) = formData[key]
                     }
                 }
+
+                if (formData.backend_entrance && formData.backend_entrance != adminBaseRoutePath) {
+                    window.open(window.location.href.replace(adminBaseRoutePath, formData.backend_entrance))
+                    window.close()
+                }
             })
         }
     })
@@ -270,6 +276,16 @@ const onTestSendMail = () => {
 
 onMounted(() => {
     getIndex()
+    if (import.meta.hot) import.meta.hot.send('custom:close-hot', { type: 'config' })
+})
+onActivated(() => {
+    if (import.meta.hot) import.meta.hot.send('custom:close-hot', { type: 'config' })
+})
+onDeactivated(() => {
+    if (import.meta.hot) import.meta.hot.send('custom:open-hot', { type: 'config' })
+})
+onUnmounted(() => {
+    if (import.meta.hot) import.meta.hot.send('custom:open-hot', { type: 'config' })
 })
 </script>
 

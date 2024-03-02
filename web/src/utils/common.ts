@@ -4,6 +4,7 @@ import * as elIcons from '@element-plus/icons-vue'
 import router from '/@/router/index'
 import Icon from '/@/components/icon/index.vue'
 import { useNavTabs } from '/@/stores/navTabs'
+import { useNavTabs as useTenantNavTabs } from '/@/stores/tenantNavTabs'
 import { useMemberCenter } from '/@/stores/memberCenter'
 import type { FormInstance } from 'element-plus'
 import { useSiteConfig } from '../stores/siteConfig'
@@ -206,22 +207,27 @@ export const getFileNameFromPath = (path: string) => {
     return paths[paths.length - 1]
 }
 
-export function auth(node: string): boolean
-export function auth(node: { name: string; subNodeName?: string }): boolean
-
 /**
  * 鉴权
  * 提供 string 将根据当前路由 path 自动拼接和鉴权，还可以提供路由的 name 对象进行鉴权
  * @param node
  */
-export function auth(node: string | { name: string; subNodeName?: string }) {
-    const store = isAdminApp() ? useNavTabs() : useMemberCenter()
+export function auth(node: string | { name: string; subNodeName?: string }, basePath?: string) {
+    const store = isAdminApp() ? useNavTabs() : isTenantApp() ? useTenantNavTabs() : useMemberCenter();
     if (typeof node === 'string') {
-        const path = getCurrentRoutePath()
-        if (store.state.authNode.has(path)) {
-            const subNodeName = path + (path == '/' ? '' : '/') + node
-            if (store.state.authNode.get(path)!.some((v: string) => v == subNodeName)) {
-                return true
+        if (basePath) {
+            if (store.state.authNode.has(basePath)) {
+                if (store.state.authNode.get(basePath)!.some((v: string) => v == basePath + '/' + node)) {
+                    return true
+                }
+            }
+        } else {
+            const path = getCurrentRoutePath()
+            if (store.state.authNode.has(path)) {
+                const subNodeName = path + (path == '/' ? '' : '/') + node
+                if (store.state.authNode.get(path)!.some((v: string) => v == subNodeName)) {
+                    return true
+                }
             }
         }
     } else {

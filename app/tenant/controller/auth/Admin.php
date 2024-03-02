@@ -46,6 +46,7 @@ class Admin extends Backend
         list($where, $alias, $limit, $order) = $this->queryBuilder();
         $res = $this->model
             ->permission($this->auth->tenant_id)
+            ->where('is_platform_admin', 0) // 只查出租户端管理员
             ->withoutField('login_failure,password,salt')
             ->withJoin($this->withJoinTable, $this->withJoinType)
             ->alias($alias)

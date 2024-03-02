@@ -492,6 +492,12 @@ class Manage
             }
         }
 
+        // 删除 composer.json 中的 config
+        $composerConfig = Server::getConfig($this->modulesDir, 'composerConfig');
+        if ($composerConfig) {
+            $serverDepend->removeComposerConfig($composerConfig);
+        }
+
         // 配置了不删除的文件
         $protectedFiles = Server::getConfig($this->modulesDir, 'protectedFiles');
         foreach ($protectedFiles as &$protectedFile) {
@@ -701,6 +707,13 @@ class Manage
             $npm      = false;
             $composer = false;
             $nuxtNpm  = false;
+
+            // composer config 更新
+            $composerConfig = Server::getConfig($this->modulesDir, 'composerConfig');
+            if ($composerConfig) {
+                $serverDep->setComposerConfig($composerConfig);
+            }
+
             foreach ($depends as $key => $item) {
                 if (!$item) {
                     continue;

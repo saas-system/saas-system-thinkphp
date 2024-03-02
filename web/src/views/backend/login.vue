@@ -1,7 +1,7 @@
 <template>
-    <div class="login">
+    <div :class="'login ' + (state.isMobile?'login_mobile':'')">
         <div class="login-box">
-            <div class="word">
+            <div class="word" v-if="!state.isMobile">
                 <div class="logo_text_1">欢迎使用</div>
                 <div class="logo_text_2">后台管理系统</div>
             </div>
@@ -70,6 +70,7 @@ const formRef = ref<FormInstance>()
 const usernameRef = ref<InputInstance>()
 const passwordRef = ref<InputInstance>()
 const state = reactive({
+    isMobile: false,
     showCaptcha: false,
     submitLoading: false,
 })
@@ -82,6 +83,11 @@ const form = reactive({
 })
 
 const { t } = useI18n()
+
+const checkMobile = () => {
+    state.isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)?true:false
+    console.log(state.isMobile)
+}
 
 // 表单验证规则
 const rules = reactive({
@@ -104,7 +110,7 @@ const focusInput = () => {
 }
 
 onMounted(() => {
-
+    checkMobile();
     login('get')
         .then((res) => {
             state.showCaptcha = res.data.captcha
@@ -218,6 +224,19 @@ const onSubmit = (captchaInfo = '') => {
                 border-radius: var(--el-input-border-radius, var(--el-border-radius-base));
                 --el-button-bg-color: var(--el-color-primary);
             }
+        }
+    }
+}
+
+.login_mobile {
+    min-width: auto;
+    .login-box {
+        height: auto;
+        background: none;
+        .content {
+            width: 160vw;
+            padding: 60px;
+            transform: scale(0.5);
         }
     }
 }
