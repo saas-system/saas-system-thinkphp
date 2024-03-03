@@ -265,12 +265,13 @@ export function checkClickCaptcha(id: string, info: string, unset: boolean) {
     )
 }
 
-export function getTablePk(table: string) {
+export function getTablePk(table: string, connection = '') {
     return createAxios({
         url: getTablePkUrl,
         method: 'get',
         params: {
             table: table,
+            connection: connection,
         },
     })
 }
@@ -279,6 +280,7 @@ export function getTablePk(table: string) {
  * 获取数据表的字段
  * @param table 数据表名
  * @param clean 只要干净的字段注释（只要字段标题）
+ * @param connection 连接
  */
 export function getTableFieldList(table: string, clean = true, connection = '') {
     return createAxios({
