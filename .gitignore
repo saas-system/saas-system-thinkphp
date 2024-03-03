@@ -1,15 +1,16 @@
 # 通过 Git 部署项目至线上时建议删除的忽略规则
 /vendor
+/modules
 /public/*.lock
 /public/index.html
 /public/assets
 
 # 通过 Git 部署项目至线上时可以考虑删除的忽略规则
 /public/storage/*
+composer.lock
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
-composer.lock
 
 # common
 /nbproject
@@ -21,11 +22,6 @@ dist-ssr
 .DS_Store
 /.env
 Desktop.ini
-
-# 部署到线上时，如果您已经删除了 /modules 的忽略规则，那么以下规则可以帮您排除多余的模块文件（已知的多余/重复文件）
-# 请勿在已经忽略以下文件[夹]的环境下卸载模块，该操作将导致未知异常！
-/modules/ebak
-/modules/*/uniapp.zip
 
 # Log files
 *.log
@@ -49,5 +45,3 @@ pnpm-debug.log*
 *.local
 !.gitkeep
 .svn
-.phpunit.result.cache
-
