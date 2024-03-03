@@ -432,7 +432,7 @@ class Helper
     public static function updateFieldOrder(string $tableName, array $fields, array $designChange): void
     {
         if ($designChange) {
-            $table = TableManager::instance($tableName, [], false);
+            $table = TableManager::phinxTable($tableName, [], false);
             foreach ($designChange as $item) {
                 if (!$item['sync']) continue;
 
@@ -472,7 +472,7 @@ class Helper
         $name         = TableManager::tableName($table['name']);
         $comment      = $table['comment'] ?? '';
         $designChange = $table['designChange'] ?? [];
-        $adapter      = TableManager::adapter(false);
+        $adapter      = TableManager::phinxTable(false);
 
         $pk = self::searchArray($fields, function ($item) {
             return $item['primaryKey'];
@@ -483,7 +483,7 @@ class Helper
             // 更新表
             TableManager::changeComment($name, $comment);
             if ($designChange) {
-                $table = TableManager::instance($name, [], false);
+                $table = TableManager::phinxTable($name, [], false);
 
                 // 改名和删除操作优先
                 foreach ($designChange as $item) {
@@ -547,7 +547,7 @@ class Helper
             }
         } else {
             // 创建表
-            $table = TableManager::instance($name, [
+            $table = TableManager::phinxTable($name, [
                 'id'          => false,
                 'comment'     => $comment,
                 'row_format'  => 'DYNAMIC',
