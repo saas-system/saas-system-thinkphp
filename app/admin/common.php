@@ -10,36 +10,3 @@ if (!function_exists('get_controller_list')) {
         return Filesystem::getDirFiles($controllerDir);
     }
 }
-
-if (!function_exists('get_table_fields')) {
-    function get_table_fields($table, $onlyCleanComment = false): array
-    {
-        if (!$table) return [];
-
-        $dbname = config('database.connections.mysql.database');
-        $prefix = config('database.connections.mysql.prefix');
-
-        // 从数据库中获取表字段信息
-        $sql        = "SELECT * FROM `information_schema`.`columns` "
-            . "WHERE TABLE_SCHEMA = ? AND table_name = ? "
-            . "ORDER BY ORDINAL_POSITION";
-        $columnList = Db::query($sql, [$dbname, $table]);
-        if (!$columnList) {
-            $columnList = Db::query($sql, [$dbname, $prefix . $table]);
-        }
-
-        $fieldList = [];
-        foreach ($columnList as $item) {
-            if ($onlyCleanComment) {
-                $fieldList[$item['COLUMN_NAME']] = '';
-                if ($item['COLUMN_COMMENT']) {
-                    $comment                         = explode(':', $item['COLUMN_COMMENT']);
-                    $fieldList[$item['COLUMN_NAME']] = $comment[0];
-                }
-                continue;
-            }
-            $fieldList[$item['COLUMN_NAME']] = $item;
-        }
-        return $fieldList;
-    }
-}

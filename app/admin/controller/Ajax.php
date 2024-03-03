@@ -6,6 +6,7 @@ use app\common\model\Area;
 use Throwable;
 use ba\Terminal;
 use think\Response;
+use ba\TableManager;
 use think\facade\Db;
 use think\facade\Cache;
 use think\facade\Event;
@@ -124,7 +125,7 @@ class Ajax extends Backend
         $tablePk = Db::name($table)->getPk();
         $this->success('', [
             'pk'        => $tablePk,
-            'fieldList' => get_table_fields($table, $clean),
+            'fieldList' => TableManager::getTableColumns($table, $clean),
         ]);
     }
 
