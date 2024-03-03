@@ -51,6 +51,13 @@ const baTable = new sensitiveDataClass(
                 operatorPlaceholder: t('Fuzzy query'),
             },
             {
+                label: t('Connection'),
+                prop: 'connection',
+                align: 'center',
+                operator: 'LIKE',
+                operatorPlaceholder: t('Fuzzy query'),
+            },
+            {
                 label: t('security.sensitiveData.data sheet'),
                 prop: 'data_table',
                 align: 'center',
@@ -110,9 +117,7 @@ const baTable = new sensitiveDataClass(
 provide('baTable', baTable)
 
 onMounted(() => {
-    baTable.form.extend = Object.assign({}, baTable.form.extend, {
-        parentRef: formRef.value,
-    })
+    baTable.form.extend!.parentRef = formRef.value
     baTable.table.ref = tableRef.value
     baTable.mount()
     baTable.getIndex()

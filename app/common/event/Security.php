@@ -5,6 +5,7 @@ namespace app\common\event;
 use app\admin\model\Admin;
 use Exception;
 use think\Request;
+use ba\TableManager;
 use think\facade\Db;
 use think\facade\Log;
 use app\admin\library\Auth;
@@ -36,7 +37,8 @@ class Security
                     return true;
                 }
 
-                $recycleData    = Db::name($recycle['data_table'])
+                $recycleData    = Db::connect(TableManager::getConnection($recycle['connection']))
+                    ->name($recycle['data_table'])
                     ->whereIn($recycle['primary_key'], $dataIds)
                     ->select()->toArray();
                 $recycleDataArr = [];
@@ -48,6 +50,7 @@ class Security
                         'admin_type'  => $adminId ? Admin::class : '',
                         'recycle_id'  => $recycle['id'],
                         'data'        => json_encode($recycleDatum, JSON_UNESCAPED_UNICODE),
+                        'connection'  => $recycle['connection'],
                         'data_table'  => $recycle['data_table'],
                         'primary_key' => $recycle['primary_key'],
                         'ip'          => $request->ip(),
@@ -79,8 +82,9 @@ class Security
             }
 
             $sensitiveData = $sensitiveData->toArray();
-            $dataId        = $request->param('id');
-            $editData      = Db::name($sensitiveData['data_table'])
+            $dataId        = $request->param($sensitiveData['primary_key']);
+            $editData      = Db::connect(TableManager::getConnection($sensitiveData['connection']))
+                ->name($sensitiveData['data_table'])
                 ->field(array_keys($sensitiveData['data_fields']))
                 ->where($sensitiveData['primary_key'], $dataId)
                 ->find();
@@ -112,6 +116,7 @@ class Security
                         'admin_id'     => $adminId,
                         'admin_type'   => $adminId ? Admin::class : '',
                         'sensitive_id' => $sensitiveData['id'],
+                        'connection'   => $sensitiveData['connection'],
                         'data_table'   => $sensitiveData['data_table'],
                         'primary_key'  => $sensitiveData['primary_key'],
                         'data_field'   => $field,

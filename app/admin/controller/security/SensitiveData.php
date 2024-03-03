@@ -3,7 +3,6 @@
 namespace app\admin\controller\security;
 
 use Throwable;
-use ba\TableManager;
 use app\common\controller\Backend;
 use app\admin\model\SensitiveData as SensitiveDataModel;
 
@@ -114,7 +113,6 @@ class SensitiveData extends Backend
         $app = $this->request->get('app', 'admin');
         // 放在add方法内，就不需要额外添加权限节点了
         $this->success('', [
-            'tables'      => $this->getTableList(),
             'controllers' => $this->getControllerList($app),
             'apps'        => $this->getAppList(),
         ]);
@@ -179,7 +177,6 @@ class SensitiveData extends Backend
         $app = $this->request->get('app', $row->app);
         $this->success('', [
             'row'         => $row,
-            'tables'      => $this->getTableList(),
             'controllers' => $this->getControllerList($app),
             'apps'        => $this->getAppList(),
         ]);
@@ -208,39 +205,6 @@ class SensitiveData extends Backend
             }
         }
         return $outControllers;
-    }
-
-    /**
-     * 数据表列表
-     * @throws Throwable
-     */
-    protected function getTableList(): array
-    {
-        $tablePrefix     = config('database.connections.mysql.prefix');
-        $outExcludeTable = [
-            // 功能表
-            'area',
-            'token',
-            'captcha',
-            'platform_admin_group_access',
-            'tenant_admin_group_access',
-            'config',
-            // 无编辑功能
-            'admin_log',
-            'user_money_log',
-            'user_score_log',
-        ];
-
-        $outTables = [];
-        $tables    = TableManager::getTableList();
-        $pattern   = '/^' . $tablePrefix . '/i';
-        foreach ($tables as $table => $tableComment) {
-            $table = preg_replace($pattern, '', $table);
-            if (!in_array($table, $outExcludeTable)) {
-                $outTables[$table] = $tableComment;
-            }
-        }
-        return $outTables;
     }
 
     protected function getAppList(): array
