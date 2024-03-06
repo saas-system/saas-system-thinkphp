@@ -11,9 +11,6 @@
             <div class="admin-info-base" v-if="state.tenantInfo.name">
                 <div class="admin-nickname">{{ state.tenantInfo.name }}</div>
             </div>
-            <div class="tenant-info-line">
-                <a v-if="state.tenantInfo.app_download_url" :href="state.tenantInfo.app_download_url" target="_blank">APP下载</a>
-            </div>
             <div class="tenant-info-line" v-if="state.tenantInfo.expire_time_text">
                 到期时间：<span>{{ state.tenantInfo.expire_time_text }}</span>
             </div>
