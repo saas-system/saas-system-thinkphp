@@ -108,7 +108,7 @@ const baTable = new baTableClass(new baTableApi((isTenantApp() ? '/tenant' : '/a
             align: 'center',
             operator: false,
         },
-        { label: t('Id'), prop: 'id', align: 'center', operator: '=', sortable: true, width: 70 },
+        { label: t('Id'), prop: 'id', align: 'center', operator: '=', sortable: 'custom', width: 70 },
         { label: t('utils.Breakdown'), prop: 'topic', align: 'center', operator: 'LIKE', operatorPlaceholder: t('Fuzzy query') },
         {
             label: t('utils.preview'),
