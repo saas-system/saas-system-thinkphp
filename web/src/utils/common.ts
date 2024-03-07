@@ -405,3 +405,36 @@ export const getGreet = () => {
     }
     return greet
 }
+
+/**
+ * 获取时间范围
+ */
+export const getDataRange = (day = 30, date = new Date()) => {
+    let nowDateArr = [
+        date.getFullYear(),
+        date.getMonth() + 1,
+        date.getDate()
+    ];
+    //如果格式是MM则需要此步骤，如果是M格式则此循环注释掉
+    for (var i = 0; i < nowDateArr.length; i++) {
+        if (nowDateArr[i] >= 1 && nowDateArr[i] <= 9) {
+            nowDateArr[i] = '0' + nowDateArr[i];
+        }
+    }
+    let endDateStr = nowDateArr.join('-') + ' 23:59:59';
+
+    date.setDate(date.getDate() - day);
+    let startDateArr = [
+        date.getFullYear(),
+        date.getMonth() + 1,
+        date.getDate()
+    ];
+    for (var i = 0; i < startDateArr.length; i++) {
+        if (startDateArr[i] >= 1 && startDateArr[i] <= 9) {
+            startDateArr[i] = '0' + startDateArr[i];
+        }
+    }
+    let startDateStr = startDateArr.join('-') + ' 23:59:59';
+
+    return startDateStr + ',' + endDateStr;
+}
