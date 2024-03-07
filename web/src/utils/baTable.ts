@@ -531,6 +531,7 @@ export default class baTable {
                         const range = queryProp.split(',')
                         if (field[key].render == 'datetime') {
                             if (range && range.length >= 2) {
+                                form[prop] = range;
                                 form[prop + '-default'] = [new Date(range[0]), new Date(range[1])]
                             }
                         } else {
