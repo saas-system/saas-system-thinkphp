@@ -40,9 +40,9 @@
 
     <!-- tag -->
     <div v-if="field.render == 'tag' && fieldValue !== ''">
-        <el-tag :type="getTagType(fieldValue, field.custom)" :effect="field.effect ?? 'light'" :size="field.size ?? 'default'">{{
-            field.replaceValue ? field.replaceValue[fieldValue] : fieldValue
-        }}</el-tag>
+        <el-tag :type="getTagType(fieldValue, field.custom)" :effect="field.effect ?? 'light'" :size="field.size ?? 'default'">
+            {{field.replaceValue ? field.replaceValue[fieldValue] : fieldValue }}
+        </el-tag>
     </div>
 
     <!-- tags -->
@@ -115,91 +115,208 @@
 
     <!-- 按钮组 -->
     <!-- 只对默认的编辑、删除、排序按钮进行鉴权，其他按钮请通过 display 属性控制按钮是否显示 -->
-    <div v-if="field.render == 'buttons' && field.buttons">
-        <template v-for="(btn, idx) in field.buttons" :key="idx">
-            <template v-if="btn.display ? btn.display(row, field) : true">
-                <!-- 常规按钮 -->
-                <el-button
-                    v-if="btn.render == 'basicButton'"
-                    v-blur
-                    @click="onButtonClick(btn)"
-                    :class="btn.class"
-                    class="table-operate"
-                    :type="btn.type"
-                    :disabled="btn.disabled && btn.disabled(row, field)"
-                    v-bind="btn.attr"
-                >
-                    <Icon :name="btn.icon" />
-                    <div v-if="btn.text" class="table-operate-text">{{ btn.text }}</div>
-                </el-button>
-
-                <!-- 带提示信息的按钮 -->
-                <el-tooltip
-                    v-if="btn.render == 'tipButton' && ((btn.name == 'edit' && baTable.auth('edit')) || btn.name != 'edit')"
-                    :disabled="btn.title && !btn.disabledTip ? false : true"
-                    :content="btn.title ? t(btn.title) : ''"
-                    placement="top"
-                >
+    <div v-if="field.render == 'buttons' && (field.buttons || field.beforeButtons || field.moreButtons)" class="el_btns">
+        <div v-if="field.beforeButtons" class="el_before_btns">
+            <template v-for="(btn, idx) in field.beforeButtons" :key="idx">
+                <template v-if="btn.display ? btn.display(row, field) : true">
+                    <!-- 常规按钮 -->
                     <el-button
+                        v-if="btn.render == 'basicButton'"
                         v-blur
                         @click="onButtonClick(btn)"
                         :class="btn.class"
-                        class="table-operate"
+                        class="table-operate btn_item"
                         :type="btn.type"
                         :disabled="btn.disabled && btn.disabled(row, field)"
                         v-bind="btn.attr"
                     >
                         <Icon :name="btn.icon" />
-                        <div v-if="btn.text" class="table-operate-text">{{ btn.text }}</div>
+                        <div v-if="btn.text" :class="btn.icon?'table-operate-text':''">{{ btn.text }}</div>
                     </el-button>
-                </el-tooltip>
 
-                <!-- 带确认框的按钮 -->
-                <el-popconfirm
-                    v-if="btn.render == 'confirmButton' && ((btn.name == 'delete' && baTable.auth('del')) || btn.name != 'delete')"
-                    :disabled="btn.disabled && btn.disabled(row, field)"
-                    v-bind="btn.popconfirm"
-                    @confirm="onButtonClick(btn)"
-                >
-                    <template #reference>
-                        <div class="ml-6">
-                            <el-tooltip :disabled="btn.title ? false : true" :content="btn.title ? t(btn.title) : ''" placement="top">
-                                <el-button
-                                    v-blur
-                                    :class="btn.class"
-                                    class="table-operate"
-                                    :type="btn.type"
-                                    :disabled="btn.disabled && btn.disabled(row, field)"
-                                    v-bind="btn.attr"
-                                >
-                                    <Icon :name="btn.icon" />
-                                    <div v-if="btn.text" class="table-operate-text">{{ btn.text }}</div>
-                                </el-button>
-                            </el-tooltip>
-                        </div>
-                    </template>
-                </el-popconfirm>
-
-                <!-- 带提示的可拖拽按钮 -->
-                <el-tooltip
-                    v-if="btn.render == 'moveButton' && ((btn.name == 'weigh-sort' && baTable.auth('sortable')) || btn.name != 'weigh-sort')"
-                    :disabled="btn.title && !btn.disabledTip ? false : true"
-                    :content="btn.title ? t(btn.title) : ''"
-                    placement="top"
-                >
-                    <el-button
-                        :class="btn.class"
-                        class="table-operate move-button"
-                        :type="btn.type"
-                        :disabled="btn.disabled && btn.disabled(row, field)"
-                        v-bind="btn.attr"
+                    <!-- 带提示信息的按钮 -->
+                    <el-tooltip
+                        v-if="btn.render == 'tipButton' && ((btn.name == 'edit' && baTable.auth('edit')) || btn.name != 'edit')"
+                        :disabled="btn.title && !btn.disabledTip ? false : true"
+                        :content="btn.title ? t(btn.title) : ''"
+                        placement="top"
                     >
-                        <Icon :name="btn.icon" />
-                        <div v-if="btn.text" class="table-operate-text">{{ btn.text }}</div>
-                    </el-button>
-                </el-tooltip>
+                        <el-button
+                            v-blur
+                            @click="onButtonClick(btn)"
+                            :class="btn.class"
+                            class="table-operate btn_item"
+                            :type="btn.type"
+                            :disabled="btn.disabled && btn.disabled(row, field)"
+                            v-bind="btn.attr"
+                        >
+                            <Icon :name="btn.icon" />
+                            <div v-if="btn.text" :class="btn.icon?'table-operate-text':''">{{ btn.text }}</div>
+                        </el-button>
+                    </el-tooltip>
+
+                    <!-- 带确认框的按钮 -->
+                    <el-popconfirm
+                        v-if="btn.render == 'confirmButton' && ((btn.name == 'delete' && baTable.auth('del')) || btn.name != 'delete')"
+                        :disabled="btn.disabled && btn.disabled(row, field)"
+                        v-bind="btn.popconfirm"
+                        @confirm="onButtonClick(btn)"
+                    >
+                        <template #reference>
+                            <div>
+                                <el-tooltip :disabled="btn.title ? false : true" :content="btn.title ? t(btn.title) : ''" placement="top">
+                                    <el-button
+                                        v-blur
+                                        :class="btn.class"
+                                        class="table-operate btn_item"
+                                        :type="btn.type"
+                                        :disabled="btn.disabled && btn.disabled(row, field)"
+                                        v-bind="btn.attr"
+                                    >
+                                        <Icon :name="btn.icon" />
+                                        <div v-if="btn.text" :class="btn.icon?'table-operate-text':''">{{ btn.text }}</div>
+                                    </el-button>
+                                </el-tooltip>
+                            </div>
+                        </template>
+                    </el-popconfirm>
+
+                    <!-- 带提示的可拖拽按钮 -->
+                    <el-tooltip
+                        v-if="btn.render == 'moveButton' && ((btn.name == 'weigh-sort' && baTable.auth('sortable')) || btn.name != 'weigh-sort')"
+                        :disabled="btn.title && !btn.disabledTip ? false : true"
+                        :content="btn.title ? t(btn.title) : ''"
+                        placement="top"
+                    >
+                        <el-button
+                            :class="btn.class"
+                            class="table-operate move-button btn_item"
+                            :type="btn.type"
+                            :disabled="btn.disabled && btn.disabled(row, field)"
+                            v-bind="btn.attr"
+                        >
+                            <Icon :name="btn.icon" />
+                            <div v-if="btn.text" :class="btn.icon?'table-operate-text':''">{{ btn.text }}</div>
+                        </el-button>
+                    </el-tooltip>
+                </template>
             </template>
-        </template>
+        </div>
+        <div v-if="field.moreButtons" class="el_more_btns">
+            <el-dropdown trigger="click" :hide-on-click="false">
+                <el-button type="primary" plain class="table-operate btn_item">
+                    更多<el-icon class="el-icon--right"><ArrowDownBold /></el-icon>
+                </el-button>
+                <template #dropdown>
+                    <el-dropdown-menu>
+                        <template v-for="(btn, idx) in field.moreButtons" :key="idx">
+                            <template v-if="btn.display ? btn.display(row, field) : true">
+                                <el-dropdown-item v-if="['basicButton', 'tipButton'].includes(btn.render)" @click="onButtonClick(btn)">
+                                    {{ btn.text }}
+                                </el-dropdown-item>
+                                <el-dropdown-item v-if="btn.render == 'confirmButton'" style="padding: 0;">
+                                    <el-popconfirm
+                                        :disabled="btn.disabled && btn.disabled(row, field)"
+                                        v-bind="btn.popconfirm"
+                                        @confirm="onButtonClick(btn)"
+                                    >
+                                        <template #reference>
+                                            <div style="width: 100%;padding: 5px 16px;">{{ btn.text }}</div>
+                                        </template>
+                                    </el-popconfirm>
+                                </el-dropdown-item>
+                            </template>
+                        </template>
+                    </el-dropdown-menu>
+                </template>
+            </el-dropdown>
+        </div>
+        <div v-if="field.buttons">
+            <template v-for="(btn, idx) in field.buttons" :key="idx">
+                <template v-if="btn.display ? btn.display(row, field) : true">
+                    <!-- 常规按钮 -->
+                    <el-button
+                        v-if="btn.render == 'basicButton'"
+                        v-blur
+                        @click="onButtonClick(btn)"
+                        :class="btn.class"
+                        class="table-operate btn_item"
+                        :type="btn.type"
+                        :disabled="btn.disabled && btn.disabled(row, field)"
+                        v-bind="btn.attr"
+                    >
+                        <Icon :name="btn.icon" />
+                        <div v-if="btn.text" :class="btn.icon?'table-operate-text':''">{{ btn.text }}</div>
+                    </el-button>
+
+                    <!-- 带提示信息的按钮 -->
+                    <el-tooltip
+                        v-if="btn.render == 'tipButton' && ((btn.name == 'edit' && baTable.auth('edit')) || btn.name != 'edit')"
+                        :disabled="btn.title && !btn.disabledTip ? false : true"
+                        :content="btn.title ? t(btn.title) : ''"
+                        placement="top"
+                    >
+                        <el-button
+                            v-blur
+                            @click="onButtonClick(btn)"
+                            :class="btn.class"
+                            class="table-operate btn_item"
+                            :type="btn.type"
+                            :disabled="btn.disabled && btn.disabled(row, field)"
+                            v-bind="btn.attr"
+                        >
+                            <Icon :name="btn.icon" />
+                            <div v-if="btn.text && btn.name != 'edit'" :class="btn.icon?'table-operate-text':''">{{ btn.text }}</div>
+                        </el-button>
+                    </el-tooltip>
+
+                    <!-- 带确认框的按钮 -->
+                    <el-popconfirm
+                        v-if="btn.render == 'confirmButton' && ((btn.name == 'delete' && baTable.auth('del')) || btn.name != 'delete')"
+                        :disabled="btn.disabled && btn.disabled(row, field)"
+                        v-bind="btn.popconfirm"
+                        @confirm="onButtonClick(btn)"
+                    >
+                        <template #reference>
+                            <div>
+                                <el-tooltip :disabled="btn.title ? false : true" :content="btn.title ? t(btn.title) : ''" placement="top">
+                                    <el-button
+                                        v-blur
+                                        :class="btn.class"
+                                        class="table-operate btn_item"
+                                        :type="btn.type"
+                                        :disabled="btn.disabled && btn.disabled(row, field)"
+                                        v-bind="btn.attr"
+                                    >
+                                        <Icon :name="btn.icon" />
+                                        <div v-if="btn.text && btn.name != 'delete'" :class="btn.icon?'table-operate-text':''">{{ btn.text }}</div>
+                                    </el-button>
+                                </el-tooltip>
+                            </div>
+                        </template>
+                    </el-popconfirm>
+
+                    <!-- 带提示的可拖拽按钮 -->
+                    <el-tooltip
+                        v-if="btn.render == 'moveButton' && ((btn.name == 'weigh-sort' && baTable.auth('sortable')) || btn.name != 'weigh-sort')"
+                        :disabled="btn.title && !btn.disabledTip ? false : true"
+                        :content="btn.title ? t(btn.title) : ''"
+                        placement="top"
+                    >
+                        <el-button
+                            :class="btn.class"
+                            class="table-operate move-button btn_item"
+                            :type="btn.type"
+                            :disabled="btn.disabled && btn.disabled(row, field)"
+                            v-bind="btn.attr"
+                        >
+                            <Icon :name="btn.icon" />
+                            <div v-if="btn.text && btn.name != 'weigh-sort'" :class="btn.icon?'table-operate-text':''">{{ btn.text }}</div>
+                        </el-button>
+                    </el-tooltip>
+                </template>
+            </template>
+        </div>
     </div>
 </template>
 
@@ -210,6 +327,7 @@ import { openUrl } from '/@/components/table'
 import { useI18n } from 'vue-i18n'
 import { fullUrl, arrayFullUrl, timeFormat } from '/@/utils/common'
 import type baTableClass from '/@/utils/baTable'
+import { ArrowDownBold } from '@element-plus/icons-vue'
 
 const { t } = useI18n()
 const baTable = inject('baTable') as baTableClass
@@ -284,16 +402,23 @@ const getTagType = (value: string, custom: any): TagProps['type'] => {
 .move-button {
     cursor: move;
 }
-.ml-6 {
-    display: inline-flex;
-    vertical-align: middle;
-    margin-left: 6px;
-}
-.ml-6 + .el-button {
-    margin-left: 6px;
-}
 .ba-render-color {
     height: 25px;
     width: 100%;
+}
+.el_btns {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    > div {
+        display: flex;
+        justify-content: center;
+    }
+    > div:first-child {
+        margin-left: -6px;
+    }
+    .btn_item {
+        margin-left: 6px;
+    }
 }
 </style>

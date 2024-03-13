@@ -152,6 +152,10 @@ declare global {
             | 'slot'
         // 操作按钮组
         buttons?: OptButton[]
+        // 操作前置按钮组
+        beforeButtons?: OptButton[]
+        // 操作更多按钮组
+        moreButtons?: OptButton[]
         // 渲染为Tag时:el-tag 组件的主题
         effect?: TagProps['effect']
         // 渲染为Tag时:el-tag 组件的size
