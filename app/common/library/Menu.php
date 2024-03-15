@@ -3,7 +3,8 @@
 namespace app\common\library;
 
 use Throwable;
-use app\admin\model\MenuRule;
+use app\admin\model\MenuRule as PlatformMenuRule;
+use app\tenant\model\MenuRule as TenantMenuRule;
 
 /**
  * 后台菜单类
@@ -14,14 +15,14 @@ class Menu
      * @param array      $menu
      * @param int|string $parent   父级规则name或id
      * @param string     $mode     添加模式(规则重复时):cover=覆盖旧菜单,rename=重命名新菜单,ignore=忽略
-     * @param string     $position 位置:backend=后台,frontend=前台
+     * @param string     $position 位置:backend=平台端,tenant=租户端
      * @return void
      * @throws Throwable
      */
     public static function create(array $menu, int|string $parent = 0, string $mode = 'cover', string $position = 'backend'): void
     {
         $pid        = 0;
-        $model      = $position == 'backend' ?? new MenuRule();
+        $model      = $position == 'backend' ? new PlatformMenuRule() : new TenantMenuRule();
         $parentRule = $model->where((is_numeric($parent) ? 'id' : 'name'), $parent)->find();
         if ($parentRule) {
             $pid = $parentRule['id'];
@@ -63,7 +64,7 @@ class Menu
      * 删菜单
      * @param string|int $id        规则name或id
      * @param bool       $recursion 是否递归删除子级菜单、是否删除自身，是否删除上级空菜单
-     * @param string     $position  位置:backend=后台,frontend=前台
+     * @param string     $position  位置:backend=平台端,tenant=租户端
      * @return bool
      * @throws Throwable
      */
@@ -72,7 +73,7 @@ class Menu
         if (!$id) {
             return true;
         }
-        $model    = $position == 'backend' ?? new MenuRule();
+        $model    = $position == 'backend' ? new PlatformMenuRule() : new TenantMenuRule();
         $menuRule = $model->where((is_numeric($id) ? 'id' : 'name'), $id)->find();
         if (!$menuRule) {
             return true;
@@ -95,13 +96,13 @@ class Menu
     /**
      * 启用菜单
      * @param string|int $id       规则name或id
-     * @param string     $position 位置:backend=后台,frontend=前台
+     * @param string     $position 位置:backend=平台端,tenant=租户端
      * @return bool
      * @throws Throwable
      */
     public static function enable(string|int $id, string $position = 'backend'): bool
     {
-        $model    = $position == 'backend' ?? new MenuRule();
+        $model    = $position == 'backend' ? new PlatformMenuRule() : new TenantMenuRule();
         $menuRule = $model->where((is_numeric($id) ? 'id' : 'name'), $id)->find();
         if (!$menuRule) {
             return false;
@@ -114,13 +115,13 @@ class Menu
     /**
      * 禁用菜单
      * @param string|int $id       规则name或id
-     * @param string     $position 位置:backend=后台,frontend=前台
+     * @param string     $position 位置:backend=平台端,tenant=租户端
      * @return bool
      * @throws Throwable
      */
     public static function disable(string|int $id, string $position = 'backend'): bool
     {
-        $model    = $position == 'backend' ?? new MenuRule();
+        $model    = $position == 'backend' ? new PlatformMenuRule() : new TenantMenuRule();;
         $menuRule = $model->where((is_numeric($id) ? 'id' : 'name'), $id)->find();
         if (!$menuRule) {
             return false;
