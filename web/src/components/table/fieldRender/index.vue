@@ -130,7 +130,7 @@
                         :disabled="btn.disabled && btn.disabled(row, field)"
                         v-bind="btn.attr"
                     >
-                        <Icon :name="btn.icon" />
+                        <Icon v-if="btn.icon" :name="btn.icon" />
                         <div v-if="btn.text" :class="btn.icon?'table-operate-text':''">{{ btn.text }}</div>
                     </el-button>
 
@@ -150,7 +150,7 @@
                             :disabled="btn.disabled && btn.disabled(row, field)"
                             v-bind="btn.attr"
                         >
-                            <Icon :name="btn.icon" />
+                            <Icon v-if="btn.icon" :name="btn.icon" />
                             <div v-if="btn.text" :class="btn.icon?'table-operate-text':''">{{ btn.text }}</div>
                         </el-button>
                     </el-tooltip>
@@ -173,7 +173,7 @@
                                         :disabled="btn.disabled && btn.disabled(row, field)"
                                         v-bind="btn.attr"
                                     >
-                                        <Icon :name="btn.icon" />
+                                        <Icon v-if="btn.icon" :name="btn.icon" />
                                         <div v-if="btn.text" :class="btn.icon?'table-operate-text':''">{{ btn.text }}</div>
                                     </el-button>
                                 </el-tooltip>
@@ -195,7 +195,7 @@
                             :disabled="btn.disabled && btn.disabled(row, field)"
                             v-bind="btn.attr"
                         >
-                            <Icon :name="btn.icon" />
+                            <Icon v-if="btn.icon" :name="btn.icon" />
                             <div v-if="btn.text" :class="btn.icon?'table-operate-text':''">{{ btn.text }}</div>
                         </el-button>
                     </el-tooltip>
@@ -245,7 +245,7 @@
                         :disabled="btn.disabled && btn.disabled(row, field)"
                         v-bind="btn.attr"
                     >
-                        <Icon :name="btn.icon" />
+                        <Icon v-if="btn.icon" :name="btn.icon" />
                         <div v-if="btn.text" :class="btn.icon?'table-operate-text':''">{{ btn.text }}</div>
                     </el-button>
 
@@ -265,8 +265,8 @@
                             :disabled="btn.disabled && btn.disabled(row, field)"
                             v-bind="btn.attr"
                         >
-                            <Icon :name="btn.icon" />
-                            <div v-if="btn.text && btn.name != 'edit'" :class="btn.icon?'table-operate-text':''">{{ btn.text }}</div>
+                            <Icon v-if="btn.icon" :name="btn.icon" />
+                            <div v-if="btn.text" :class="btn.icon?'table-operate-text':''">{{ btn.text }}</div>
                         </el-button>
                     </el-tooltip>
 
@@ -288,8 +288,8 @@
                                         :disabled="btn.disabled && btn.disabled(row, field)"
                                         v-bind="btn.attr"
                                     >
-                                        <Icon :name="btn.icon" />
-                                        <div v-if="btn.text && btn.name != 'delete'" :class="btn.icon?'table-operate-text':''">{{ btn.text }}</div>
+                                        <Icon v-if="btn.icon" :name="btn.icon" />
+                                        <div v-if="btn.text" :class="btn.icon?'table-operate-text':''">{{ btn.text }}</div>
                                     </el-button>
                                 </el-tooltip>
                             </div>
