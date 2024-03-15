@@ -51,7 +51,6 @@ import FormItem from '/@/components/formItem/index.vue'
 import { buildValidatorData } from '/@/utils/validate'
 import { useConfig } from '/@/stores/config'
 import type baTableClass from '/@/utils/baTable'
-import { buildValidatorData } from '/@/utils/validate'
 
 const config = useConfig()
 const formRef = ref<FormInstance>()
