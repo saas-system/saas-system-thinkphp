@@ -212,7 +212,7 @@
                         <template v-for="(btn, idx) in field.moreButtons" :key="idx">
                             <template v-if="btn.display ? btn.display(row, field) : true">
                                 <el-dropdown-item v-if="['basicButton', 'tipButton'].includes(btn.render)" @click="onButtonClick(btn)">
-                                    {{ btn.text }}
+                                    {{ btn.text!='' ? btn.text : t(btn.title) }}
                                 </el-dropdown-item>
                                 <el-dropdown-item v-if="btn.render == 'confirmButton'" style="padding: 0;">
                                     <el-popconfirm
@@ -221,7 +221,7 @@
                                         @confirm="onButtonClick(btn)"
                                     >
                                         <template #reference>
-                                            <div style="width: 100%;padding: 5px 16px;">{{ btn.text }}</div>
+                                            <div style="width: 100%;padding: 5px 16px;">{{ btn.text!='' ? btn.text : t(btn.title) }}</div>
                                         </template>
                                     </el-popconfirm>
                                 </el-dropdown-item>
