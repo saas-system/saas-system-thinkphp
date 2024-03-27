@@ -7,7 +7,11 @@
         <TableHeader
             :buttons="['refresh', 'add', 'comSearch', 'quickSearch', 'columnDisplay']"
             :quick-search-placeholder="t('Quick search placeholder', { fields: t('tenant.tenant.quick Search Fields') })"
-        />
+        >
+            <el-button v-if="auth('exportTenant')" v-blur class="table-header-operate" type="primary" @click="handleExportTenant">
+                导出租户
+            </el-button>
+        </TableHeader>
 
         <!-- 表格 -->
         <!-- 要使用`el-table`组件原有的属性，直接加在Table标签上即可 -->
@@ -38,7 +42,7 @@ import Admin from '../admin/index.vue'
 import Table from '/@/components/table/index.vue'
 import TableHeader from '/@/components/table/header/index.vue'
 import { ElMessageBox } from "element-plus";
-import { clearDataApi, initDataApi, getTenantConfigApi } from "/@/api/backend/tenant/tenant";
+import { clearDataApi, initDataApi, getTenantConfigApi, exportTenantApi } from "/@/api/backend/tenant/tenant";
 import { auth } from "/@/utils/common";
 import { useAdminInfo } from '/@/stores/adminInfo'
 
@@ -420,6 +424,37 @@ const initDataDialog = () => {
     }).catch(() => {
         baTable.form.items = {};
     })
+}
+
+const handleExportTenant = () => {
+    baTable.form.submitLoading = true
+    let fileName = '导出租户 - ' + currentTime() + '.xlsx'
+    exportTenantApi(baTable.table!.filter, fileName).then(() => {
+        baTable.form.submitLoading = false
+    })
+}
+
+/**
+ * 获取当前时间
+ */
+function currentTime(): string {
+    let date = new Date();
+    let year = date.getFullYear();
+    let month = date.getMonth();
+    let dateArr = [
+        date.getMonth() + 1,
+        date.getDate(),
+        date.getHours(),
+        date.getMinutes(),
+        date.getSeconds(),
+    ];
+    //如果格式是MM则需要此步骤，如果是M格式则此循环注释掉
+    for (let i = 0; i < dateArr.length; i++) {
+        if (dateArr[i] >= 1 && dateArr[i] <= 9) {
+            dateArr[i] = "0" + dateArr[i];
+        }
+    }
+    return year + "" + dateArr[0] + "" + dateArr[1] + "" + dateArr[2] + "" + dateArr[3] + "" + dateArr[4];
 }
 </script>
 

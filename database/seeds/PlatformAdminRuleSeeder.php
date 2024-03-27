@@ -88,7 +88,7 @@ class PlatformAdminRuleSeeder extends Seeder
                         'remark'    => '',
                         'weigh'     => 130,
                         'status'    => 1,
-                        'sublist'   => MenuService::getCommonMenuData('tenant/tenant', ['index', 'add', 'edit', 'del', 'initData', 'clearData', 'getTenantConfig', 'config']),
+                        'sublist'   => MenuService::getCommonMenuData('tenant/tenant', ['index', 'add', 'edit', 'del', 'initData', 'clearData', 'getTenantConfig', 'config', 'exportTenant']),
                     ],
                     [
                         'type'      => 'button',

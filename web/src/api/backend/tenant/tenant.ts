@@ -7,6 +7,7 @@ export const actionUrl = new Map([
     ['getTenantConfig', controllerUrl + 'getTenantConfig'],
     ['clearData', controllerUrl + 'clearData'],
     ['initData', controllerUrl + 'initData'],
+    ['exportTenant', controllerUrl + 'exportTenant'], // 导出租户
 ])
 
 export function getTenantConfigApi(id: number) {
@@ -66,6 +67,23 @@ export function updateTenantConfig(data: object) {
         },
         {
             showSuccessMessage: true,
+        }
+    )
+}
+
+// 导出租户列表
+export function exportTenantApi(data: anyObj, fileName = '') {
+    return createAxios(
+        {
+            url: actionUrl.get('exportTenant'),
+            method: 'get',
+            params: data,
+            responseType: 'blob',
+        },
+        {
+            loading: false,
+            showSuccessMessage: false,
+            fileName,
         }
     )
 }

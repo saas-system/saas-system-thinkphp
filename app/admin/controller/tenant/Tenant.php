@@ -262,4 +262,17 @@ class Tenant extends Backend
 
         $this->success('清除数据成功');
     }
+
+    /**
+     * 导出租户
+     */
+    public function exportTenant()
+    {
+        $dataLimitAdminIds = $this->getDataLimitAdminIds();
+        if ($dataLimitAdminIds && !in_array($this->auth->id, $dataLimitAdminIds)) {
+            $this->error(__('You have no permission'));
+        }
+
+        return (new TenantService())->exportTenant($this->queryBuilder());
+    }
 }

@@ -84,6 +84,7 @@ class MenuService
             'clearData'          => '清除数据',
             'getTenantConfig'    => '获取配置',
             'config'             => '配置',
+            'exportTenant'       => '导出租户',
 
             // 会员相关
             'census'             => '统计',

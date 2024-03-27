@@ -2,6 +2,7 @@
 
 namespace app\common\model\tenant;
 
+use app\common\model\Area;
 use app\common\model\Base;
 use think\model\concern\SoftDelete;
 
@@ -48,6 +49,33 @@ class Tenant extends Base
         }
 
         return true;
+    }
+
+    public function getExpireTimeTextAttr($value, $data)
+    {
+        $expireTime = intval($data['expire_time'] ?? '');
+        return $expireTime ? date('Y-m-d', $expireTime) : '';
+    }
+
+    public function province()
+    {
+        return $this->belongsTo(Area::class, 'province_id');
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(Area::class, 'city_id');
+    }
+
+    public function district()
+    {
+        return $this->belongsTo(Area::class, 'district_id');
+    }
+
+
+    public function config()
+    {
+        return $this->hasOne(TenantConfig::class, 'tenant_id', 'id');
     }
 
 }

@@ -4,6 +4,8 @@ namespace app\common\services\tenant;
 
 use app\admin\model\sms\Log as SmsLog;
 use app\admin\model\TenantAdmin;
+use app\common\exceptions\UserException;
+use app\common\library\SpreadsheetUtil;
 use app\common\model\tenant\Tenant;
 use app\tenant\model\AdminGroup;
 use app\tenant\model\AdminGroupAccess;
@@ -169,6 +171,62 @@ class TenantService
             Log::critical('发送消息提醒失败，失败原因：' . $e->getMessage() . '-' . $e->getLine() . '-' . $e->getTraceAsString());
         }
 
+    }
+
+    /**
+     * 导出比赛报名记录
+     * @param array $queryBuilder
+     * @return string
+     */
+    public function exportTenant(array $queryBuilder)
+    {
+        try {
+            $items           = [];
+            $spreadsheetUtil = new SpreadsheetUtil();
+            $headers         = [
+                'A' => ['title' => '代理商名称', 'width' => 'auto'],
+                'B' => ['title' => '联系人', 'width' => 'auto'],
+                'C' => ['title' => '联系电话', 'width' => 'auto'],
+                'D' => ['title' => '过期时间', 'width' => 'auto']
+            ];
+            $titles          = [];
+            foreach ($headers as $key => $item) {
+                $titles[] = $item['title'];
+                if ($item['width'] == 'auto') {
+                    $spreadsheetUtil->getActiveSheet()->getColumnDimension($key)->setAutoSize(true);
+                } else {
+                    $spreadsheetUtil->getActiveSheet()->getColumnDimension($key)->setWidth($item['width']);
+                }
+            }
+            $spreadsheetUtil->setRowValue($titles, 1); // 头部
+
+            list($where, $alias, $limit, $order) = $queryBuilder;
+            $tenantList = (new Tenant())->withJoin(['province', 'city', 'district', 'config'], 'LEFT')
+                ->alias($alias)
+                ->where($where)
+                ->order('expire_time asc')
+                ->select();
+
+            // 格式化数据
+            foreach ($tenantList as $tenant) {
+                $items[] = [
+                    $tenant->name,
+                    $tenant->contact_name,
+                    $tenant->mobile,
+                    $tenant->expire_time_text
+                ];
+            }
+
+            $spreadsheetUtil->setRowValues($items, 2); // 内容
+
+            // 文件名
+            $fileName  = "租户导出" . time();
+
+            return $spreadsheetUtil->save('', $fileName, false); // 浏览
+        } catch (\Exception $e) {
+            Log::critical("导出租户错误：" . $e->__toString());
+            throw new UserException("导出错误");
+        }
     }
 
 }
