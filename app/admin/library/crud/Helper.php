@@ -8,7 +8,8 @@ use think\Exception;
 use ba\TableManager;
 use think\facade\Db;
 use app\common\library\Menu;
-use app\admin\model\AdminRule;
+use app\admin\model\MenuRule as AdminRule;
+use app\tenant\model\MenuRule as TenantRule;
 use app\admin\model\CrudLog;
 use ba\Exception as BaException;
 use Phinx\Db\Adapter\MysqlAdapter;
@@ -242,14 +243,15 @@ class Helper
 
     /**
      * 获取字段字典数据
-     * @param array  $dict              存储字典数据的变量
-     * @param array  $field             字段数据
-     * @param string $lang              语言
+     * @param array $dict 存储字典数据的变量
+     * @param array $field 字段数据
+     * @param string $lang 语言
      * @param string $translationPrefix 翻译前缀
      */
     public static function getDictData(array &$dict, array $field, string $lang, string $translationPrefix = ''): array
     {
-        if (!$field['comment']) return [];
+        if (!$field['comment'])
+            return [];
         $comment = str_replace(['，', '：'], [',', ':'], $field['comment']);
         if (stripos($comment, ':') !== false && stripos($comment, ',') && stripos($comment, '=') !== false) {
             [$fieldTitle, $item] = explode(':', $comment);
@@ -289,14 +291,15 @@ class Helper
             'fields'     => $data['fields'],
             'connection' => $connection,
             'status'     => $data['status'],
+            'app'        => $data['app'],
         ]);
         return $log->id;
     }
 
     /**
      * 获取 Phinx 的字段类型数据
-     * @param string $type  字段类型
-     * @param array  $field 字段数据
+     * @param string $type 字段类型
+     * @param array $field 字段数据
      * @return array
      */
     public static function getPhinxFieldType(string $type, array $field): array
@@ -328,8 +331,8 @@ class Helper
 
     /**
      * 分析字段limit和精度
-     * @param string $type  字段类型
-     * @param array  $field 字段数据
+     * @param string $type 字段类型
+     * @param array $field 字段数据
      * @return array ['limit' => 10, 'precision' => null, 'scale' => null]
      */
     public static function analyseFieldLimit(string $type, array $field): array
@@ -427,10 +430,10 @@ class Helper
 
     /**
      * 表字段排序
-     * @param string  $tableName    表名
-     * @param array   $fields       字段数据
-     * @param array   $designChange 前端字段改变数据
-     * @param ?string $connection   数据库连接标识
+     * @param string $tableName 表名
+     * @param array $fields 字段数据
+     * @param array $designChange 前端字段改变数据
+     * @param ?string $connection 数据库连接标识
      * @return void
      * @throws Throwable
      */
@@ -439,7 +442,8 @@ class Helper
         if ($designChange) {
             $table = TableManager::phinxTable($tableName, [], false, $connection);
             foreach ($designChange as $item) {
-                if (!$item['sync']) continue;
+                if (!$item['sync'])
+                    continue;
 
                 if (!empty($item['after'])) {
 
@@ -466,7 +470,7 @@ class Helper
 
     /**
      * 表设计处理
-     * @param array $table  表数据
+     * @param array $table 表数据
      * @param array $fields 字段数据
      * @return array
      * @throws Throwable
@@ -493,7 +497,8 @@ class Helper
                 $priorityOpt = false;
                 foreach ($designChange as $item) {
 
-                    if (!$item['sync']) continue;
+                    if (!$item['sync'])
+                        continue;
 
                     if (in_array($item['type'], ['change-field-name', 'del-field']) && !$tableManager->hasColumn($item['oldName'])) {
                         // 字段不存在
@@ -517,7 +522,8 @@ class Helper
                 // 修改字段属性和添加字段操作
                 foreach ($designChange as $item) {
 
-                    if (!$item['sync']) continue;
+                    if (!$item['sync'])
+                        continue;
 
                     if ($item['type'] == 'change-field-attr') {
 
@@ -620,21 +626,22 @@ class Helper
         ];
     }
 
-    public static function parseWebDirNameData($table, $type, $value = ''): array
+    public static function parseWebDirNameData($table, $type, $value = '', $app = 'admin'): array
     {
         $pathArr = [];
+        $dirName = $app == 'admin' ? 'backend' : 'tenant';
         if ($value) {
             $value        = str_replace(['.', '/', '\\', '_'], '/', $value);
             $pathArrTemp  = explode('/', $value);
             $redundantDir = [
-                'web'     => 0,
-                'src'     => 1,
-                'views'   => 2,
-                'lang'    => 2,
-                'backend' => 3,
-                'pages'   => 3,
-                'en'      => 4,
-                'zh-cn'   => 4,
+                'web'    => 0,
+                'src'    => 1,
+                'views'  => 2,
+                'lang'   => 2,
+                $dirName => 3,
+                'pages'  => 3,
+                'en'     => 4,
+                'zh-cn'  => 4,
             ];
             foreach ($pathArrTemp as $key => $item) {
                 if (!array_key_exists($item, $redundantDir) || $key !== $redundantDir[$item]) {
@@ -657,16 +664,17 @@ class Helper
         $webDir['lastName']         = $lastName;
         $webDir['originalLastName'] = $originalLastName;
         if ($type == 'views') {
-            $webDir['views'] = "web/src/views/backend" . ($pathArr ? '/' . implode('/', $pathArr) : '') . "/$lastName";
+            $webDir['views'] = "web/src/views/" . $dirName . ($pathArr ? '/' . implode('/', $pathArr) : '') . "/$lastName";
         } elseif ($type == 'lang') {
             $webDir['lang'] = array_merge($pathArr, [$lastName]);
             $langDir        = ['en', 'zh-cn'];
             foreach ($langDir as $item) {
-                $webDir[$item] = "web/src/lang/backend/$item" . ($pathArr ? '/' . implode('/', $pathArr) : '') . "/$lastName";
+                $webDir[$item] = "web/src/lang/" . $dirName . "/" . "$item" . ($pathArr ? '/' . implode('/', $pathArr) : '') . "/$lastName";
             }
         }
         foreach ($webDir as &$item) {
-            if (is_string($item)) $item = Filesystem::fsFit($item);
+            if (is_string($item))
+                $item = Filesystem::fsFit($item);
         }
         return $webDir;
     }
@@ -694,8 +702,8 @@ class Helper
     /**
      * 组装模板
      * @param string $name
-     * @param array  $data
-     * @param bool   $escape
+     * @param array $data
+     * @param bool $escape
      * @return string
      */
     public static function assembleStub(string $name, array $data, bool $escape = false): string
@@ -811,7 +819,8 @@ class Helper
      */
     public static function analyseFieldDataType(array $field): string
     {
-        if (!empty($field['dataType'])) return $field['dataType'];
+        if (!empty($field['dataType']))
+            return $field['dataType'];
 
         $conciseType = self::analyseFieldType($field);
         $limit       = self::analyseFieldLimit($conciseType, $field);
@@ -888,7 +897,7 @@ class Helper
     /**
      * 判断是否符合指定后缀
      *
-     * @param string       $field     字段名称
+     * @param string $field 字段名称
      * @param string|array $suffixArr 后缀
      * @return bool
      */
@@ -907,13 +916,19 @@ class Helper
      * 创建菜单
      * @throws Throwable
      */
-    public static function createMenu($webViewsDir, $tableComment): void
+    public static function createMenu($webViewsDir, $tableComment, $app): void
     {
-        $menuName = self::getMenuName($webViewsDir);
-        if (!AdminRule::where('name', $menuName)->value('id')) {
+        $menuName  = self::getMenuName($webViewsDir);
+        $menuModel = new AdminRule();
+
+        if ($app == 'tenant') {
+            $menuModel = new TenantRule();
+        }
+
+        if (!$menuModel::where('name', $menuName)->value('id')) {
             $pid = 0;
             foreach ($webViewsDir['path'] as $item) {
-                $pMenu = AdminRule::where('name', $item)->value('id');
+                $pMenu = $menuModel::where('name', $item)->value('id');
                 if ($pMenu) {
                     $pid = $pMenu;
                     continue;
@@ -925,7 +940,7 @@ class Helper
                     'name'  => $item,
                     'path'  => $item,
                 ];
-                $menu = AdminRule::create($menu);
+                $menu = $menuModel::create($menu);
                 $pid  = $menu->id;
             }
 
@@ -934,6 +949,8 @@ class Helper
                 $item['name'] = $menuName . $item['name'];
             }
             $componentPath = str_replace(['\\', 'web/src'], ['/', '/src'], $webViewsDir['views'] . '/' . 'index.vue');
+
+            $position = $app == 'admin' ? 'backend' : 'tenant';
             Menu::create([
                 [
                     'type'      => 'menu',
@@ -945,7 +962,7 @@ class Helper
                     'component' => $componentPath,
                     'children'  => self::$menuChildren,
                 ]
-            ], $pid);
+            ], $pid, 'cover', $position);
         }
     }
 
@@ -974,14 +991,16 @@ class Helper
 
     public static function buildModelAppend($append): string
     {
-        if (!$append) return '';
+        if (!$append)
+            return '';
         $append = self::buildFormatSimpleArray($append);
         return "\n" . self::tab() . "// 追加属性" . "\n" . self::tab() . "protected \$append = $append;\n";
     }
 
     public static function buildModelFieldType(array $fieldType): string
     {
-        if (!$fieldType) return '';
+        if (!$fieldType)
+            return '';
         $maxStrLang = 0;
         foreach ($fieldType as $key => $item) {
             $strLang    = strlen($key);
@@ -1115,7 +1134,7 @@ class Helper
         return $rulesHtml ? "\n" . $rulesHtml : '';
     }
 
-    public static function writeIndexFile($indexVueData, $webViewsDir, $controllerFile): void
+    public static function writeIndexFile($indexVueData, $webViewsDir, $controllerFile, $app): void
     {
         $indexVueData['optButtons']            = self::buildSimpleArray($indexVueData['optButtons']);
         $indexVueData['defaultItems']          = self::getJsonFromArray($indexVueData['defaultItems']);
@@ -1123,8 +1142,11 @@ class Helper
         $indexVueData['dblClickNotEditColumn'] = self::buildSimpleArray($indexVueData['dblClickNotEditColumn']);
         $controllerFile['path'][]              = $controllerFile['originalLastName'];
         $indexVueData['controllerUrl']         = '\'/admin/' . ($controllerFile['path'] ? implode('.', $controllerFile['path']) : '') . '/\'';
-        $indexVueData['componentName']         = ($webViewsDir['path'] ? implode('/', $webViewsDir['path']) . '/' : '') . $webViewsDir['originalLastName'];
-        $indexVueContent                       = self::assembleStub('html/index', $indexVueData);
+        if ($app != 'admin') {
+            $indexVueData['controllerUrl'] = str_replace('admin', $app, $indexVueData['controllerUrl']);
+        }
+        $indexVueData['componentName'] = ($webViewsDir['path'] ? implode('/', $webViewsDir['path']) . '/' : '') . $webViewsDir['originalLastName'];
+        $indexVueContent               = self::assembleStub('html/index', $indexVueData);
         self::writeFile(root_path() . $webViewsDir['views'] . '/' . 'index.vue', $indexVueContent);
     }
 
@@ -1181,7 +1203,8 @@ class Helper
 
     public static function buildFormatSimpleArray($arr, int $tab = 2): string
     {
-        if (!$arr) return '[]';
+        if (!$arr)
+            return '[]';
         $str = '[' . PHP_EOL;
         foreach ($arr as $item) {
             if ($item == 'undefined' || $item == 'false' || is_numeric($item)) {
@@ -1196,7 +1219,8 @@ class Helper
 
     public static function buildSimpleArray($arr): string
     {
-        if (!$arr) return '[]';
+        if (!$arr)
+            return '[]';
         $str = '';
         foreach ($arr as $item) {
             if ($item == 'undefined' || $item == 'false' || is_numeric($item)) {

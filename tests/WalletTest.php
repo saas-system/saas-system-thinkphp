@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 
 ((new \think\App())->http)->run();
 
-class DataTest extends TestCase
+class WalletTest extends TestCase
 {
     public function testData()
     {

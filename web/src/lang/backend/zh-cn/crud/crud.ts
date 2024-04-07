@@ -54,6 +54,9 @@ export default {
     // design
     'Name of the data table': '数据表的名称',
     'Data Table Notes': '数据表注释',
+    'App': '应用类型',
+    'admin': '平台端',
+    'tenant': '租户端',
     'Generate CRUD code': '生成 CRUD 代码',
     'give up': '放弃',
     'Table Quick Search Fields': '表格快速搜索字段',

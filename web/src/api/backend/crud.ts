@@ -15,13 +15,14 @@ export function generate(data: anyObj) {
     )
 }
 
-export function getFileData(table: string, commonModel = 0) {
+export function getFileData(table: string, commonModel = 0,app = 'admin') {
     return createAxios({
         url: url + 'getFileData',
         method: 'get',
         params: {
             table: table,
             commonModel: commonModel,
+            app:app,
         },
     })
 }

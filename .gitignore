@@ -45,3 +45,4 @@ pnpm-debug.log*
 *.local
 !.gitkeep
 .svn
+.phpunit.result.cache

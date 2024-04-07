@@ -57,6 +57,7 @@ class CommonTable extends Migrator
 
         $table = $this->table('crud_log', ['collation' => 'utf8mb4_unicode_ci', 'comment' => '公共 - crud记录表']);
         $table->addColumn('table_name', 'string', ['limit' => 200, 'default' => '', 'comment' => '数据表名'])
+            ->addColumn('app', 'enum', ['values' => ['admin', 'tenant'], 'null' => false, 'default' => 'admin', 'comment' => '应用类型:admin=平台端,tenant=租户端'])
             ->addColumn('table', 'text', ['comment' => '数据表数据'])
             ->addColumn('fields', 'text', ['comment' => '字段数据'])
             ->addColumn('status', 'enum', ['values' => ['delete', 'success', 'error', 'start'], 'null' => false, 'default' => 'start', 'comment' => '状态:delete=已删除,success=成功,error=失败,start=生成中'])

@@ -2,6 +2,7 @@
 
 namespace app\admin\controller\crud;
 
+use app\Request;
 use Throwable;
 use ba\Exception;
 use ba\Filesystem;
@@ -66,6 +67,7 @@ class Crud extends Backend
         parent::initialize();
     }
 
+
     /**
      * 开始生成
      * @throws Throwable
@@ -75,6 +77,7 @@ class Crud extends Backend
         $type   = $this->request->post('type', '');
         $table  = $this->request->post('table', []);
         $fields = $this->request->post('fields', [], 'clean_xss,htmlspecialchars_decode_improve');
+        $app    = $this->request->post('app', 'tenant');
 
         if (!$table || !$fields || !isset($table['name']) || !$table['name']) {
             $this->error(__('Parameter error'));
@@ -86,6 +89,7 @@ class Crud extends Backend
                 'table'  => $table,
                 'fields' => $fields,
                 'status' => 'start',
+                'app'    => $app,
             ]);
 
             // 表名称
@@ -103,11 +107,11 @@ class Crud extends Backend
             $tableComment = mb_substr($table['comment'], -1) == '表' ? mb_substr($table['comment'], 0, -1) . '管理' : $table['comment'];
 
             // 生成文件信息解析
-            $modelFile      = Helper::parseNameData($table['isCommonModel'] ? 'common' : 'admin', $tableName, 'model', $table['modelFile']);
-            $validateFile   = Helper::parseNameData('admin', $tableName, 'validate', $table['validateFile']);
-            $controllerFile = Helper::parseNameData('admin', $tableName, 'controller', $table['controllerFile']);
-            $webViewsDir    = Helper::parseWebDirNameData($tableName, 'views', $table['webViewsDir']);
-            $webLangDir     = Helper::parseWebDirNameData($tableName, 'lang', $table['webViewsDir']);
+            $modelFile      = Helper::parseNameData($table['isCommonModel'] ? 'common' : $app, $tableName, 'model', $table['modelFile']);
+            $validateFile   = Helper::parseNameData($app, $tableName, 'validate', $table['validateFile']);
+            $controllerFile = Helper::parseNameData($app, $tableName, 'controller', $table['controllerFile']);
+            $webViewsDir    = Helper::parseWebDirNameData($tableName, 'views', $table['webViewsDir'], $app);
+            $webLangDir     = Helper::parseWebDirNameData($tableName, 'lang', $table['webViewsDir'], $app);
 
             // 语言翻译前缀
             $this->webTranslate = implode('.', $webLangDir['lang']) . '.';
@@ -196,7 +200,7 @@ class Crud extends Backend
 
                 // 表单项
                 if (in_array($field['name'], $table['formFields'])) {
-                    $this->formVueData['formFields'][] = $this->getFormField($field, $columnDict);
+                    $this->formVueData['formFields'][] = $this->getFormField($field, $columnDict, $app);
                 }
 
                 // 表格列
@@ -206,7 +210,7 @@ class Crud extends Backend
 
                 // 关联表数据解析
                 if (in_array($field['designType'], ['remoteSelect', 'remoteSelects'])) {
-                    $this->parseJoinData($field, $table);
+                    $this->parseJoinData($field, $table, $app);
                 }
 
                 // 模型方法
@@ -266,13 +270,13 @@ class Crud extends Backend
             // 写入index.vue代码
             $this->indexVueData['tablePk']      = $tablePk;
             $this->indexVueData['webTranslate'] = $this->webTranslate;
-            Helper::writeIndexFile($this->indexVueData, $webViewsDir, $controllerFile);
+            Helper::writeIndexFile($this->indexVueData, $webViewsDir, $controllerFile, $app);
 
             // 写入form.vue代码
             Helper::writeFormFile($this->formVueData, $webViewsDir, $fields, $this->webTranslate);
 
             // 生成菜单
-            Helper::createMenu($webViewsDir, $tableComment);
+            Helper::createMenu($webViewsDir, $tableComment, $app);
 
             Helper::recordCrudStatus([
                 'id'     => $crudLogId,
@@ -289,7 +293,10 @@ class Crud extends Backend
                 'id'     => $crudLogId ?? 0,
                 'status' => 'error',
             ]);
-            if (env('app_debug', false)) throw $e;
+            if (env('app_debug', false)) {
+                throw $e;
+            }
+
             $this->error($e->getMessage());
         }
 
@@ -327,6 +334,7 @@ class Crud extends Backend
         $this->success('', [
             'table'  => $info['table'],
             'fields' => $info['fields'],
+            'app'    => $info['app'],
         ]);
     }
 
@@ -341,7 +349,9 @@ class Crud extends Backend
         if (!$info) {
             $this->error(__('Record not found'));
         }
-        $webLangDir = Helper::parseWebDirNameData($info['table']['name'], 'lang', $info['table']['webViewsDir']);
+
+        $app        = $info['app'] ?? '';
+        $webLangDir = Helper::parseWebDirNameData($info['table']['name'], 'lang', $info['table']['webViewsDir'], $app);
         $files      = [
             $webLangDir['en'] . '.ts',
             $webLangDir['zh-cn'] . '.ts',
@@ -361,7 +371,8 @@ class Crud extends Backend
             }
 
             // 删除菜单
-            Menu::delete(Helper::getMenuName($webLangDir), true);
+            $position = $app == 'admin' ? 'backend' : 'tenant';
+            Menu::delete(Helper::getMenuName($webLangDir), true, $position);
 
             Helper::recordCrudStatus([
                 'id'     => $id,
@@ -381,29 +392,30 @@ class Crud extends Backend
     {
         $table       = $this->request->get('table');
         $commonModel = $this->request->get('commonModel/b');
+        $app         = $this->request->get('app', 'admin');
 
         if (!$table) {
             $this->error(__('Parameter error'));
         }
 
         try {
-            $modelFile      = Helper::parseNameData($commonModel ? 'common' : 'admin', $table, 'model');
-            $validateFile   = Helper::parseNameData('admin', $table, 'validate');
-            $controllerFile = Helper::parseNameData('admin', $table, 'controller');
-            $webViewsDir    = Helper::parseWebDirNameData($table, 'views');
+            $modelFile      = Helper::parseNameData($commonModel ? 'common' : $app, $table, 'model');
+            $validateFile   = Helper::parseNameData($app, $table, 'validate');
+            $controllerFile = Helper::parseNameData($app, $table, 'controller');
+            $webViewsDir    = Helper::parseWebDirNameData($table, 'views', '', $app);
         } catch (Throwable $e) {
             $this->error($e->getMessage());
         }
 
         // 模型和控制器文件和文件列表
-        $adminModelFiles      = Filesystem::getDirFiles(root_path() . 'app' . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR);
+        $adminModelFiles      = Filesystem::getDirFiles(root_path() . 'app' . DIRECTORY_SEPARATOR . $app . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR);
         $commonModelFiles     = Filesystem::getDirFiles(root_path() . 'app' . DIRECTORY_SEPARATOR . 'common' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR);
-        $adminControllerFiles = get_controller_list();
+        $adminControllerFiles = get_controller_list($app);
 
         $modelFileList   = [];
         $controllerFiles = [];
         foreach ($adminModelFiles as $item) {
-            $item                 = Filesystem::fsFit('app/admin/model/' . $item);
+            $item                 = Filesystem::fsFit("app/{$app}/model/" . $item);
             $modelFileList[$item] = $item;
         }
         foreach ($commonModelFiles as $item) {
@@ -425,7 +437,7 @@ class Crud extends Backend
             if (in_array($item, $outExcludeController)) {
                 continue;
             }
-            $item                   = Filesystem::fsFit('app/admin/controller/' . $item);
+            $item                   = Filesystem::fsFit("app/{$app}/controller/" . $item);
             $controllerFiles[$item] = $item;
         }
 
@@ -511,6 +523,7 @@ class Crud extends Backend
         $table          = $this->request->post('table');
         $controllerFile = $this->request->post('controllerFile', '');
         $connection     = $this->request->post('connection');
+        $app            = $this->request->post('app', 'admin');
 
         if (!$table) {
             $this->error(__('Parameter error'));
@@ -520,7 +533,7 @@ class Crud extends Backend
 
         try {
             if (!$controllerFile) {
-                $controllerFile = Helper::parseNameData('admin', $table, 'controller')['rootFileName'];
+                $controllerFile = Helper::parseNameData($app, $table, 'controller')['rootFileName'];
             }
         } catch (Throwable $e) {
             $this->error($e->getMessage());
@@ -545,7 +558,7 @@ class Crud extends Backend
      * @param $table
      * @throws Throwable
      */
-    private function parseJoinData($field, $table): void
+    private function parseJoinData($field, $table, $app): void
     {
         $dictEn   = [];
         $dictZhCn = [];
@@ -563,7 +576,7 @@ class Crud extends Backend
 
             // 建立关联模型代码文件
             if (!$field['form']['remote-model'] || !file_exists(root_path() . $field['form']['remote-model'])) {
-                $joinModelFile = Helper::parseNameData('admin', $tableName, 'model', $field['form']['remote-model']);
+                $joinModelFile = Helper::parseNameData($app, $tableName, 'model', $field['form']['remote-model']);
                 if (!file_exists(root_path() . $joinModelFile['rootFileName'])) {
                     $joinModelData['append']             = [];
                     $joinModelData['methods']            = [];
@@ -582,7 +595,8 @@ class Crud extends Backend
                     foreach ($columns as $column) {
                         $joinFieldsMap[$column['name']] = $column['designType'];
                         $this->parseModelMethods($column, $joinModelData);
-                        if ($column['primaryKey']) $joinTablePk = $column['name'];
+                        if ($column['primaryKey'])
+                            $joinTablePk = $column['name'];
                     }
                     $weighKey = array_search('weigh', $joinFieldsMap);
                     if ($weighKey !== false) {
@@ -625,7 +639,9 @@ class Crud extends Backend
             }
 
             foreach ($relationFields as $relationField) {
-                if (!array_key_exists($relationField, $columns)) continue;
+                if (!array_key_exists($relationField, $columns)) {
+                    continue;
+                }
                 $relationFieldPrefix     = $relationName . '.';
                 $relationFieldLangPrefix = strtolower($relationName) . '__';
                 Helper::getDictData($dictEn, $columns[$relationField], 'en', $relationFieldLangPrefix);
@@ -656,7 +672,7 @@ class Crud extends Backend
                     $columns[$relationField]['table']['remote']          = [
                         'pk'        => TableManager::tableName($field['form']['remote-table']) . '.' . ($field['form']['remote-pk'] ?? 'id'),
                         'field'     => $field['form']['remote-field'] ?? 'name',
-                        'remoteUrl' => $this->getRemoteSelectUrl($field),
+                        'remoteUrl' => $this->getRemoteSelectUrl($field, $app),
                         'multiple'  => 'true',
                     ];
                     $this->indexVueData['tableColumn'][]                 = $this->getTableColumn($columns[$relationField], $columnDict, '', $relationFieldLangPrefix);
@@ -753,7 +769,7 @@ class Crud extends Backend
      * 组装前台表单的数据
      * @throws Throwable
      */
-    private function getFormField($field, $columnDict): array
+    private function getFormField($field, $columnDict, $app): array
     {
         // 表单项属性
         $formField = [
@@ -775,7 +791,7 @@ class Crud extends Backend
         } elseif ($field['designType'] == 'remoteSelect' || $field['designType'] == 'remoteSelects') {
             $formField[':input-attr']['pk']         = TableManager::tableName($field['form']['remote-table']) . '.' . ($field['form']['remote-pk'] ?? 'id');
             $formField[':input-attr']['field']      = $field['form']['remote-field'] ?? 'name';
-            $formField[':input-attr']['remote-url'] = $this->getRemoteSelectUrl($field);
+            $formField[':input-attr']['remote-url'] = $this->getRemoteSelectUrl($field, $app);
         } elseif ($field['designType'] == 'number') {
             $formField[':input-attr']['step'] = (int)($field['form']['step'] ?? 1);
             $formField['v-model.number']      = $formField['v-model'];
@@ -816,9 +832,10 @@ class Crud extends Backend
         return $formField;
     }
 
-    private function getRemoteSelectUrl($field): string
+    private function getRemoteSelectUrl($field, $app): string
     {
-        if ($field['form']['remote-url']) return $field['form']['remote-url'];
+        if ($field['form']['remote-url'])
+            return $field['form']['remote-url'];
         $url = '';
         if ($field['form']['remote-controller']) {
             $pathArr      = [];
@@ -826,7 +843,7 @@ class Crud extends Backend
             $controller   = str_replace('.php', '', $controller);
             $redundantDir = [
                 'app'        => 0,
-                'admin'      => 1,
+                $app         => 1,
                 'controller' => 2,
             ];
             foreach ($controller as $key => $item) {
@@ -835,7 +852,7 @@ class Crud extends Backend
                 }
             }
             $url = count($pathArr) > 1 ? implode('.', $pathArr) : $pathArr[0];
-            $url = '/admin/' . $url . '/index';
+            $url = "/{$app}/" . $url . '/index';
         }
         return $url;
     }
