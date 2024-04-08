@@ -85,6 +85,7 @@ class MenuService
             'getTenantConfig'    => '获取配置',
             'config'             => '配置',
             'exportTenant'       => '导出租户',
+            'autoLogin'          => '自动登录',
 
             // 会员相关
             'census'             => '统计',

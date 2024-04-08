@@ -3,6 +3,8 @@
 namespace app\admin\controller\tenant;
 
 use app\common\controller\Backend;
+use app\common\facade\Token;
+use app\tenant\library\TenantAuth;
 use think\db\exception\PDOException;
 use think\exception\ValidateException;
 use think\facade\Db;
@@ -152,7 +154,7 @@ class Admin extends Backend
              * 由于有密码字段-对方法进行重写
              * 数据验证
              */
-            if ($this->modelValidate) {
+            if ($this->modelValidate && (isset($data['nickname']) && isset($data['username']))) {
                 try {
                     $validate = str_replace("\\model\\", "\\validate\\", get_class($this->model));
                     $validate = new $validate;
@@ -162,15 +164,11 @@ class Admin extends Backend
                 }
             }
 
-            if ($this->auth->id == $data['id'] && $data['status'] == '0') {
-                $this->error(__('Please use another administrator account to disable the current account!'));
-            }
-
             if (isset($data['password']) && $data['password']) {
                 $this->model->resetPassword($data['id'], $data['password']);
             }
 
-            if (implode(',', $row->group_arr) !== implode(',', $data['group_arr'])) {
+            if (isset($data['group_arr']) && implode(',', $row->group_arr) !== implode(',', $data['group_arr'])) {
                 $groupAccess = [];
                 foreach ($data['group_arr'] as $datum) {
                     $groupAccess[] = [
@@ -216,5 +214,37 @@ class Admin extends Backend
     public function del(array $ids = []): void
     {
         $this->error('禁止删除');
+    }
+
+    /**
+     * 自动登录租户账号
+     */
+    public function autoLogin($id = null): void
+    {
+        $tenantAdmin = $this->model->find($id);
+        if (!$tenantAdmin) {
+            $this->error(__('Record not found'));
+        }
+
+        $dataLimitAdminIds = $this->getDataLimitAdminIds();
+        if ($dataLimitAdminIds && !in_array($tenantAdmin[$this->dataLimitField], $dataLimitAdminIds)) {
+            $this->error(__('You have no permission'));
+        }
+
+        $auth = TenantAuth::instance();
+
+        // 随机生成token
+        $token = Random::uuid();
+        Token::set($token, 'tenant', $tenantAdmin->id, $auth->keeptime);
+
+        // 登录初始化
+        if(!$auth->init($token)){
+            $this->error($auth->getError());
+        }
+
+        $this->success('登录成功', [
+            'userInfo'  => $auth->getInfo(),
+            'routePath' => '/tenant'
+        ]);
     }
 }

@@ -39,7 +39,7 @@
                         :key="('group-' + baTable.form.items!.id)"
                         :input-attr="{
                             multiple: true,
-                            params: { isTree: true },
+                            params: { isTree: true},
                             field: 'name',
                             'remote-url': 'admin/tenant.Group/index?tenant_id=' + baTable.form.items!.tenant_id
                         }"

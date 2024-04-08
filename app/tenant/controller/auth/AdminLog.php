@@ -16,6 +16,10 @@ class AdminLog extends Backend
 
     protected array|string $quickSearchField = ['title'];
 
+    protected string|int|bool $dataLimit = 'parent';
+
+    protected array $withJoinTable = ['admin'];
+
     public function initialize(): void
     {
         parent::initialize();
@@ -32,11 +36,9 @@ class AdminLog extends Backend
         }
 
         list($where, $alias, $limit, $order) = $this->queryBuilder();
-        if (!$this->auth->isSuperAdmin()) {
-            $where[] = ['admin_id', '=', $this->auth->id];
-        }
+
         $res = $this->model
-            ->permission($this->auth->tenant_id)
+            ->permission($this->auth->tenant_id, 'admin_log')
             ->withJoin($this->withJoinTable, $this->withJoinType)
             ->alias($alias)
             ->where($where)

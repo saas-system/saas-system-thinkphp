@@ -444,31 +444,22 @@ class TenantAuth extends \ba\Auth
      */
     public function getAllAuthGroups(string $dataLimit): array
     {
-        // 当前管理员拥有的权限
-        $rules         = $this->getRuleIds();
-        $allAuthGroups = [];
-        $groups        = AdminGroup::where('status', '1')->select();
+        $children = [];
+        $groups = Db::name($this->adminGroupAccessTable)
+            ->alias('aga')
+            ->field('aga.id, aga.group_id, ag.name')
+            ->where('aga.uid', $this->id)
+            ->join($this->config['auth_group'] . ' ag', 'aga.group_id = ag.id', 'LEFT')
+            ->select();
         foreach ($groups as $group) {
-            if ($group['rules'] == '*') {
-                continue;
+            // 系统管理组 可以显示同级别
+            if($dataLimit == 'allAuth' || ($dataLimit == 'allAuthAndOthers' && $group['name'] == '系统管理组')){
+                $children[] = $group['group_id'];
             }
-            $groupRules = explode(',', $group['rules']);
 
-            // 及时break, array_diff 等没有 in_array 快
-            $all = true;
-            foreach ($groupRules as $groupRule) {
-                if (!in_array($groupRule, $rules)) {
-                    $all = false;
-                    break;
-                }
-            }
-            if ($all) {
-                if ($dataLimit == 'allAuth' || ($dataLimit == 'allAuthAndOthers' && array_diff($rules, $groupRules))) {
-                    $allAuthGroups[] = $group['id'];
-                }
-            }
+            $this->getGroupChildGroups($group['group_id'], $children);
         }
-        return $allAuthGroups;
+        return array_unique($children);
     }
 
     /**
