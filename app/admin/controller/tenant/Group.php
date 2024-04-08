@@ -34,13 +34,11 @@ class Group extends Backend
 
     /**
      * 远程select初始化传值
-     * @var array
      */
-    protected array $initValue;
+    protected array|string $initValue;
 
     /**
      * 搜索关键词
-     * @var array
      */
     protected string $keyword;
 
@@ -62,7 +60,7 @@ class Group extends Backend
         $this->tree  = Tree::instance();
 
         $isTree          = $this->request->param('isTree', true);
-        $this->initValue = $this->request->get("initValue/a", []);
+        $this->initValue = $this->request->get("initValue/a", '');
         $this->keyword   = $this->request->request("quickSearch");
 
         // 有初始化值时不组装树状（初始化出来的值更好看）

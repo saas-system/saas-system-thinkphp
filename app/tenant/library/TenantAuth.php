@@ -447,13 +447,14 @@ class TenantAuth extends \ba\Auth
         $children = [];
         $groups = Db::name($this->adminGroupAccessTable)
             ->alias('aga')
-            ->field('aga.id, aga.group_id, ag.name')
+            ->field('aga.id, aga.group_id, ag.name, p_ag.pid as parent_pid')
             ->where('aga.uid', $this->id)
             ->join($this->config['auth_group'] . ' ag', 'aga.group_id = ag.id', 'LEFT')
+            ->join($this->config['auth_group'] . ' p_ag', 'ag.pid = p_ag.id', 'LEFT')
             ->select();
         foreach ($groups as $group) {
             // 系统管理组 可以显示同级别
-            if($dataLimit == 'allAuth' || ($dataLimit == 'allAuthAndOthers' && $group['name'] == '系统管理组')){
+            if($dataLimit == 'allAuth' || ($dataLimit == 'allAuthAndOthers' && $group['parent_pid'] == 0)){
                 $children[] = $group['group_id'];
             }
 
