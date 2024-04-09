@@ -41,8 +41,8 @@ class PlatformAdminTable extends Migrator
             ->addColumn('salt', 'string', ['limit' => 30, 'null' => false, 'default' => '', 'comment' => '密码盐'])
             ->addColumn('motto', 'string', ['limit' => 255, 'null' => false, 'default' => '', 'comment' => '签名'])
             ->addColumn('status', 'enum', ['values' => ['1', '0'], 'null' => false, 'default' => '1', 'comment' => '状态:0=禁用,1=启用'])
-            ->addColumn('create_time', 'integer', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '创建时间'])
-            ->addColumn('update_time', 'integer', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '更新时间'])
+            ->addColumn('create_time', 'biginteger', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '创建时间'])
+            ->addColumn('update_time', 'biginteger', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '更新时间'])
             ->addIndex(['username'], ['unique' => true, 'name' => 'username'])
             ->create();
 
@@ -55,7 +55,7 @@ class PlatformAdminTable extends Migrator
             ->addColumn('data', 'text', ['null' => false, 'comment' => '请求数据'])
             ->addColumn('ip', 'string', ['limit' => 50, 'null' => false, 'default' => '', 'comment' => 'IP'])
             ->addColumn('useragent', 'string', ['limit' => 255, 'null' => false, 'default' => '', 'comment' => 'User-Agent'])
-            ->addColumn('create_time', 'integer', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '创建时间'])
+            ->addColumn('create_time', 'biginteger', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '创建时间'])
             ->addIndex(['username'], ['name' => 'name'])
             ->create();
     }

@@ -43,8 +43,8 @@ class TenantConfigTable extends Migrator
             ->addColumn('remind_admin_ids', 'string', ['limit' => 255, 'default' => '', 'comment' => '提醒管理员IDS'])
 
             // 时间相关
-            ->addColumn('create_time', 'integer', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '创建时间'])
-            ->addColumn('update_time', 'integer', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '更新时间'])
+            ->addColumn('create_time', 'biginteger', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '创建时间'])
+            ->addColumn('update_time', 'biginteger', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '更新时间'])
             ->addIndex('tenant_id')
             ->create();
     }

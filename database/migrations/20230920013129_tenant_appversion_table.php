@@ -36,9 +36,9 @@ class TenantAppversionTable extends Migrator
             ->addColumn('url', 'string', ['limit' => 255, 'null' => false, 'default' => '', 'comment' => '下载地址'])
             ->addColumn('enforce', 'integer', ['limit' => 1, 'null' => false, 'default' => 0, 'comment' => '强制更新:1=是,0=否'])
             ->addColumn('status', 'integer', ['limit' => 1, 'null' => false, 'default' => 1, 'comment' => '状态:1=显示,0=隐藏'])
-            ->addColumn('create_time', 'integer', ['limit' => 11, 'null' => false, 'default' => 0, 'comment' => '添加时间'])
-            ->addColumn('update_time', 'integer', ['limit' => 11, 'null' => false, 'default' => 0, 'comment' => '修改时间'])
-            ->addColumn('delete_time', 'integer', ['limit' => 11, 'null' => true, 'default' => null, 'comment' => '删除时间'])
+            ->addColumn('create_time', 'biginteger', ['limit' => 11, 'null' => false, 'default' => 0, 'comment' => '添加时间'])
+            ->addColumn('update_time', 'biginteger', ['limit' => 11, 'null' => false, 'default' => 0, 'comment' => '修改时间'])
+            ->addColumn('delete_time', 'biginteger', ['limit' => 11, 'null' => true, 'default' => null, 'comment' => '删除时间'])
 
             ->addIndex(['version_code'], ['unique' => true])
             ->create();

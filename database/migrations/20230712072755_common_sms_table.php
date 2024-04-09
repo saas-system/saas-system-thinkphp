@@ -37,8 +37,8 @@ class CommonSmsTable extends Migrator
             ->addColumn('status', 'boolean', ['default' => 1, 'comment' => '状态:0=禁用,1=启用'])
 
             // 时间
-            ->addColumn('create_time', 'integer', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '创建时间'])
-            ->addColumn('update_time', 'integer', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '更新时间'])
+            ->addColumn('create_time', 'biginteger', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '创建时间'])
+            ->addColumn('update_time', 'biginteger', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '更新时间'])
             ->create();
 
         $table = $this->table('sms_variable', ['collation' => 'utf8mb4_unicode_ci', 'comment' => '公共 -短信模版变量表']);
@@ -54,8 +54,8 @@ class CommonSmsTable extends Migrator
             ->addColumn('status', 'boolean', ['default' => 1, 'comment' => '状态:0=禁用,1=启用'])
 
             // 时间
-            ->addColumn('create_time', 'integer', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '创建时间'])
-            ->addColumn('update_time', 'integer', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '更新时间'])
+            ->addColumn('create_time', 'biginteger', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '创建时间'])
+            ->addColumn('update_time', 'biginteger', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '更新时间'])
             ->create();
 
         $table = $this->table('sms_log', ['collation' => 'utf8mb4_unicode_ci', 'comment' => '公共 -短信发送记录表']);
@@ -72,8 +72,8 @@ class CommonSmsTable extends Migrator
 
             // 时间
 
-            ->addColumn('create_time', 'integer', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '创建时间'])
-            ->addColumn('update_time', 'integer', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '更新时间'])
+            ->addColumn('create_time', 'biginteger', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '创建时间'])
+            ->addColumn('update_time', 'biginteger', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '更新时间'])
             ->addIndex('tenant_id')
             ->create();
     }

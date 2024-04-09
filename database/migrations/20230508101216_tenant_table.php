@@ -44,9 +44,9 @@ class TenantTable extends Migrator
 
             // 时间相关
             ->addColumn('expire_time', 'integer', ['comment' => '过期时间', 'null' => true])
-            ->addColumn('create_time', 'integer', ['limit' => 10, 'comment' => '创建时间'])
-            ->addColumn('update_time', 'integer', ['limit' => 10, 'comment' => '更新时间'])
-            ->addColumn('delete_time', 'integer', ['comment' => '删除时间', 'null' => true])
+            ->addColumn('create_time', 'biginteger', ['limit' => 10, 'comment' => '创建时间'])
+            ->addColumn('update_time', 'biginteger', ['limit' => 10, 'comment' => '更新时间'])
+            ->addColumn('delete_time', 'biginteger', ['comment' => '删除时间', 'null' => true])
             ->setPrimaryKey('id')
             ->create();
     }

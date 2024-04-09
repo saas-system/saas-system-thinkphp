@@ -49,8 +49,8 @@ class CommonTable extends Migrator
             ->addColumn('quote', 'integer', ['null' => false, 'default' => 0, 'comment' => '上传(引用)次数'])
             ->addColumn('storage', 'string', ['limit' => 50, 'null' => false, 'default' => '', 'comment' => '存储方式'])
             ->addColumn('sha1', 'string', ['limit' => 40, 'null' => false, 'default' => '', 'comment' => 'sha1编码'])
-            ->addColumn('create_time', 'integer', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '创建时间'])
-            ->addColumn('last_upload_time', 'integer', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '最后上传时间'])
+            ->addColumn('create_time', 'biginteger', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '创建时间'])
+            ->addColumn('last_upload_time', 'biginteger', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '最后上传时间'])
             ->addIndex(['admin_id'])
             ->addIndex(['user_id'])
             ->create();
@@ -63,7 +63,7 @@ class CommonTable extends Migrator
             ->addColumn('status', 'enum', ['values' => ['delete', 'success', 'error', 'start'], 'null' => false, 'default' => 'start', 'comment' => '状态:delete=已删除,success=成功,error=失败,start=生成中'])
 
             // 时间相关
-            ->addColumn('create_time', 'integer', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '创建时间'])
+            ->addColumn('create_time', 'biginteger', ['limit' => 10, 'null' => true, 'signed' => false, 'default' => null, 'comment' => '创建时间'])
             ->create();
 
         // token记录表
@@ -71,8 +71,8 @@ class CommonTable extends Migrator
         $table->addColumn('token', 'string', ['limit' => 50, 'null' => false, 'comment' => 'Token'])
             ->addColumn('type', 'string', ['limit' => 15, 'null' => false, 'comment' => '类型'])
             ->addColumn('user_id', 'integer', ['limit' => 10, 'signed' => false, 'null' => false, 'default' => 0, 'comment' => '用户ID'])
-            ->addColumn('create_time', 'integer', ['limit' => 10, 'signed' => false, 'null' => true, 'default' => null, 'comment' => '创建时间'])
-            ->addColumn('expire_time', 'integer', ['limit' => 10, 'signed' => false, 'null' => true, 'default' => null, 'comment' => '过期时间'])
+            ->addColumn('create_time', 'biginteger', ['limit' => 10, 'signed' => false, 'null' => true, 'default' => null, 'comment' => '创建时间'])
+            ->addColumn('expire_time', 'biginteger', ['limit' => 10, 'signed' => false, 'null' => true, 'default' => null, 'comment' => '过期时间'])
             ->addIndex(['token'], ['unique' => true])
             ->create();
 
@@ -81,8 +81,8 @@ class CommonTable extends Migrator
         $table->addColumn('key', 'string', ['limit' => 32, 'null' => false, 'default' => '', 'comment' => '验证码Key'])
             ->addColumn('code', 'string', ['limit' => 32, 'null' => false, 'default' => '', 'comment' => '验证码(加密后的,用于验证)'])
             ->addColumn('captcha', 'text', ['comment' => '验证码数据'])
-            ->addColumn('create_time', 'integer', ['limit' => 10, 'signed' => false, 'null' => true, 'default' => null, 'comment' => '创建时间'])
-            ->addColumn('expire_time', 'integer', ['limit' => 10, 'signed' => false, 'null' => true, 'default' => null, 'comment' => '过期时间'])
+            ->addColumn('create_time', 'biginteger', ['limit' => 10, 'signed' => false, 'null' => true, 'default' => null, 'comment' => '创建时间'])
+            ->addColumn('expire_time', 'biginteger', ['limit' => 10, 'signed' => false, 'null' => true, 'default' => null, 'comment' => '过期时间'])
             ->addIndex('key', ['unique' => true])
             ->create();
 
@@ -94,9 +94,9 @@ class CommonTable extends Migrator
             ->addColumn('content', 'text', ['comment' => '内容', 'limit' => \Phinx\Db\Adapter\MysqlAdapter::TEXT_LONG])
 
             // 时间相关
-            ->addColumn('create_time', 'integer', ['limit' => 10, 'signed' => false, 'null' => true, 'default' => null, 'comment' => '添加时间'])
-            ->addColumn('update_time', 'integer', ['limit' => 10, 'signed' => false, 'null' => true, 'default' => null, 'comment' => '修改时间'])
-            ->addColumn('delete_time', 'integer', ['comment' => '删除时间', 'null' => true])
+            ->addColumn('create_time', 'biginteger', ['limit' => 10, 'signed' => false, 'null' => true, 'default' => null, 'comment' => '添加时间'])
+            ->addColumn('update_time', 'biginteger', ['limit' => 10, 'signed' => false, 'null' => true, 'default' => null, 'comment' => '修改时间'])
+            ->addColumn('delete_time', 'biginteger', ['comment' => '删除时间', 'null' => true])
             ->create();
     }
 }

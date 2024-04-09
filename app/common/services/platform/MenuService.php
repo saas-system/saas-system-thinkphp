@@ -88,32 +88,7 @@ class MenuService
             'autoLogin'          => '自动登录',
 
             // 会员相关
-            'census'             => '统计',
-            'recharge'           => '充值',
-            'changeScore'        => '积分变动',
-            'changePoint'        => '竞技点变动',
-            'changeMasterScore'  => '大师分变动',
-            'emptyMasterScore'   => '清空大师分',
             'exportUser'         => '导出用户',
-
-            // 比赛操作按钮相关
-            'enrollRecord'       => '报名详情',
-            'exportEnrollRecord' => '核销记录',
-            'seedReward'         => '发奖',
-            'revokeReward'       => '撤销发奖',
-            'rewardRecord'       => '奖励日志',
-            'finishMatch'        => '发奖结束',
-            'startMatch'         => '开始比赛',
-            'openTimer'          => '开启计时器',
-            'openMatchSignup'    => '开启报名',
-            'closeMatchSignup'   => '截止报名',
-            'copyMatch'          => '复制比赛',
-            'quitMatch'          => '用户退赛',
-            'matchTimer'         => '计时器',
-
-            // 背包&比赛
-            'useCoupon'          => '核销',
-            'verifySignup'       => '核销报名',
 
             // 短信管理
             'getConfigKey'       => '查看',

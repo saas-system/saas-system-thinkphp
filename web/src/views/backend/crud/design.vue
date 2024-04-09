@@ -30,7 +30,7 @@
                             :data="{
                                     content: { admin: t('crud.crud.admin'), tenant: t('crud.crud.tenant') },
                                 }"
-                            :input-attr="{ onChange: onChangeCommonModel }"
+                            :input-attr="{ onChange: onChangeCommonModel,clearable:false }"
                         />
                     </div>
                     <div class="header-right">

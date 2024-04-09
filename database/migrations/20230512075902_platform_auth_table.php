@@ -32,8 +32,8 @@ class PlatformAuthTable extends Migrator
         $table->addColumn('pid', 'integer', ['limit' => 10, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '上级分组'])
             ->addColumn('name', 'string', ['limit' => 100, 'null' => false, 'default' => '', 'comment' => '组名'])
             ->addColumn('rules', 'text', ['null' => false, 'comment' => '权限规则ID'])
-            ->addColumn('create_time', 'integer', ['signed' => false, 'null' => true, 'default' => null, 'comment' => '创建时间'])
-            ->addColumn('update_time', 'integer', ['signed' => false, 'null' => true, 'default' => null, 'comment' => '更新时间'])
+            ->addColumn('create_time', 'biginteger', ['signed' => false, 'null' => true, 'default' => null, 'comment' => '创建时间'])
+            ->addColumn('update_time', 'biginteger', ['signed' => false, 'null' => true, 'default' => null, 'comment' => '更新时间'])
             ->addColumn('status', 'enum', ['values' => ['1', '0'], 'null' => false, 'default' => '1', 'comment' => '状态:0=禁用,1=启用'])
             ->create();
 
@@ -60,8 +60,8 @@ class PlatformAuthTable extends Migrator
             ->addColumn('remark', 'string', ['limit' => 255, 'default' => '', 'comment' => '备注'])
             ->addColumn('weigh', 'integer', ['limit' => 10, 'default' => 0, 'comment' => '权重(排序)'])
             ->addColumn('status', 'enum', ['values' => ['1', '0'], 'default' => '1', 'comment' => '状态:0=禁用,1=启用'])
-            ->addColumn('update_time', 'integer', ['limit' => 10, 'signed' => false, 'null' => true, 'default' => null, 'comment' => '更新时间'])
-            ->addColumn('create_time', 'integer', ['limit' => 10, 'signed' => false, 'null' => true, 'default' => null, 'comment' => '创建时间'])
+            ->addColumn('update_time', 'biginteger', ['limit' => 10, 'signed' => false, 'null' => true, 'default' => null, 'comment' => '更新时间'])
+            ->addColumn('create_time', 'biginteger', ['limit' => 10, 'signed' => false, 'null' => true, 'default' => null, 'comment' => '创建时间'])
             ->addIndex('pid')
             ->addIndex('weigh')
             ->create();

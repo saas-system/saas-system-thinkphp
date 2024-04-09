@@ -51,7 +51,7 @@ class TenantUserTable extends Migrator
 
             // 统计相关
             ->addColumn('last_login_ip', 'string', ['default' => '', 'comment' => '最后登录IP'])
-            ->addColumn('last_login_time', 'integer', ['comment' => '最后登录时间', 'null' => true])
+            ->addColumn('last_login_time', 'biginteger', ['comment' => '最后登录时间', 'null' => true])
             ->addColumn('last_login_ip_addr', 'string', ['limit' => 50, 'default' => '', 'comment' => '最后登录地址'])
             ->addColumn('register_ip', 'string', ['default' => '', 'comment' => '注册时IP'])
             ->addColumn('register_origin', 'boolean', ['default' => 0, 'comment' => '注册来源:1=Android,2=iPhone,3=模拟器'])
@@ -65,9 +65,9 @@ class TenantUserTable extends Migrator
             ->addColumn('session_key', 'string', ['default' => '', 'comment' => '授权用:session_key'])
 
             // 时间相关
-            ->addColumn('create_time', 'integer', ['limit' => 10,'signed' => false, 'null' => true, 'default' => null, 'comment' => '创建时间'])
-            ->addColumn('update_time', 'integer', ['limit' => 10,'signed' => false, 'null' => true, 'default' => null, 'comment' => '修改时间'])
-            ->addColumn('delete_time', 'integer', ['comment' => '删除时间', 'null' => true])
+            ->addColumn('create_time', 'biginteger', ['limit' => 10,'signed' => false, 'null' => true, 'default' => null, 'comment' => '创建时间'])
+            ->addColumn('update_time', 'biginteger', ['limit' => 10,'signed' => false, 'null' => true, 'default' => null, 'comment' => '修改时间'])
+            ->addColumn('delete_time', 'biginteger', ['comment' => '删除时间', 'null' => true])
             // 索引
             ->addIndex('mobile')
             ->addIndex('tenant_id')

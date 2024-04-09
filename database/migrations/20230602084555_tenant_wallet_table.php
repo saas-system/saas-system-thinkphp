@@ -37,7 +37,7 @@ class TenantWalletTable extends Migrator
             ->addColumn('year', 'string', ['limit' => 6, 'default' => '', 'comment' => '年'])
             ->addColumn('month', 'string', ['limit' => 2, 'default' => '', 'comment' => '月'])
             ->addColumn('number', 'integer', ['limit' => 11, 'default' => 1, 'comment' => '最后的数字'])
-            ->addColumn('create_time', 'integer', ['comment' => '添加时间'])
+            ->addColumn('create_time', 'biginteger', ['comment' => '添加时间'])
             // 索引相关
             ->addIndex('type')
             ->addIndex('month')
@@ -57,9 +57,9 @@ class TenantWalletTable extends Migrator
             ->addColumn('freeze_amount', 'decimal', ['scale' => 2, 'precision' => 10, 'default' => 0.00, 'comment' => '冻结金额'])
             ->addColumn('status', 'boolean', ['default' => 1, 'comment' => '钱包状态标志:1=正常,2=冻结'])
             // 时间相关
-            ->addColumn('create_time', 'integer', ['comment' => '添加时间'])
-            ->addColumn('update_time', 'integer', ['comment' => '修改时间'])
-            ->addColumn('delete_time', 'integer', ['comment' => '删除时间', 'null' => true])
+            ->addColumn('create_time', 'biginteger', ['comment' => '添加时间'])
+            ->addColumn('update_time', 'biginteger', ['comment' => '修改时间'])
+            ->addColumn('delete_time', 'biginteger', ['comment' => '删除时间', 'null' => true])
             // 索引相关
             ->addIndex('account_id')
             ->addIndex('user_type')
@@ -127,9 +127,9 @@ class TenantWalletTable extends Migrator
             ->addColumn('is_user_visible', 'boolean', ['default' => 1, 'comment' => '是否用户可见：0=否 1=是'])
 
             // 时间相关
-            ->addColumn('create_time', 'integer', ['comment' => '添加时间'])
-            ->addColumn('update_time', 'integer', ['comment' => '修改时间'])
-            ->addColumn('delete_time', 'integer', ['comment' => '删除时间', 'null' => true])
+            ->addColumn('create_time', 'biginteger', ['comment' => '添加时间'])
+            ->addColumn('update_time', 'biginteger', ['comment' => '修改时间'])
+            ->addColumn('delete_time', 'biginteger', ['comment' => '删除时间', 'null' => true])
 
             // 索引相关
             ->addIndex('from_account_id')

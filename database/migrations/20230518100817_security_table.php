@@ -35,8 +35,8 @@ class SecurityTable extends Migrator
             ->addColumn('data_table', 'string', ['limit' => 100, 'null' => false, 'default' => '', 'comment' => '对应数据表'])
             ->addColumn('primary_key', 'string', ['limit' => 50, 'null' => false, 'default' => '', 'comment' => '数据表主键'])
             ->addColumn('status', 'enum', ['values' => ['0', '1'], 'null' => false, 'default' => '0', 'comment' => '状态:0=禁用,1=启用'])
-            ->addColumn('update_time', 'integer', ['limit' => 10,'signed' => false, 'null' => true, 'default' => null, 'comment' => '修改时间'])
-            ->addColumn('create_time', 'integer', ['limit' => 10,'signed' => false, 'null' => true, 'default' => null, 'comment' => '创建时间'])
+            ->addColumn('update_time', 'biginteger', ['limit' => 10,'signed' => false, 'null' => true, 'default' => null, 'comment' => '修改时间'])
+            ->addColumn('create_time', 'biginteger', ['limit' => 10,'signed' => false, 'null' => true, 'default' => null, 'comment' => '创建时间'])
             ->create();
 
         $table = $this->table('security_data_recycle_log', ['collation' => 'utf8mb4_unicode_ci', 'comment' => '数据回收记录表']);
@@ -48,7 +48,7 @@ class SecurityTable extends Migrator
             ->addColumn('is_restore', 'boolean', ['null' => false, 'default' => false, 'comment' => '是否已还原:0=否,1=是'])
             ->addColumn('ip', 'string', ['null' => false, 'default' => '', 'comment' => '操作者IP'])
             ->addColumn('useragent', 'string', ['null' => false, 'default' => '', 'comment' => 'User Agent'])
-            ->addColumn('create_time', 'integer', ['limit' => 10,'signed' => false, 'null' => true, 'default' => null, 'comment' => '创建时间'])
+            ->addColumn('create_time', 'biginteger', ['limit' => 10,'signed' => false, 'null' => true, 'default' => null, 'comment' => '创建时间'])
             ->addIndex(['admin_id'])
             ->addIndex(['recycle_id'])
             ->create();
@@ -61,8 +61,8 @@ class SecurityTable extends Migrator
             ->addColumn('primary_key', 'string', ['limit' => 50, 'null' => false, 'default' => '', 'comment' => '数据表主键字段'])
             ->addColumn('data_fields', 'text', ['null' => false, 'comment' => '敏感数据字段'])
             ->addColumn('status', 'boolean', ['null' => false, 'default' => 0, 'comment' => '状态:0=关闭,1=启用'])
-            ->addColumn('update_time', 'integer', ['limit' => 10,'signed' => false, 'null' => true, 'default' => null, 'comment' => '修改时间'])
-            ->addColumn('create_time', 'integer', ['limit' => 10,'signed' => false, 'null' => true, 'default' => null, 'comment' => '创建时间'])
+            ->addColumn('update_time', 'biginteger', ['limit' => 10,'signed' => false, 'null' => true, 'default' => null, 'comment' => '修改时间'])
+            ->addColumn('create_time', 'biginteger', ['limit' => 10,'signed' => false, 'null' => true, 'default' => null, 'comment' => '创建时间'])
             ->create();
 
         $table = $this->table('security_sensitive_data_log', ['collation' => 'utf8mb4_unicode_ci', 'comment' => '敏感数据修改记录']);
@@ -78,7 +78,7 @@ class SecurityTable extends Migrator
             ->addColumn('ip', 'string', ['limit' => 50, 'null' => false, 'default' => '', 'comment' => '操作者IP'])
             ->addColumn('useragent', 'string', ['limit' => 255, 'null' => false, 'default' => '', 'comment' => 'User Agent'])
             ->addColumn('is_rollback', 'boolean', ['null' => false, 'default' => 0, 'comment' => '是否已回滚:0=否,1=是'])
-            ->addColumn('create_time', 'integer', ['limit' => 10,'signed' => false, 'null' => true, 'default' => null, 'comment' => '创建时间'])
+            ->addColumn('create_time', 'biginteger', ['limit' => 10,'signed' => false, 'null' => true, 'default' => null, 'comment' => '创建时间'])
             ->create();
     }
 }
