@@ -10,7 +10,26 @@
             />
             <Icon :color="configStore.getColorVal('headerBarTabColor')" class="nav-menu-icon" v-else name="el-icon-FullScreen" size="18" />
         </div>
-
+        <el-dropdown
+            @visible-change="onCurrentNavMenu($event, 'lang')"
+            class="h100"
+            size="large"
+            :hide-timeout="50"
+            placement="bottom"
+            trigger="click"
+            :hide-on-click="true"
+        >
+            <div class="nav-menu-item pt2" :class="state.currentNavMenu == 'lang' ? 'hover' : ''">
+                <Icon :color="configStore.getColorVal('headerBarTabColor')" class="nav-menu-icon" name="local-lang" size="18" />
+            </div>
+            <template #dropdown>
+                <el-dropdown-menu class="dropdown-menu-box">
+                    <el-dropdown-item v-for="item in configStore.lang.langArray" :key="item.name" @click="editDefaultLang(item.name)">
+                        {{ item.value }}
+                    </el-dropdown-item>
+                </el-dropdown-menu>
+            </template>
+        </el-dropdown>
         <el-dropdown
             v-if="adminInfo.super"
             @visible-change="onCurrentNavMenu($event, 'clear')"

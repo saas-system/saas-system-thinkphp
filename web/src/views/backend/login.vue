@@ -1,14 +1,26 @@
 <template>
+    <div class="switch-language">
+        <el-dropdown size="large" :hide-timeout="50" placement="bottom-end" :hide-on-click="true">
+            <Icon name="fa fa-globe" color="#ffffff" size="28" />
+            <template #dropdown>
+                <el-dropdown-menu class="chang-lang">
+                    <el-dropdown-item v-for="item in config.lang.langArray" :key="item.name" @click="editDefaultLang(item.name)">
+                        {{ item.value }}
+                    </el-dropdown-item>
+                </el-dropdown-menu>
+            </template>
+        </el-dropdown>
+    </div>
     <div :class="'login ' + (state.isMobile?'login_mobile':'')">
         <div class="login-box">
             <div class="word" v-if="!state.isMobile">
-                <div class="logo_text_1">欢迎使用</div>
-                <div class="logo_text_2">后台管理系统</div>
+                <div class="logo_text_1">{{ t('login.Welcome to use') }}</div>
+                <div class="logo_text_2">{{ t('login.Backend management system') }}</div>
             </div>
             <div class="content">
                 <el-form @keyup.enter="onSubmitPre()" ref="formRef" :rules="rules" size="large" :model="form">
-                    <div class="login-title">平台端 - 登录</div>
-                    <div class="form-item-title"><span>*</span> 账号</div>
+                    <div class="login-title">{{ t('login.Platform') }} - {{ t('login.Login') }}</div>
+                    <div class="form-item-title"><span>*</span> {{ t('login.Account') }}</div>
                     <el-form-item prop="username">
                         <el-input
                             ref="usernameRef"
@@ -18,7 +30,7 @@
                             :placeholder="t('login.Please enter an account')"
                         />
                     </el-form-item>
-                    <div class="form-item-title"><span>*</span> 密码</div>
+                    <div class="form-item-title"><span>*</span> {{ t('login.Password') }}</div>
                     <el-form-item prop="password">
                         <el-input
                             ref="passwordRef"
@@ -51,6 +63,7 @@
 import { onMounted, onBeforeUnmount, reactive, ref, nextTick } from 'vue'
 import type { FormInstance, InputInstance } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import { editDefaultLang } from '/@/lang/index'
 import { useConfig } from '/@/stores/config'
 import { useAdminInfo } from '/@/stores/adminInfo'
 import { login } from '/@/api/backend'
@@ -152,6 +165,13 @@ const onSubmit = (captchaInfo = '') => {
 </script>
 
 <style scoped lang="scss">
+.switch-language {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1;
+}
+
 .login {
     display: flex;
     width: 100vw;
@@ -171,8 +191,11 @@ const onSubmit = (captchaInfo = '') => {
 
         .word {
             width: 460px;
+            display: flex;
             color: #ffffff;
             padding: 80px 40px;
+            flex-direction: column;
+            justify-content: flex-end;
 
             .logo_img {
                 width: 117px;
@@ -180,7 +203,6 @@ const onSubmit = (captchaInfo = '') => {
             }
 
             .logo_text_1 {
-                padding-top: 260px;
                 font-size: 30px;
                 line-height: 30px;
                 font-weight: bold;
@@ -188,8 +210,8 @@ const onSubmit = (captchaInfo = '') => {
 
             .logo_text_2 {
                 font-size: 40px;
-                padding-top: 20px;
-                line-height: 50px;
+                margin-top: 10px;
+                line-height: 40px;
                 font-weight: bold;
             }
         }
