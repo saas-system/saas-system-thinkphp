@@ -6,20 +6,23 @@ use Throwable;
 use think\facade\Db;
 
 /**
- * 权限规则检测类
+ * 权限规则类
  */
 class Auth
 {
     /**
      * 用户有权限的规则节点
      */
-    protected array $rules = [];
+    protected static array $rules = [];
 
     /**
      * 默认配置
      * @var array|string[]
      */
     protected array $config = [
+        'auth_group'        => 'admin_group', // 用户组数据表名
+        'auth_group_access' => 'admin_group_access', // 用户-用户组关系表
+        'auth_rule'         => 'admin_rule', // 权限规则表
     ];
 
     /**
@@ -56,19 +59,14 @@ class Auth
      */
     public function getMenus(int $uid): array
     {
-        if (!$this->rules) {
-            $this->getRuleList($uid);
-        }
-        if (!$this->rules) return [];
-
-        foreach ($this->rules as $rule) {
+        $this->children  = [];
+        $originAuthRules = $this->getOriginAuthRules($uid);
+        foreach ($originAuthRules as $rule) {
             $this->children[$rule['pid']][] = $rule;
         }
 
         // 没有根菜单规则
-        if (!isset($this->children[0])) {
-            return [];
-        }
+        if (!isset($this->children[0])) return [];
 
         return $this->getChildren($this->children[0]);
     }
@@ -152,45 +150,55 @@ class Auth
      */
     public function getRuleList(int $uid): array
     {
-        // 静态保存所有用户验证通过的权限列表
-        static $ruleList = [];
-        if (isset($ruleList[$uid])) {
-            return $ruleList[$uid];
-        }
-
         // 读取用户规则节点
         $ids = $this->getRuleIds($uid);
-        if (empty($ids)) {
-            $ruleList[$uid] = [];
-            return [];
-        }
+        if (empty($ids)) return [];
 
-        $where[] = ['status', '=', '1'];
-        // 如果没有 * 则只获取用户拥有的规则
-        if (!in_array('*', $ids)) {
-            $where[] = ['id', 'in', $ids];
-        }
-        // 读取用户组所有权限规则
-        $this->rules = Db::name($this->config['auth_rule'])
-            ->withoutField(['remark', 'status', 'weigh', 'update_time', 'create_time'])
-            ->where($where)
-            ->order('weigh desc,id asc')
-            ->select()
-            ->toArray();
+        $originAuthRules = $this->getOriginAuthRules($uid);
 
         // 用户规则
         $rules = [];
         if (in_array('*', $ids)) {
             $rules[] = "*";
         }
-        foreach ($this->rules as $key => $rule) {
+        foreach ($originAuthRules as $rule) {
             $rules[$rule['id']] = strtolower($rule['name']);
-            if (isset($rule['keepalive']) && $rule['keepalive']) {
-                $this->rules[$key]['keepalive'] = $rule['name'];
+        }
+        return array_unique($rules);
+    }
+
+    /**
+     * 获得权限规则原始数据
+     * @param int $uid 用户id
+     * @return array
+     * @throws Throwable
+     */
+    public function getOriginAuthRules(int $uid): array
+    {
+        $ids = $this->getRuleIds($uid);
+        if (empty($ids)) return [];
+
+        $idsCacheKey = md5(implode('', $ids) . $this->config['auth_rule']);
+        if (empty(self::$rules[$idsCacheKey])) {
+            $where   = [];
+            $where[] = ['status', '=', '1'];
+            // 如果没有 * 则只获取用户拥有的规则
+            if (!in_array('*', $ids)) {
+                $where[] = ['id', 'in', $ids];
+            }
+            self::$rules[$idsCacheKey] = Db::name($this->config['auth_rule'])
+                ->withoutField(['remark', 'status', 'weigh', 'update_time', 'create_time'])
+                ->where($where)
+                ->order('weigh desc,id asc')
+                ->select()
+                ->toArray();
+
+            foreach (self::$rules[$idsCacheKey] as $key => $rule) {
+                if (!empty($rule['keepalive'])) self::$rules[$idsCacheKey][$key]['keepalive'] = $rule['name'];
             }
         }
-        $ruleList[$uid] = $rules;
-        return array_unique($rules);
+
+        return self::$rules[$idsCacheKey];
     }
 
     /**
@@ -218,13 +226,15 @@ class Auth
      */
     public function getGroups(int $uid): array
     {
+        $dbName = $this->config['auth_group_access'] ?: 'user';
+
         static $groups = [];
-        if (isset($groups[$uid])) {
-            return $groups[$uid];
+        if (isset($groups[$dbName][$uid])) {
+            return $groups[$dbName][$uid];
         }
 
         if ($this->config['auth_group_access']) {
-            $userGroups = Db::name($this->config['auth_group_access'])
+            $userGroups = Db::name($dbName)
                 ->alias('aga')
                 ->join($this->config['auth_group'] . ' ag', 'aga.group_id = ag.id', 'LEFT')
                 ->field('aga.uid,aga.group_id,ag.id,ag.pid,ag.name,ag.rules')
@@ -232,7 +242,7 @@ class Auth
                 ->select()
                 ->toArray();
         } else {
-            $userGroups = Db::name('user')
+            $userGroups = Db::name($dbName)
                 ->alias('u')
                 ->join($this->config['auth_group'] . ' ag', 'u.group_id = ag.id', 'LEFT')
                 ->field('u.id as uid,u.group_id,ag.id,ag.name,ag.rules')
@@ -241,7 +251,7 @@ class Auth
                 ->toArray();
         }
 
-        $groups[$uid] = $userGroups ?: [];
-        return $groups[$uid];
+        $groups[$dbName][$uid] = $userGroups ?: [];
+        return $groups[$dbName][$uid];
     }
 }
