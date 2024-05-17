@@ -1,14 +1,23 @@
 <?php
+// +----------------------------------------------------------------------
+// | BuildAdmin [ Quickly create commercial-grade management system using popular technology stack ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2022~2022 http://buildadmin.com All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: 妙码生花 <hi@buildadmin.com>
+// +----------------------------------------------------------------------
+
 namespace ba;
 
-use app\Request;
 use Throwable;
 use think\Response;
 use think\facade\Config;
-use think\facade\Cookie;
 use app\admin\library\Auth;
 use app\admin\library\module\Manage;
 use think\exception\HttpResponseException;
+use app\common\library\token\TokenExpirationException;
 
 class Terminal
 {
@@ -38,9 +47,14 @@ class Terminal
     protected array $pipes = [];
 
     /**
-     * @var int proc 执行状态
+     * @var int proc执行状态:0=未执行,1=执行中,2=执行完毕
      */
-    protected int $procStatus = 0;
+    protected int $procStatusMark = 0;
+
+    /**
+     * @var array proc执行状态数据
+     */
+    protected array $procStatusData = [];
 
     /**
      * @var string 命令在前台的uuid
@@ -161,19 +175,11 @@ class Terminal
      */
     public function exec(bool $authentication = true): void
     {
-        $headers                      = request()->allowCrossDomainHeaders ?? [];
-        $headers['X-Accel-Buffering'] = 'no';
-        $headers['Content-Type']      = 'text/event-stream';
-        $headers['Cache-Control']     = 'no-cache';
-
-        foreach ($headers as $name => $val) {
-            header($name . (!is_null($val) ? ':' . $val : ''));
-        }
+        $this->sendHeader();
 
         while (ob_get_level()) {
             ob_end_clean();
         }
-
         if (!ob_get_level()) ob_start();
 
         $this->commandKey = request()->param('command');
@@ -184,11 +190,16 @@ class Terminal
         }
 
         if ($authentication) {
-            $token = request()->server('HTTP_BATOKEN', request()->request('batoken', Cookie::get('batoken') ?: false));
-            $auth  = Auth::instance();
-            $auth->init($token);
-            if (!$auth->isLogin() || !$auth->isSuperAdmin()) {
-                $this->execError("You're not super administrator or not logged in", true);
+            try {
+                $token = get_auth_token();
+                $auth  = Auth::instance();
+                $auth->init($token);
+
+                if (!$auth->isLogin() || !$auth->isSuperAdmin()) {
+                    $this->execError("You are not super administrator or not logged in", true);
+                }
+            } catch (TokenExpirationException) {
+                $this->execError(__('Token expiration'));
             }
         }
 
@@ -207,8 +218,25 @@ class Terminal
                 if (preg_match('/\r\n|\r|\n/', $newOutput)) {
                     $this->output($newOutput);
                     $this->outputContent = $contents;
+                    $this->checkOutput();
                 }
             }
+
+            // 输出执行状态信息
+            if ($this->procStatusMark === 2) {
+                $this->output('exitCode: ' . $this->procStatusData['exitcode']);
+                if ($this->procStatusData['exitcode'] === 0) {
+                    if ($this->successCallback()) {
+                        $this->outputFlag('exec-success');
+                    } else {
+                        $this->output('Error: Command execution succeeded, but callback execution failed');
+                        $this->outputFlag('exec-error');
+                    }
+                } else {
+                    $this->outputFlag('exec-error');
+                }
+            }
+
             usleep(500000);
         }
         foreach ($this->pipes as $pipe) {
@@ -224,23 +252,12 @@ class Terminal
      */
     public function getProcStatus(): bool
     {
-        $status = proc_get_status($this->process);
-        if ($status['running']) {
-            $this->procStatus = 1;
+        $this->procStatusData = proc_get_status($this->process);
+        if ($this->procStatusData['running']) {
+            $this->procStatusMark = 1;
             return true;
-        } elseif ($this->procStatus === 1) {
-            $this->procStatus = 0;
-            $this->output('exitcode: ' . $status['exitcode']);
-            if ($status['exitcode'] === 0) {
-                if ($this->successCallback()) {
-                    $this->outputFlag('exec-success');
-                } else {
-                    $this->output('Error: Command execution succeeded, but callback execution failed');
-                    $this->outputFlag('exec-error');
-                }
-            } else {
-                $this->outputFlag('exec-error');
-            }
+        } elseif ($this->procStatusMark === 1) {
+            $this->procStatusMark = 2;
             return true;
         } else {
             return false;
@@ -263,9 +280,20 @@ class Terminal
         ];
         $data = json_encode($data, JSON_UNESCAPED_UNICODE);
         if ($data) {
-            echo 'data: ' . $data . "\n\n";
+            $this->finalOutput($data);
             if ($callback) $this->outputCallback($data);
             @ob_flush();// 刷新浏览器缓冲区
+        }
+    }
+
+
+    /**
+     * 检查输出
+     */
+    public function checkOutput(): void
+    {
+        if (str_contains($this->outputContent, '(Y/n)')) {
+            $this->execError('An interactive command has been detected, and you can manually execute the command to confirm the situation.', true);
         }
     }
 
@@ -434,5 +462,39 @@ class Terminal
         $buildConfigContent = preg_replace("/'npm_package_manager'(\s+)=>(\s+)'$oldPackageManager'/", "'npm_package_manager'\$1=>\$2'$newPackageManager'", $buildConfigContent);
         $result             = @file_put_contents($buildConfigFile, $buildConfigContent);
         return (bool)$result;
+    }
+
+    /**
+     * 最终输出
+     */
+    public function finalOutput(string $data): void
+    {
+        $app = app();
+        if (!empty($app->worker) && !empty($app->connection)) {
+            $app->connection->send(new \Workerman\Protocols\Http\ServerSentEvents(['event' => 'message', 'data' => $data]));
+        } else {
+            echo 'data: ' . $data . "\n\n";
+        }
+    }
+
+    /**
+     * 发送响应头
+     */
+    public function sendHeader(): void
+    {
+        $headers = array_merge(request()->allowCrossDomainHeaders ?? [], [
+            'X-Accel-Buffering' => 'no',
+            'Content-Type'      => 'text/event-stream',
+            'Cache-Control'     => 'no-cache',
+        ]);
+
+        $app = app();
+        if (!empty($app->worker) && !empty($app->connection)) {
+            $app->connection->send(new \Workerman\Protocols\Http\Response(200, $headers, "\r\n"));
+        } else {
+            foreach ($headers as $name => $val) {
+                header($name . (!is_null($val) ? ':' . $val : ''));
+            }
+        }
     }
 }
