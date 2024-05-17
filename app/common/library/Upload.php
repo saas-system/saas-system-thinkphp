@@ -10,6 +10,7 @@ use think\Exception;
 use think\facade\Config;
 use think\file\UploadedFile;
 use app\common\model\Attachment;
+use think\exception\FileException;
 
 /**
  * 上传
@@ -65,11 +66,11 @@ class Upload
 
     /**
      * 设置文件
-     * @param UploadedFile $file
+     * @param ?UploadedFile $file
      * @return array 文件信息
      * @throws Throwable
      */
-    public function setFile(UploadedFile $file): array
+    public function setFile(?UploadedFile $file): array
     {
         if (empty($file)) {
             throw new Exception(__('No files were uploaded'), 10001);
@@ -195,7 +196,7 @@ class Upload
             '{sec}'      => date("s"),
             '{random}'   => Random::build(),
             '{random32}' => Random::build('alnum', 32),
-            '{filename}' => mb_substr($filename, 0, 15),
+            '{filename}' => $this->getFileNameSubstr($filename),
             '{suffix}'   => $suffix,
             '{.suffix}'  => $suffix ? '.' . $suffix : '',
             '{filesha1}' => $sha1,
@@ -236,19 +237,21 @@ class Upload
             'sha1'     => $this->fileInfo['sha1']
         ];
 
-        $attachment = new Attachment();
-        $attachment->data(array_filter($params));
-        $res = $attachment->save();
-        if (!$res) {
-            $attachment = Attachment::where([
-                ['sha1', '=', $params['sha1']],
-                ['topic', '=', $params['topic']],
-                ['storage', '=', $params['storage']],
-            ])->find();
+        // 附件数据入库 - 不依赖模型新增前事件，确保入库前文件已经移动完成
+        $attachment = Attachment::where('sha1', $params['sha1'])
+            ->where('topic', $params['topic'])
+            ->where('storage', $params['storage'])
+            ->find();
+        $filePath   = Filesystem::fsFit(public_path() . ltrim($params['url'], '/'));
+        if ($attachment && file_exists($filePath)) {
+            $attachment->quote++;
+            $attachment->last_upload_time = time();
         } else {
             $this->move($saveName);
+            $attachment = new Attachment();
+            $attachment->data(array_filter($params));
         }
-
+        $attachment->save();
         return $attachment->toArray();
     }
 
@@ -258,8 +261,40 @@ class Upload
         $saveName  = '/' . ltrim($saveName, '/');
         $uploadDir = substr($saveName, 0, strripos($saveName, '/') + 1);
         $fileName  = substr($saveName, strripos($saveName, '/') + 1);
-        $destDir   = root_path() . 'public' . str_replace('/', DIRECTORY_SEPARATOR, $uploadDir);
+        $destDir   = Filesystem::fsFit(root_path() . 'public' . $uploadDir);
 
-        return $this->file->move($destDir, $fileName);
+        if (request()->isCgi()) {
+            return $this->file->move($destDir, $fileName);
+        }
+
+        set_error_handler(function ($type, $msg) use (&$error) {
+            $error = $msg;
+        });
+
+        if (!is_dir($destDir) && !mkdir($destDir, 0777, true)) {
+            restore_error_handler();
+            throw new FileException(sprintf('Unable to create the "%s" directory (%s)', $destDir, strip_tags($error)));
+        }
+
+        $destination = $destDir . $fileName;
+        if (!rename($this->file->getPathname(), $destination)) {
+            restore_error_handler();
+            throw new FileException(sprintf('Could not move the file "%s" to "%s" (%s)', $this->file->getPathname(), $destination, strip_tags($error)));
+        }
+
+        restore_error_handler();
+        @chmod($destination, 0666 & ~umask());
+        return $this->file;
+    }
+
+    /**
+     * 获取文件名称字符串的子串
+     */
+    public function getFileNameSubstr(string $fileName, int $length = 15): string
+    {
+        // 对 $fileName 中不利于传输的字符串进行过滤
+        $pattern  = "/[\s:@#?&\/=',+]+/u";
+        $fileName = preg_replace($pattern, '', $fileName);
+        return mb_substr($fileName, 0, $length);
     }
 }
