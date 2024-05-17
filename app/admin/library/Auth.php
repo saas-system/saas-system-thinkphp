@@ -137,34 +137,27 @@ class Auth extends \ba\Auth
      */
     public function init(string $token): bool
     {
-        if ($this->loginEd) {
-            return true;
-        }
-        if ($this->error) {
-            return false;
-        }
         $tokenData = Token::get($token);
-        if (!$tokenData) {
-            return false;
-        }
-        $userId = intval($tokenData['user_id']);
-        if ($userId > 0) {
-            $this->model = Admin::where('id', $userId)->find();
-            if (!$this->model) {
-                $this->setError('Account not exist');
-                return false;
+        if ($tokenData) {
+            $userId = intval($tokenData['user_id']);
+            if ($userId > 0) {
+                $this->model = Admin::where('id', $userId)->find();
+                if (!$this->model) {
+                    $this->setError('Account not exist');
+                    return false;
+                }
+                if ($this->model['status'] != '1') {
+                    $this->setError('Account disabled');
+                    return false;
+                }
+                $this->token = $token;
+                $this->loginSuccessful();
+                return true;
             }
-            if ($this->model['status'] != '1') {
-                $this->setError('Account disabled');
-                return false;
-            }
-            $this->token = $token;
-            $this->loginSuccessful();
-            return true;
-        } else {
-            $this->setError('Token login failed');
-            return false;
         }
+        $this->setError('Token login failed');
+        $this->reset();
+        return false;
     }
 
     /**
@@ -212,7 +205,7 @@ class Auth extends \ba\Auth
      * 设置刷新Token
      * @param int $keepTime
      */
-    public function setRefreshToken(int $keepTime = 0)
+    public function setRefreshToken(int $keepTime = 0): void
     {
         $this->refreshToken = Random::uuid();
         Token::set($this->refreshToken, 'admin-refresh', $this->model->id, $keepTime);
@@ -224,9 +217,7 @@ class Auth extends \ba\Auth
      */
     public function loginSuccessful(): bool
     {
-        if (!$this->model) {
-            return false;
-        }
+        if (!$this->model) return false;
         $this->model->startTrans();
         try {
             $this->model->login_failure   = 0;
@@ -254,26 +245,20 @@ class Auth extends \ba\Auth
      */
     public function loginFailed(): bool
     {
-        if (!$this->model) {
-            return false;
-        }
+        if (!$this->model) return false;
         $this->model->startTrans();
         try {
             $this->model->login_failure++;
             $this->model->last_login_time = time();
             $this->model->last_login_ip   = request()->ip();
             $this->model->save();
-
-            $this->token   = '';
-            $this->loginEd = false;
             $this->model->commit();
         } catch (Throwable $e) {
             $this->model->rollback();
             $this->setError($e->getMessage());
             return false;
         }
-        $this->model = null;
-        return true;
+        return $this->reset();
     }
 
     /**
@@ -286,10 +271,7 @@ class Auth extends \ba\Auth
             $this->setError('You are not logged in');
             return false;
         }
-        $this->loginEd = false;
-        Token::delete($this->token);
-        $this->token = '';
-        return true;
+        return $this->reset();
     }
 
     /**
@@ -334,9 +316,7 @@ class Auth extends \ba\Auth
      */
     public function getInfo(): array
     {
-        if (!$this->model) {
-            return [];
-        }
+        if (!$this->model) return [];
         $info                  = $this->model->toArray();
         $info                  = array_intersect_key($info, array_flip($this->getAllowFields()));
         $info['token']         = $this->getToken();
@@ -507,5 +487,23 @@ class Auth extends \ba\Auth
     public function getError(): string
     {
         return $this->error ? __($this->error) : '';
+    }
+
+    /**
+     * 属性重置（注销、登录失败、重新初始化等将单例数据销毁）
+     */
+    protected function reset(bool $deleteToken = true): bool
+    {
+        if ($deleteToken && $this->token) {
+            Token::delete($this->token);
+        }
+
+        $this->token        = '';
+        $this->loginEd      = false;
+        $this->model        = null;
+        $this->refreshToken = '';
+        $this->setError('');
+        $this->setKeepTime((int)Config::get('buildadmin.admin_token_keep_time'));
+        return true;
     }
 }
