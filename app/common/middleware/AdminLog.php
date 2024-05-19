@@ -20,9 +20,9 @@ class AdminLog
         if (($request->isPost() || $request->isDelete()) && Config::get('buildadmin.auto_write_admin_log')) {
             $root = $request->rootUrl();
             if ($root == '/admin') {
-                AdminLogModel::record();
+                AdminLogModel::instance()->record();
             } elseif ($root == '/tenant') {
-                TenantAdminLogModel::record();
+                TenantAdminLogModel::instance()->record();
             }
         }
 

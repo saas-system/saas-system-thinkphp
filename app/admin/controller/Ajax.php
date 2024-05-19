@@ -31,7 +31,7 @@ class Ajax extends Backend
 
     public function upload()
     {
-        AdminLog::setTitle(__('upload'));
+        AdminLog::instance()->setTitle(__('upload'));
         $file = $this->request->file('file');
         try {
             $upload     = new Upload($file);
@@ -199,7 +199,7 @@ class Ajax extends Backend
 
     public function changeTerminalConfig(): void
     {
-        AdminLog::setTitle(__('Change terminal config'));
+        AdminLog::instance()->setTitle(__('Change terminal config'));
         if (Terminal::changeTerminalConfig()) {
             $this->success();
         } else {
@@ -209,7 +209,7 @@ class Ajax extends Backend
 
     public function clearCache(): void
     {
-        AdminLog::setTitle(__('Clear cache'));
+        AdminLog::instance()->setTitle(__('Clear cache'));
         $type = $this->request->post('type');
         if ($type == 'tp' || $type == 'all') {
             Cache::clear();

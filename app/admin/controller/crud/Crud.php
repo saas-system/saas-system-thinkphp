@@ -328,7 +328,7 @@ class Crud extends Backend
             $info['table']['empty'] = true;
         }
 
-        AdminLog::setTitle(__('Log start'));
+        AdminLog::instance()->setTitle(__('Log start'));
 
         $this->success('', [
             'table'  => $info['table'],
@@ -476,7 +476,7 @@ class Crud extends Backend
      */
     public function parseFieldData(): void
     {
-        AdminLog::setTitle(__('Parse field data'));
+        AdminLog::instance()->setTitle(__('Parse field data'));
         $type       = $this->request->post('type');
         $table      = $this->request->post('table');
         $connection = $this->request->post('connection');
@@ -528,7 +528,7 @@ class Crud extends Backend
             $this->error(__('Parameter error'));
         }
 
-        AdminLog::setTitle(__('Generate check'));
+        AdminLog::instance()->setTitle(__('Generate check'));
 
         try {
             if (!$controllerFile) {
