@@ -34,6 +34,11 @@ class Auth extends \ba\Auth
     public const LOGGED_IN = 'logged in';
 
     /**
+     * token 入库 type
+     */
+    public const TOKEN_TYPE = 'admin';
+
+    /**
      * 是否登录
      * @var bool
      */
@@ -133,8 +138,13 @@ class Auth extends \ba\Auth
     {
         $tokenData = Token::get($token);
         if ($tokenData) {
+            /**
+             * 过期检查，过期则抛出 @see TokenExpirationException
+             */
+            Token::tokenExpirationCheck($tokenData);
+
             $userId = intval($tokenData['user_id']);
-            if ($userId > 0) {
+            if ($tokenData['type'] == self::TOKEN_TYPE && $userId > 0) {
                 $this->model = Admin::where('id', $userId)->find();
                 if (!$this->model) {
                     $this->setError('Account not exist');
@@ -184,8 +194,8 @@ class Auth extends \ba\Auth
             return false;
         }
         if (Config::get('buildadmin.admin_sso')) {
-            Token::clear('admin', $this->model->id);
-            Token::clear('admin-refresh', $this->model->id);
+            Token::clear(self::TOKEN_TYPE, $this->model->id);
+            Token::clear(self::TOKEN_TYPE.'-refresh', $this->model->id);
         }
 
         if ($keep) {
@@ -202,7 +212,7 @@ class Auth extends \ba\Auth
     public function setRefreshToken(int $keepTime = 0): void
     {
         $this->refreshToken = Random::uuid();
-        Token::set($this->refreshToken, 'admin-refresh', $this->model->id, $keepTime);
+        Token::set($this->refreshToken, self::TOKEN_TYPE.'-refresh', $this->model->id, $keepTime);
     }
 
     /**
@@ -222,7 +232,7 @@ class Auth extends \ba\Auth
 
             if (!$this->token) {
                 $this->token = Random::uuid();
-                Token::set($this->token, 'admin', $this->model->id, $this->keepTime);
+                Token::set($this->token, self::TOKEN_TYPE, $this->model->id, $this->keepTime);
             }
             $this->model->commit();
         } catch (Throwable $e) {

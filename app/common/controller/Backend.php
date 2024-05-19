@@ -4,11 +4,9 @@ namespace app\common\controller;
 
 use Throwable;
 use think\Model;
-use think\facade\Db;
 use think\facade\Event;
 use app\admin\library\Auth;
-use think\db\exception\PDOException;
-use think\exception\HttpResponseException;
+use app\common\library\token\TokenExpirationException;
 
 class Backend extends Api
 {
