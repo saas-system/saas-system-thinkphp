@@ -20,7 +20,7 @@
                             <span>
                                 {{ t('module.Understand and agree') }}《
                                 <a
-                                    href="https://doc.buildadmin.com/guide/other/appendix/templateAgreement.html"
+                                    href="https://doc.saas-system.com/guide/other/appendix/templateAgreement.html"
                                     target="_blank"
                                     rel="noreferrer noopener"
                                 >

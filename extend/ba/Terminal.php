@@ -2,11 +2,11 @@
 // +----------------------------------------------------------------------
 // | BuildAdmin [ Quickly create commercial-grade management system using popular technology stack ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2022~2022 http://buildadmin.com All rights reserved.
+// | Copyright (c) 2022~2022 http://saas-system.com All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: 妙码生花 <hi@buildadmin.com>
+// | Author: 妙码生花 <hi@saas-system.com>
 // +----------------------------------------------------------------------
 
 namespace ba;

@@ -13,7 +13,7 @@
                 <div class="header-box">
                     <img
                         class="pay-logo"
-                        :src="'https://buildadmin.com/static/images/' + (state.common.payType == 'wx' ? 'wechat-pay.png' : 'alipay.png')"
+                        :src="'https://saas-system.com/static/images/' + (state.common.payType == 'wx' ? 'wechat-pay.png' : 'alipay.png')"
                         alt=""
                     />
                 </div>
@@ -60,7 +60,7 @@
                     <div class="right">
                         <img
                             class="pay-logo"
-                            :src="'https://buildadmin.com/static/images/screenshot-' + (state.common.payType == 'wx' ? 'wechat.png' : 'alipay.png')"
+                            :src="'https://saas-system.com/static/images/screenshot-' + (state.common.payType == 'wx' ? 'wechat.png' : 'alipay.png')"
                             alt=""
                         />
                     </div>
