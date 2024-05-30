@@ -6,6 +6,7 @@ use app\tenant\model\TenantUser;
 use Throwable;
 use think\Model;
 use ba\Filesystem;
+use think\facade\Event;
 use app\admin\model\Admin;
 use think\model\relation\BelongsTo;
 
@@ -37,7 +38,7 @@ class Attachment extends Base
     }
 
     /**
-     * 入库前
+     * 新增前
      * @throws Throwable
      */
     protected static function onBeforeInsert($model): bool
@@ -62,12 +63,31 @@ class Attachment extends Base
         return true;
     }
 
-    protected static function onAfterInsert($model)
+    /**
+     * 新增后
+     */
+    protected static function onAfterInsert($model): void
     {
+        Event::trigger('AttachmentInsert', $model);
+
         if (!$model->last_upload_time) {
             $model->quote            = 1;
             $model->last_upload_time = time();
             $model->save();
+        }
+    }
+
+    /**
+     * 删除后
+     */
+    protected static function onAfterDelete($model): void
+    {
+        Event::trigger('AttachmentDel', $model);
+
+        $filePath = Filesystem::fsFit(public_path() . ltrim($model->url, '/'));
+        if (file_exists($filePath)) {
+            unlink($filePath);
+            Filesystem::delEmptyDir(dirname($filePath));
         }
     }
 
