@@ -240,7 +240,7 @@ class TenantAdminRuleSeeder extends Seeder
                         'remark'    => '',
                         'weigh'     => 10,
                         'status'    => 1,
-                        'sublist'   => MenuService::getCommonMenuData('user/user', ['index', 'census', 'edit', 'del', 'sortable', 'exportUser']),
+                        'sublist'   => MenuService::getCommonMenuData('user/user', ['index', 'edit', 'del', 'sortable', 'exportUser']),
                     ],
                 ],
             ],
