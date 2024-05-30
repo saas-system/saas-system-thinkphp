@@ -15,22 +15,22 @@
             </transition>
         </div>
         <div :style="activeBoxStyle" class="nav-tabs-active-box"></div>
+        <Contextmenu ref="contextmenuRef" :items="state.contextmenuItems" @menuClick="onContextMenuClick" />
     </div>
-    <Contextmenu ref="contextmenuRef" :items="state.contextmenuItems" @contextmenuItemClick="onContextmenuItem" />
 </template>
 
 <script setup lang="ts">
 import { nextTick, onMounted, reactive, ref } from 'vue'
-import { useRoute, useRouter, onBeforeRouteUpdate, RouteLocationNormalized } from 'vue-router'
+import { useRoute, useRouter, onBeforeRouteUpdate, type RouteLocationNormalized } from 'vue-router'
 import { useConfig } from '/@/stores/config'
 import { useNavTabs } from '/@/stores/navTabs'
 import { useTemplateRefsList } from '@vueuse/core'
-import type { ContextMenuItem, ContextmenuItemClickEmitArg } from '/@/components/contextmenu/interface'
+import type { ContextMenuItem, ContextMenuItemClickEmitArg } from '/@/components/contextmenu/interface'
 import useCurrentInstance from '/@/utils/useCurrentInstance'
 import Contextmenu from '/@/components/contextmenu/index.vue'
 import horizontalScroll from '/@/utils/horizontalScroll'
 import { getFirstRoute, routePush } from '/@/utils/router'
-import {adminBaseRoutePath} from "/@/router/static/adminBase";
+import { adminBaseRoutePath } from '/@/router/static/adminBase'
 
 const route = useRoute()
 const router = useRouter()
@@ -62,19 +62,6 @@ const activeBoxStyle = reactive({
 
 const onTab = (menu: RouteLocationNormalized) => {
     router.push(menu)
-}
-
-const onContextmenu = (menu: RouteLocationNormalized, el: MouseEvent) => {
-    // 禁用刷新
-    state.contextmenuItems[0].disabled = route.path !== menu.path
-    // 禁用关闭其他和关闭全部
-    state.contextmenuItems[4].disabled = state.contextmenuItems[3].disabled = navTabs.state.tabsView.length == 1 ? true : false
-
-    const { clientX, clientY } = el
-    contextmenuRef.value.onShowContextmenu(menu, {
-        x: clientX,
-        y: clientY,
-    })
 }
 
 // tab 激活状态切换
@@ -141,25 +128,38 @@ const closeAllTab = (menu?: RouteLocationNormalized) => {
     if (firstRoute) routePush(firstRoute.path)
 }
 
-const onContextmenuItem = async (item: ContextmenuItemClickEmitArg) => {
-    const { name, menu } = item
-    if (!menu) return
+const onContextmenu = (menu: RouteLocationNormalized, el: MouseEvent) => {
+    // 禁用刷新
+    state.contextmenuItems[0].disabled = route.path !== menu.path
+    // 禁用关闭其他和关闭全部
+    state.contextmenuItems[4].disabled = state.contextmenuItems[3].disabled = navTabs.state.tabsView.length == 1 ? true : false
+
+    const { clientX, clientY } = el
+    contextmenuRef.value.onShowContextmenu(menu, {
+        x: clientX,
+        y: clientY,
+    })
+}
+
+const onContextMenuClick = (item: ContextMenuItemClickEmitArg<RouteLocationNormalized>) => {
+    const { name, sourceData } = item
+    if (!sourceData) return
     switch (name) {
         case 'refresh':
-            proxy.eventBus.emit('onTabViewRefresh', menu)
+            proxy.eventBus.emit('onTabViewRefresh', sourceData)
             break
         case 'close':
-            closeTab(menu)
+            closeTab(sourceData)
             break
         case 'closeOther':
-            closeOtherTab(menu)
+            closeOtherTab(sourceData)
             break
         case 'closeAll':
-            closeAllTab(menu)
+            closeAllTab(sourceData)
             break
         case 'fullScreen':
-            if (route.path !== menu?.path) {
-                router.push(menu?.path as string)
+            if (route.path !== sourceData.path) {
+                router.push(sourceData.path as string)
             }
             navTabs.setFullScreen(true)
             break

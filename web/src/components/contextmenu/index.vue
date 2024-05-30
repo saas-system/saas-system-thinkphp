@@ -10,22 +10,21 @@
         >
             <ul class="el-dropdown-menu">
                 <template v-for="(item, idx) in props.items" :key="idx">
-                    <li class="el-dropdown-menu__item" :class="item.disabled ? 'is-disabled' : ''" tabindex="-1" @click="onContextmenuItem(item)">
+                    <li class="el-dropdown-menu__item" :class="item.disabled ? 'is-disabled' : ''" tabindex="-1" @click="onMenuItemClick(item)">
                         <Icon size="12" :name="item.icon" />
                         <span>{{ item.label }}</span>
                     </li>
                 </template>
             </ul>
-            <span class="el-popper__arrow" :style="{ left: `${state.arrowAxis}px` }"></span>
+            <span v-if="state.showArrow" class="el-popper__arrow" :style="{ left: `${state.arrowAxis}px` }"></span>
         </div>
     </transition>
 </template>
 
 <script setup lang="ts">
 import { onMounted, reactive, toRaw } from 'vue'
-import type { Axis, ContextmenuItemClickEmitArg, Props } from './interface'
-import type { RouteLocationNormalized } from 'vue-router'
 import { useEventListener } from '@vueuse/core'
+import type { Axis, ContextMenuItemClickEmitArg, Props } from './interface'
 
 const props = withDefaults(defineProps<Props>(), {
     width: 150,
@@ -33,7 +32,10 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emits = defineEmits<{
-    (e: 'contextmenuItemClick', item: ContextmenuItemClickEmitArg): void
+    // 菜单项被点击
+    (e: 'menuClick', item: ContextMenuItemClickEmitArg): void
+    // 右击菜单隐藏回调，它可能在组件内部被触发，所以提供 emit
+    (e: 'hideContextmenu'): void
 }>()
 
 const state: {
@@ -42,7 +44,8 @@ const state: {
         x: number
         y: number
     }
-    menu: RouteLocationNormalized | undefined
+    sourceData: any
+    showArrow: boolean
     arrowAxis: number
 } = reactive({
     show: false,
@@ -50,24 +53,47 @@ const state: {
         x: 0,
         y: 0,
     },
-    menu: undefined,
+    sourceData: null,
+    showArrow: true,
     arrowAxis: 10,
 })
 
-const onShowContextmenu = (menu: RouteLocationNormalized, axis: Axis) => {
-    state.menu = menu
+/**
+ * 显示右击菜单
+ * @param sourceData 来源数据，开发者可于右击菜单项被点击的事件中访问到它
+ * @param axis 右击坐标信息
+ */
+const onShowContextmenu = (sourceData: any, axis: Axis) => {
+    state.showArrow = true
+    state.sourceData = sourceData
+
+    const yOffset = document.documentElement.clientHeight - axis.y - (props.items.length * 40 + 20)
+    const xOffset = document.documentElement.clientWidth - axis.x - (props.width + 20)
+    if (yOffset < 0) {
+        axis.y += yOffset
+        state.showArrow = false
+    }
+    if (xOffset < 0) {
+        axis.x += xOffset
+        state.showArrow = false
+    }
+
     state.axis = axis
     state.show = true
 }
 
-const onContextmenuItem = (item: ContextmenuItemClickEmitArg) => {
-    if (item.disabled) return
-    item.menu = toRaw(state.menu)
-    emits('contextmenuItemClick', item)
-}
-
+/**
+ * 隐藏右击菜单
+ */
 const onHideContextmenu = () => {
     state.show = false
+    emits('hideContextmenu')
+}
+
+const onMenuItemClick = (item: ContextMenuItemClickEmitArg) => {
+    if (item.disabled) return
+    item.sourceData = toRaw(state.sourceData)
+    emits('menuClick', item)
 }
 
 defineExpose({
@@ -77,11 +103,18 @@ defineExpose({
 
 onMounted(() => {
     useEventListener(document, 'click', onHideContextmenu)
+    useEventListener(document, 'scroll', onHideContextmenu)
+    useEventListener(document, 'keydown', (e) => {
+        if (e.key === 'Escape') {
+            onHideContextmenu()
+        }
+    })
 })
 </script>
 
 <style scoped lang="scss">
 .ba-contextmenu {
+    position: fixed;
     z-index: 9999;
 }
 .el-popper,
