@@ -55,9 +55,9 @@ function createAxios<Data = any, T = ApiPromise<Data>>(axiosConfig: AxiosRequest
             'think-lang': config.lang.defaultLang,
             server: true,
         },
-        params: (import.meta.env.DEV ? {
-            XDEBUG_SESSION_START: 'XDEBUG_SESSION_START'
-        } : null),
+        // params: (import.meta.env.DEV ? {
+        //     XDEBUG_SESSION_START: 'XDEBUG_SESSION_START'
+        // } : null),
         responseType: 'json',
     })
 

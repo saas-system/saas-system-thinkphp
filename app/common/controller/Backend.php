@@ -2,11 +2,13 @@
 
 namespace app\common\controller;
 
+use think\db\exception\PDOException;
+use think\exception\HttpResponseException;
+use think\facade\Db;
 use Throwable;
 use think\Model;
 use think\facade\Event;
 use app\admin\library\Auth;
-use app\common\library\token\TokenExpirationException;
 
 class Backend extends Api
 {
