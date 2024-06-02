@@ -21,7 +21,7 @@ class Ajax extends Backend
 
     public function upload()
     {
-        AdminLog::setTitle(__('upload'));
+        AdminLog::instance()->setTitle(__('upload'));
         $file = $this->request->file('file');
         try {
             $upload     = new Upload($file);
