@@ -149,11 +149,18 @@ class TenantBackend extends Api
             }
         }
 
-        // 管理员验权和登录标签位
-        Event::trigger('tenantInit', $this->auth);
+        // 管理员验权和登录标签位 todo 先关闭
+        // Event::trigger('backendInit', $this->auth);
+
+        // tenant_id 获取
+        if (!input('?post.tenant_id')) {
+            $post              = $this->request->post();
+            $post['tenant_id'] = $this->auth->tenant_id ?? 0;
+            $this->request->withPost($post);
+        }
     }
 
-    public function queryBuilder(): array
+    public function queryBuilder($nobuildfields = []): array
     {
         if (empty($this->model)) {
             return [];
@@ -166,6 +173,8 @@ class TenantBackend extends Api
         $search      = $this->request->get("search/a", []);
         $initKey     = $this->request->get("initKey/s", $pk);
         $initValue   = $this->request->get("initValue/a", '');
+
+        $search = $this->filterParams($search, $nobuildfields); // 过滤搜索参数
 
         $where              = [];
         $modelTable         = strtolower($this->model->getTable());
@@ -322,5 +331,20 @@ class TenantBackend extends Api
         }
         $adminIds[] = $this->auth->id;
         return array_unique($adminIds);
+    }
+
+    /**
+     * 过滤原始的不能用buildParams 的条件
+     */
+    public function filterParams($filter, $nobuildfields = [])
+    {
+        if ($nobuildfields) {
+            foreach ($filter as $k => $f) {
+                if (in_array($f['field'], $nobuildfields)) {
+                    unset($filter[$k]);
+                }
+            }
+        }
+        return $filter;
     }
 }
