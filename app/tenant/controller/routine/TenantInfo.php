@@ -3,8 +3,6 @@
 namespace app\tenant\controller\routine;
 
 use app\common\model\Area;
-use app\common\model\tenant\AppVersion;
-use app\common\model\tenant\TenantConfig;
 use app\tenant\model\Tenant;
 use app\common\controller\TenantBackend as Backend;
 use think\facade\Db;
@@ -42,12 +40,6 @@ class TenantInfo extends Backend
 
             $fullAddress        = $provinceName . $cityName . $districtName . $info->address;
             $info->full_address = $fullAddress;
-
-            // app下载地址
-            $appVersion = AppVersion::order('version_code', 'desc')->find();
-            if ($appVersion) {
-                $info->app_download_url = $appVersion->url;
-            }
         }
 
         $this->success('', [
