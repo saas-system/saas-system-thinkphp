@@ -33,7 +33,7 @@ class Slide extends Base
         return $value ? full_url($value) : '';
     }
 
-    protected static function onAfterInsert($model)
+    protected static function onAfterInsert($model): void
     {
         if ($model->weigh == 0) {
             $pk = $model->getPk();

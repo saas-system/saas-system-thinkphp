@@ -103,10 +103,8 @@ class AdminLog extends Model
             foreach ($this->desensitizationRegex as $reg) {
                 if (preg_match($reg, $index)) {
                     $item = "***";
-                } else {
-                    if (is_array($item)) {
-                        $item = $this->desensitization($item);
-                    }
+                } elseif (is_array($item)) {
+                    $item = $this->desensitization($item);
                 }
             }
         }

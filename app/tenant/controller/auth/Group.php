@@ -131,7 +131,7 @@ class Group extends Backend
                 if ($this->modelValidate) {
                     $validate = str_replace("\\model\\", "\\validate\\", get_class($this->model));
                     if (class_exists($validate)) {
-                        $validate = new $validate;
+                        $validate = new $validate();
                         $validate->scene('add')->check($data);
                     }
                 }
@@ -201,7 +201,7 @@ class Group extends Backend
                 if ($this->modelValidate) {
                     $validate = str_replace("\\model\\", "\\validate\\", get_class($this->model));
                     if (class_exists($validate)) {
-                        $validate = new $validate;
+                        $validate = new $validate();
                         $validate->scene('edit')->check($data);
                     }
                 }
