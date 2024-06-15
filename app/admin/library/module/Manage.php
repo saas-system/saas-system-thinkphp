@@ -111,7 +111,6 @@ class Manage
         $zipFile = Server::download($this->uid, $this->installDir, [
             'sysVersion'    => Config::get('buildadmin.version'),
             'nuxtVersion'   => Server::getNuxtVersion(),
-            'moduleVersion' => $info['version'],
             'ba-user-token' => $token,
             'order_id'      => $orderId,
             'installed'     => Server::getInstalledIds($this->installDir),
