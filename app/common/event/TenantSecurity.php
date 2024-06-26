@@ -62,7 +62,7 @@ class TenantSecurity
                 }
 
                 // saveAll 方法自带事务
-                $dataRecycleLogModel = new DataRecycleLog;
+                $dataRecycleLogModel = new DataRecycleLog();
                 if (!$dataRecycleLogModel->saveAll($recycleDataArr)) {
                     Log::record('[ DataSecurity ] Failed to recycle data:' . var_export($recycleDataArr, true), 'warning');
                 }

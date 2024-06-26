@@ -35,7 +35,7 @@ export type modelValueTypes = string | number | boolean | object
 export interface InputData {
     // 标题
     title?: string
-    // 内容,比如radio的选项列表数据 content: { a: '选项1', b: '选项2' }
+    // 内容,比如radio的选项列表数据,格式为对象或者数组：{ a: '选项1', b: '选项2' } or [{value: 1, label: 2, disabled: false}, {...}]
     content?: any
     // 提示信息
     tip?: string
@@ -123,6 +123,7 @@ export interface InputAttr {
     field?: string
     remoteUrl?: string
     tooltipParams?: anyObj
+    escBlur?: boolean
     // 图标选择器属性
     showIconName?: boolean
     placement?: string
