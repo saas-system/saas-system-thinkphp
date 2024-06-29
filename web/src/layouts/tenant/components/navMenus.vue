@@ -31,7 +31,6 @@
             </template>
         </el-dropdown>
         <el-dropdown
-            v-if="adminInfo.super"
             @visible-change="onCurrentNavMenu($event, 'clear')"
             class="h100"
             size="large"
@@ -45,9 +44,9 @@
             </div>
             <template #dropdown>
                 <el-dropdown-menu class="dropdown-menu-box">
-                    <el-dropdown-item @click="onClearCache('tp')">{{ t('utils.Clean up system cache') }}</el-dropdown-item>
+                    <!--<el-dropdown-item @click="onClearCache('tp')">{{ t('utils.Clean up system cache') }}</el-dropdown-item>-->
                     <el-dropdown-item @click="onClearCache('storage')">{{ t('utils.Clean up browser cache') }}</el-dropdown-item>
-                    <el-dropdown-item @click="onClearCache('all')" divided>{{ t('utils.Clean up all cache') }}</el-dropdown-item>
+                    <!--<el-dropdown-item @click="onClearCache('all')" divided>{{ t('utils.Clean up all cache') }}</el-dropdown-item>-->
                 </el-dropdown-menu>
             </template>
         </el-dropdown>
@@ -97,7 +96,7 @@
 import { reactive } from 'vue'
 import screenfull from 'screenfull'
 import { useConfig } from '/@/stores/config'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElNotification } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import Config from './config.vue'
 import { useTenantAdminInfo } from '/@/stores/tenantAdminInfo'
@@ -156,7 +155,15 @@ const onClearCache = (type: string) => {
         Local.clear()
 
         Local.set(TENANT_ADMIN_INFO, adminInfo)
-        if (type == 'storage') return
+        if (type == 'storage') {
+            setTimeout(function () {
+                ElNotification({
+                    message: t('utils.Clean up cache success'),
+                    type: 'success',
+                })
+            }, 500)
+            return
+        }
     }
     // 清理后端缓存
     postTenantClearCache(type).then(() => {})

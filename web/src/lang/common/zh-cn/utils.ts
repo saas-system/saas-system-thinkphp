@@ -20,6 +20,7 @@ export default {
     close: '关闭',
     'Clean up system cache': '清理系统缓存',
     'Clean up browser cache': '清理浏览器缓存',
+    'Clean up cache success': '清理缓存成功',
     'Clean up all cache': '一键清理所有',
     'The data of the uploaded file is incomplete!': '上传文件的资料不完整！',
     'The type of uploaded file is not allowed!': '上传文件的类型不被允许！',
