@@ -1,6 +1,10 @@
 # SAAS系统介绍
 ## 一：安装介绍
 #### 第一步： 复制env-example到.env文件中，并修改正确的信息
+```shell
+git clone https://github.com/sxqibo/saas-system-thinkphp.git  
+git submodule update --init --force --remote
+```
 
 #### 第二步： 后端安装和运行
 ```shell
