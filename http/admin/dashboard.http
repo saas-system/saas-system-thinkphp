@@ -1,0 +1,4 @@
+### 获取省市区数据
+GET http://{{domain}}/admin/dashboard/index
+Batoken:  {{token}}
+Content-Type: application/json

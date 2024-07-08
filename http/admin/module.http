@@ -1,0 +1,33 @@
+### index
+GET http://{{domain}}/admin/module/index
+Accept: application/json
+
+### state
+GET http://{{domain}}/admin/module/state?uid=<uid>
+Accept: application/json
+
+### install
+GET http://{{domain}}/admin/module/install?uid=<uid>&token=<token>&orderId=<orderId>
+Accept: application/json
+
+### dependentInstallComplete
+GET http://{{domain}}/admin/module/dependentInstallComplete?uid=<uid>
+Accept: application/json
+
+### changeState
+POST http://{{domain}}/admin/module/changeState
+Content-Type: application/x-www-form-urlencoded
+
+uid=<uid>&state=<state>
+
+### uninstall
+GET http://{{domain}}/admin/module/uninstall?uid=<uid>
+Accept: application/json
+
+### update
+GET http://{{domain}}/admin/module/update?uid=<uid>&token=<token>&orderId=<orderId>
+Accept: application/json
+
+### upload
+GET http://{{domain}}/admin/module/upload?file=<file>&token=<token>
+Accept: application/json
