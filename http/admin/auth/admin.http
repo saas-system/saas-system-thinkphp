@@ -1,0 +1,53 @@
+### index
+GET http://{{domain}}/admin/auth.admin/index
+Batoken: {{token}}
+Content-Type: application/json
+Accept: application/json
+
+### add
+POST http://{{domain}}/admin/auth.admin/add
+Batoken: {{token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "admin",
+  "nickname": "Admin User",
+  "password": "admin123",
+  "group_arr": [1]
+}
+
+### edit
+POST http://{{domain}}/admin/auth.admin/edit
+Batoken: {{token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": 1,
+  "username": "admin_super",
+  "nickname": "Admin Super",
+  "password": "admin123",
+  "group_arr": [1],
+  "status": 1
+}
+
+### delete
+DELETE http://{{domain}}/admin/auth.admin/del
+Batoken: {{token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "ids": [2, 3]
+}
+
+### checkGroupAuth
+POST http://{{domain}}/admin/auth.admin/checkGroupAuth
+Batoken: {{token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "groups": [10]
+}
