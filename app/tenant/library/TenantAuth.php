@@ -332,7 +332,7 @@ class TenantAuth extends \ba\Auth
         $info                 = $this->model->toArray();
         $info                 = array_intersect_key($info, array_flip($this->getAllowFields()));
         $info['token']        = $this->getToken();
-        $info['refreshToken'] = $this->getRefreshToken();
+        $info['refresh_token'] = $this->getRefreshToken();
         return $info;
     }
 
