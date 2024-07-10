@@ -19,8 +19,9 @@ class Index extends Backend
     public function index(): void
     {
         $adminInfo          = $this->auth->getInfo();
+        $adminInfo['debug'] = (boolean)env('app_debug', false);
         $adminInfo['super'] = $this->auth->isSuperAdmin();
-        unset($adminInfo['token'], $adminInfo['refreshToken']);
+        unset($adminInfo['token'], $adminInfo['refresh_token']);
 
         $menus = $this->auth->getMenus();
         if (!$menus) {

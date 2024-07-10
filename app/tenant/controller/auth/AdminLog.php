@@ -38,10 +38,10 @@ class AdminLog extends Backend
         list($where, $alias, $limit, $order) = $this->queryBuilder();
 
         $res = $this->model
-            ->permission($this->auth->tenant_id, 'admin_log')
             ->withJoin($this->withJoinTable, $this->withJoinType)
             ->alias($alias)
             ->where($where)
+            ->where('admin_log.tenant_id', $this->auth->tenant_id)
             ->where('admin.is_platform_admin', 0) // 只查出租户端管理员
             ->order($order)
             ->paginate($limit);

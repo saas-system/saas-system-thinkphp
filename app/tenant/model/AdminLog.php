@@ -2,7 +2,6 @@
 
 namespace app\tenant\model;
 
-
 use Throwable;
 use think\Model;
 use app\tenant\library\TenantAuth as Auth;
@@ -67,7 +66,7 @@ class AdminLog extends Model
      */
     public function setData(string|array $data): void
     {
-        $this->$data = $data;
+        $this->data = $data;
     }
 
     /**
@@ -90,13 +89,12 @@ class AdminLog extends Model
         $this->desensitizationRegex = array_merge($this->desensitizationRegex, $regex);
     }
 
-
     /**
      * 数据脱敏（只数组，根据数组 key 脱敏）
      * @param array|string $data
      * @return array|string
      */
-    protected function pureData(array|string $data): array|string
+    protected function desensitization(array|string $data): array|string
     {
         if (!is_array($data) || !$this->desensitizationRegex) {
             return $data;
@@ -122,7 +120,7 @@ class AdminLog extends Model
     public function record(string $title = '', string|array $data = null): void
     {
         $auth     = Auth::instance();
-        $adminId = $auth->isLogin() ? $auth->id : 0;
+        $adminId  = $auth->isLogin() ? $auth->id : 0;
         $username = $auth->isLogin() ? $auth->username : request()->param('username', __('Unknown'));
 
         $controller = str_replace('.', '/', request()->controller(true));

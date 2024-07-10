@@ -166,7 +166,7 @@ class TenantAdminRuleSeeder extends Seeder
                 'sublist'   => [
                     [
                         'type'      => 'menu',
-                        'title'     => '租户管理',
+                        'title'     => '租户信息',
                         'name'      => 'routine/tenantInfo',
                         'path'      => 'routine/tenantInfo',
                         'icon'      => 'el-icon-Tools',

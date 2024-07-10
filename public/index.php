@@ -24,7 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     header("Access-Control-Allow-Origin: *");
     exit();
 }
-$server = isset($_REQUEST['server']) || isset($_SERVER['HTTP_SERVER']) || substr($_SERVER['REQUEST_URI'], 1, 9) == 'index.php' || $_SERVER['REQUEST_METHOD'] == 'OPTIONS';
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -36,3 +35,4 @@ $response = $http->run();
 $response->send();
 
 $http->end($response);
+
