@@ -209,11 +209,12 @@ class Upload
      * 上传文件
      * @param ?string $saveName
      * @param int     $adminId
+     * @param string  $tenantId
      * @param int     $userId
      * @return array
      * @throws Throwable
      */
-    public function upload(?string $saveName = null, int $adminId = 0, int $userId = 0): array
+    public function upload(?string $saveName = null, int $adminId = 0, string $tenantId = '', int $userId = 0): array
     {
         if (empty($this->file)) {
             throw new Exception(__('No files have been uploaded or the file size exceeds the upload limit of the server'));
@@ -225,6 +226,7 @@ class Upload
 
         $params = [
             'topic'    => $this->topic,
+            'tenant_id'=> $tenantId,
             'admin_id' => $adminId,
             'user_id'  => $userId,
             'url'      => $this->getSaveName(),
