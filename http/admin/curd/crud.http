@@ -1,0 +1,89 @@
+### generate
+POST http://{{domain}}/admin/crud.crud/generate
+Batoken: {{token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "type": "",
+  "table": "",
+  "fields": "",
+  "app": "tenant"
+}
+
+
+### log
+POST http://{{domain}}/admin/crud.crud/log
+Batoken: {{token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": ""
+}
+
+### delete
+DELETE http://{{domain}}/admin/crud.crud/delete
+Batoken: {{token}}
+Content-Type: application/json
+
+[
+  1, 2
+]
+
+### getFileData
+GET http://{{domain}}/admin/crud.crud/getFileData
+Batoken: {{token}}
+Content-Type: application/json
+
+
+### 检查是否已有CRUD记录
+GET http://{{domain}}/admin/crud.crud/checkCrudLog
+Batoken: {{token}}
+Content-Type: application/json
+
+### 解析字段数据
+GET http://{{domain}}/admin/crud.crud/parseFieldData
+Batoken: {{token}}
+Content-Type: application/json
+
+### 生成前检查
+GET http://{{domain}}/admin/crud.crud/generateCheck
+Batoken: {{token}}
+Content-Type: application/json
+
+### 关联表数据解析
+GET http://{{domain}}/admin/crud.crud/parseJoinData
+Batoken: {{token}}
+Content-Type: application/json
+
+### 解析模型方法（设置器、获取器等）
+GET http://{{domain}}/admin/crud.crud/parseModelMethods
+Batoken: {{token}}
+Content-Type: application/json
+
+### 控制器/模型等文件的一些杂项属性解析
+GET http://{{domain}}/admin/crud.crud/parseSundryData
+Batoken: {{token}}
+Content-Type: application/json
+
+
+### 组装前台表单的数据
+GET http://{{domain}}/admin/crud.crud/getFormField
+Batoken: {{token}}
+Content-Type: application/json
+
+### getRemoteSelectUrl
+GET http://{{domain}}/admin/crud.crud/getRemoteSelectUrl
+Batoken: {{token}}
+Content-Type: application/json
+
+### getTableColumn
+GET http://{{domain}}/admin/crud.crud/getTableColumn
+Batoken: {{token}}
+Content-Type: application/json
+
+### getColumnDict
+GET http://{{domain}}/admin/crud.crud/getColumnDict
+Batoken: {{token}}
+Content-Type: application/json
