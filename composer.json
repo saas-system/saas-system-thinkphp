@@ -40,7 +40,8 @@
     "ext-bcmath": "*",
     "ext-iconv": "*",
     "ext-json": "*",
-    "ext-gd": "*"
+    "ext-gd": "*",
+    "sxqibo/fast-area": "^1.0"
   },
   "require-dev": {
     "symfony/var-dumper": "^5.4",
