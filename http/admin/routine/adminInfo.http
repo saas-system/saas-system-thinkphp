@@ -1,0 +1,24 @@
+### Get Admin Info
+GET http://{{domain}}/admin/routine.admininfo/index
+Batoken: {{token}}
+Content-Type: application/json
+Accept: application/json
+
+###
+
+### Edit Admin Info
+POST http://{{domain}}/admin/routine.admininfo/edit
+Batoken: {{token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id":1,
+  "username": "new_username",
+  "nickname": "new_nickname",
+  "avatar": "new_avatar_url",
+  "email": "new_email@example.com",
+  "mobile": "1234567890",
+  "motto": "new_motto",
+  "password": "new_password"
+}
