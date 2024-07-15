@@ -1,0 +1,17 @@
+### Add DataRecycle
+POST http://{{domain}}/admin/security/datarecycle/add
+Content-Type: application/json
+
+{
+  "controller": "app\\admin\\controller\\ExampleController",
+  "other_field": "value"
+}
+
+### Edit DataRecycle
+POST http://{{domain}}/admin/security/datarecycle/edit?id=1
+Content-Type: application/json
+
+{
+  "controller": "app\\admin\\controller\\ExampleController",
+  "other_field": "value"
+}

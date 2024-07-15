@@ -1,0 +1,21 @@
+### 查看 SensitiveDataLog
+GET http://{{domain}}/admin/security/sensitivedatalog/index
+Content-Type: application/json
+
+{
+  "search": [
+    {"field": "admin.nickname", "val": "nickname_value"}
+  ]
+}
+
+### 查看 SensitiveDataLog 详情
+GET http://{{domain}}/admin/security/sensitivedatalog/info?id=1
+Content-Type: application/json
+
+### 回滚 SensitiveDataLog
+POST http://{{domain}}/admin/security/sensitivedatalog/rollback
+Content-Type: application/json
+
+{
+  "ids": [1, 2, 3]
+}

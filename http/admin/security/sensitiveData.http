@@ -1,0 +1,34 @@
+### 查看 SensitiveData
+GET http://{{domain}}/admin/security/sensitivedata/index
+Content-Type: application/json
+
+{
+  "search": [
+    {"field": "controller", "val": "controller_value"}
+  ]
+}
+
+### 添加 SensitiveData
+POST http://{{domain}}/admin/security/sensitivedata/add
+Content-Type: application/json
+
+{
+  "controller": "ExampleController",
+  "fields": [
+    {"name": "field1", "value": "value1"},
+    {"name": "field2", "value": "value2"}
+  ]
+}
+
+### 编辑 SensitiveData
+POST http://{{domain}}/admin/security/sensitivedata/edit
+Content-Type: application/json
+
+{
+  "id": 1,
+  "controller": "ExampleControllerUpdated",
+  "fields": [
+    {"name": "field1", "value": "new_value1"},
+    {"name": "field2", "value": "new_value2"}
+  ]
+}
