@@ -42,10 +42,6 @@ class TenantUserTable extends Migrator
             // 扩展信息
             ->addColumn('country', 'string', ['limit' => 50, 'default' => '', 'comment' => '国家'])
             ->addColumn('address', 'string', ['limit' => 100, 'default' => '', 'comment' => '地址'])
-            ->addColumn('integral', 'integer', ['signed' => true, 'default' => 0, 'comment' => '参赛积分'])
-            ->addColumn('competitive_point', 'integer', ['signed' => true, 'default' => 0, 'comment' => '竞技点'])
-            ->addColumn('master_score', 'integer', ['signed' => true, 'default' => 0, 'comment' => '大师分'])
-            ->addColumn('coupon_num', 'integer', ['signed' => true, 'default' => 0, 'comment' => '卡券数量'])
             ->addColumn('is_virtual', 'boolean', ['default' => 0, 'comment' => '是否虚拟用户:0=否,1=是'])
             ->addColumn('status', 'boolean', ['default' => 1, 'comment' => '状态标志:0=禁用,1=正常'])
 
