@@ -1,0 +1,32 @@
+### 添加模板
+# 通过POST请求添加新的短信模板
+POST http://{{domain}}/admin/sms/template/add
+Content-Type: application/json
+
+{
+  "title": "New Template",
+  "code": "TEMPLATE_CODE",
+  "content": "This is the content of the SMS template."
+}
+
+
+### 编辑模板
+# 通过POST请求编辑现有的短信模板，ID为1
+POST http://{{domain}}/admin/sms/template/edit?id=1
+Content-Type: application/json
+
+{
+  "title": "Updated Template Title",
+  "code": "UPDATED_TEMPLATE_CODE",
+  "content": "This is the updated content of the SMS template."
+}
+
+
+### 查看模板列表
+# 通过GET请求查看所有短信模板
+GET http://{{domain}}/admin/sms/template/index
+Accept: application/json
+
+# 通过GET请求查看模板列表，并带有查询参数
+GET http://{{domain}}/admin/sms/template/index?select=1&limit=10&page=1
+Accept: application/json
