@@ -1,0 +1,40 @@
+### 查看列表
+GET http://{{domain}}/admin/tenant/admin/index
+Content-Type: application/json
+Batoken:  {{token}}
+
+{
+  "tenant_id": 1
+}
+
+### 添加管理员
+POST http://{{domain}}/admin/tenant/admin/add
+Content-Type: application/json
+Batoken:  {{token}}
+
+{
+  "username": "newadmin",
+  "password": "password123",
+  "nickname": "New Admin",
+  "mobile": "1234567890",
+  "group_arr": [1, 2],
+  "tenant_id": 1
+}
+
+### 编辑管理员
+POST http://{{domain}}/admin/tenant/admin/edit/1
+Content-Type: application/json
+Batoken:  {{token}}
+
+{
+  "username": "editedadmin",
+  "nickname": "Edited Admin",
+  "password": "newpassword123",
+  "group_arr": [1, 3],
+  "tenant_id": 1
+}
+
+### 自动登录租户账号
+POST http://{{domain}}/admin/tenant/admin/autoLogin/1
+Content-Type: application/json
+Batoken:  {{token}}

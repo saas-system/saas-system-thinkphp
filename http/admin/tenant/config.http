@@ -1,0 +1,10 @@
+### 编辑配置
+POST http://{{domain}}/admin/tenant/config/edit
+Content-Type: application/json
+Batoken:  {{token}}
+
+{
+  "id": 1,
+  "tenant_pre": "new_prefix",
+  "other_field": "value"
+}

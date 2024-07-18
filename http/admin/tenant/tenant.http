@@ -1,0 +1,62 @@
+### 查看租户信息列表
+GET http://{{domain}}/admin/tenant/tenant/index
+Content-Type: application/json
+Batoken:  {{token}}
+
+{
+  "select": true,
+  "limit": 10,
+  "order": "create_time desc"
+}
+
+### 添加租户信息
+POST http://{{domain}}/admin/tenant/tenant/add
+Content-Type: application/json
+Batoken:  {{token}}
+
+{
+  "name": "New Tenant",
+  "mobile": "1234567890",
+  "other_field": "value"
+}
+
+### 删除租户信息
+DELETE http://{{domain}}/admin/tenant/tenant/del
+Content-Type: application/json
+Batoken:  {{token}}
+
+{
+  "ids": [1, 2, 3]
+}
+
+### 获取租户配置
+GET http://{{domain}}/admin/tenant/tenant/getTenantConfig
+Content-Type: application/json
+Batoken:  {{token}}
+
+{
+  "id": 1
+}
+
+### 初始化租户数据
+POST http://{{domain}}/admin/tenant/tenant/initData
+Content-Type: application/json
+Batoken:  {{token}}
+
+{
+  "id": 1
+}
+
+### 清除租户数据
+POST http://{{domain}}/admin/tenant/tenant/clearData
+Content-Type: application/json
+Batoken:  {{token}}
+
+{
+  "id": 1
+}
+
+### 导出租户信息
+GET http://{{domain}}/admin/tenant/tenant/exportTenant
+Content-Type: application/json
+Batoken:  {{token}}

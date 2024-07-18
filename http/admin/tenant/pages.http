@@ -1,0 +1,11 @@
+### 查看单页列表
+GET http://{{domain}}/admin/tenant/pages/index
+Content-Type: application/json
+Batoken:  {{token}}
+
+{
+  "select": true,
+  "tenant_id": 1,
+  "limit": 10,
+  "order": "id desc"
+}
