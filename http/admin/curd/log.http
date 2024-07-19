@@ -1,14 +1,14 @@
 ### 获取CRUD记录列表
 GET http://{{domain}}/admin/crud.log/
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 ### 查看特定的CRUD记录
 GET http://{{domain}}/admin/crud.log/1
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 ### 删除特定的CRUD记录
 DELETE http://{{domain}}/admin/crud.log/1
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json

@@ -1,6 +1,6 @@
 ### generate
 POST http://{{domain}}/admin/crud.crud/generate
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 Accept: application/json
 
@@ -14,7 +14,7 @@ Accept: application/json
 
 ### log
 POST http://{{domain}}/admin/crud.crud/log
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 Accept: application/json
 
@@ -24,7 +24,7 @@ Accept: application/json
 
 ### delete
 DELETE http://{{domain}}/admin/crud.crud/delete
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 [
@@ -33,57 +33,57 @@ Content-Type: application/json
 
 ### getFileData
 GET http://{{domain}}/admin/crud.crud/getFileData
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 
 ### 检查是否已有CRUD记录
 GET http://{{domain}}/admin/crud.crud/checkCrudLog
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 ### 解析字段数据
 GET http://{{domain}}/admin/crud.crud/parseFieldData
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 ### 生成前检查
 GET http://{{domain}}/admin/crud.crud/generateCheck
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 ### 关联表数据解析
 GET http://{{domain}}/admin/crud.crud/parseJoinData
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 ### 解析模型方法（设置器、获取器等）
 GET http://{{domain}}/admin/crud.crud/parseModelMethods
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 ### 控制器/模型等文件的一些杂项属性解析
 GET http://{{domain}}/admin/crud.crud/parseSundryData
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 
 ### 组装前台表单的数据
 GET http://{{domain}}/admin/crud.crud/getFormField
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 ### getRemoteSelectUrl
 GET http://{{domain}}/admin/crud.crud/getRemoteSelectUrl
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 ### getTableColumn
 GET http://{{domain}}/admin/crud.crud/getTableColumn
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 ### getColumnDict
 GET http://{{domain}}/admin/crud.crud/getColumnDict
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json

@@ -1,12 +1,12 @@
 ### index
 GET http://{{domain}}/admin/auth.admin/index
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 Accept: application/json
 
 ### add
 POST http://{{domain}}/admin/auth.admin/add
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 Accept: application/json
 
@@ -19,7 +19,7 @@ Accept: application/json
 
 ### edit
 POST http://{{domain}}/admin/auth.admin/edit
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 Accept: application/json
 
@@ -34,7 +34,7 @@ Accept: application/json
 
 ### delete
 DELETE http://{{domain}}/admin/auth.admin/del
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 Accept: application/json
 
@@ -44,7 +44,7 @@ Accept: application/json
 
 ### checkGroupAuth
 POST http://{{domain}}/admin/auth.admin/checkGroupAuth
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 Accept: application/json
 

@@ -1,6 +1,6 @@
 ### Upload File
 POST http://{{domain}}/admin/ajax/upload
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: multipart/form-data
 
 --boundary
@@ -14,14 +14,14 @@ This is a sample file content.
 
 ### 获取省市区数据
 GET http://{{domain}}/admin/ajax/area
-Batoken:  {{token}}
+Batoken:  {{admin-token}}
 Content-Type: application/json
 
 ###
 
 ### Get Area List
 GET http://{{domain}}/admin/ajax/getAreaList
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 Query-String: province=some_province&city=some_city&quickSearch=search_term
 
@@ -29,7 +29,7 @@ Query-String: province=some_province&city=some_city&quickSearch=search_term
 
 ### Build Suffix SVG
 GET http://{{domain}}/admin/ajax/buildSuffixSvg
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 Query-String: suffix=example&background=white
 
@@ -37,14 +37,14 @@ Query-String: suffix=example&background=white
 
 ### 获取已脱敏的数据库连接配置列表
 GET http://{{domain}}/admin/ajax/getDatabaseConnectionList
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 ###
 
 ### 获取数据表列表
 GET http://{{domain}}/admin/ajax/getTableList
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 Query-String: connection=your_connection&samePrefix=true&excludeTable[]=table1&excludeTable[]=table2
 
@@ -52,7 +52,7 @@ Query-String: connection=your_connection&samePrefix=true&excludeTable[]=table1&e
 
 ### 获取表主键字段
 GET http://{{domain}}/admin/ajax/getTablePk
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 Query-String: table=your_table&connection=your_connection
 
@@ -60,7 +60,7 @@ Query-String: table=your_table&connection=your_connection
 
 ### Get Table Field List
 GET http://{{domain}}/admin/ajax/getTableFieldList
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 Query-String: table=your_table&clean=true&connection=your_connection
 
@@ -68,14 +68,14 @@ Query-String: table=your_table&clean=true&connection=your_connection
 
 ### Change Terminal Config
 POST http://{{domain}}/admin/ajax/changeTerminalConfig
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 ###
 
 ### Clear Cache
 POST http://{{domain}}/admin/ajax/clearCache
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 {
@@ -86,5 +86,5 @@ Content-Type: application/json
 
 ### 终端
 GET http://{{domain}}/admin/ajax/terminal
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json

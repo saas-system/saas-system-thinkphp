@@ -1,0 +1,19 @@
+### Callback Request
+POST http://{{domain}}/api/alioss/callback
+Content-Type: application/json
+Authorization: Bearer {{api-token}}
+
+{
+  "url": "http://example.com/image.jpg",
+  "width": 1024,
+  "height": 768,
+  "name": "example-image.jpg",
+  "size": 123456,
+  "type": "image/jpeg",
+  "sha1": "1234567890abcdef1234567890abcdef12345678"
+}
+
+### Authorization Header (if needed)
+# Add this section if your endpoint requires authentication
+# You can remove this section if no authentication is required
+

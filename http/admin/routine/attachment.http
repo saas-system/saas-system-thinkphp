@@ -1,6 +1,6 @@
 ### Get Attachment Info
 GET http://{{domain}}/admin/routine.attachment/index
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 Accept: application/json
 
@@ -8,7 +8,7 @@ Accept: application/json
 
 ### Del Attachment Info
 DELETE http://{{domain}}/admin/routine.attachment/del
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 Accept: application/json
 

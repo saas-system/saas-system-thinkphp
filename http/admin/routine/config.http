@@ -1,6 +1,6 @@
 ### Get Config
 GET http://{{domain}}/admin/routine.config/index
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 Accept: application/json
 
@@ -8,7 +8,7 @@ Accept: application/json
 
 ### Edit Config
 POST http://{{domain}}/admin/routine.config/edit
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 Accept: application/json
 
@@ -21,7 +21,7 @@ Accept: application/json
 
 ### Add Config
 POST http://{{domain}}/admin/routine.config/add
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 Accept: application/json
 
@@ -36,7 +36,7 @@ Accept: application/json
 
 ### Send Test Mail
 POST http://{{domain}}/admin/routine.config/sendTestMail
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 Accept: application/json
 

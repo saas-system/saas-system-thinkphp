@@ -1,13 +1,13 @@
 ### 获取分组列表
 GET http://{{domain}}/admin/auth.group/index
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 ###
 
 ### 添加分组
 POST http://{{domain}}/admin/auth.group/add
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 {
@@ -20,7 +20,7 @@ Content-Type: application/json
 
 ### 编辑分组
 POST http://{{domain}}/admin/auth.group/edit?id=1
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 {
@@ -33,7 +33,7 @@ Content-Type: application/json
 
 ### 删除分组
 DELETE http://{{domain}}/admin/auth.group/del
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 [
@@ -44,5 +44,5 @@ Content-Type: application/json
 
 ### 获取远程下拉选项
 GET http://{{domain}}/admin/auth.group/select
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json

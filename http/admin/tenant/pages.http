@@ -1,7 +1,7 @@
 ### 查看单页列表
 GET http://{{domain}}/admin/tenant/pages/index
 Content-Type: application/json
-Batoken:  {{token}}
+Batoken:  {{admin-token}}
 
 {
   "select": true,

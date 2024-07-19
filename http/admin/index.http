@@ -1,6 +1,6 @@
 ### Get Admin Info
 GET http://{{domain}}/admin/index/index
-Batoken:  {{token}}
+Batoken:  {{admin-token}}
 Content-Type: application/json
 
 ###

@@ -1,11 +1,11 @@
 ### 获取菜单列表
 GET http://{{domain}}/admin/auth/rule/index
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 ### 添加菜单
 POST http://{{domain}}/admin/auth/rule/add
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 {
@@ -17,7 +17,7 @@ Content-Type: application/json
 
 ### 编辑菜单
 POST http://{{domain}}/admin/auth/rule/edit?id=1
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 {
@@ -29,7 +29,7 @@ Content-Type: application/json
 
 ### 删除菜单
 DELETE http://{{domain}}/admin/auth/rule/del
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 
 [
@@ -38,5 +38,5 @@ Content-Type: application/json
 
 ### 远程select选项
 GET http://{{domain}}/admin/auth/rule/select
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json

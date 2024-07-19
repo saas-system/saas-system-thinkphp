@@ -1,6 +1,6 @@
 ### Get Admin Info
 GET http://{{domain}}/admin/routine.admininfo/index
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 Accept: application/json
 
@@ -8,7 +8,7 @@ Accept: application/json
 
 ### Edit Admin Info
 POST http://{{domain}}/admin/routine.admininfo/edit
-Batoken: {{token}}
+Batoken: {{admin-token}}
 Content-Type: application/json
 Accept: application/json
 

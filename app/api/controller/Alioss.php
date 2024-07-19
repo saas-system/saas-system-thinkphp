@@ -13,7 +13,7 @@ class Alioss extends Frontend
      */
     protected $topic = 'default';
 
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
     }
