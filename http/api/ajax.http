@@ -1,0 +1,23 @@
+### Upload file
+POST http://{{domain}}/api/ajax/upload
+Content-Type: multipart/form-data
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="example.txt"
+Content-Type: text/plain
+
+This is a test file content.
+--boundary--
+
+### Get area data
+GET http://{{domain}}/api/ajax/area
+Content-Type: application/json
+
+### Build Suffix SVG
+GET http://{{domain}}/api/ajax/buildSuffixSvg
+Content-Type: application/json
+
+{
+  "suffix": "file",
+  "background": "your-background-color"
+}
