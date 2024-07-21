@@ -14,9 +14,9 @@ use think\facade\Validate;
 
 class Sms extends Frontend
 {
-    protected $noNeedLogin = ['send'];
+    protected array $noNeedLogin = ['send'];
 
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
     }

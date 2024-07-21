@@ -1,0 +1,41 @@
+### 图形验证码
+POST http://{{domain}}/api/common/captcha
+Content-Type: application/json
+
+{
+  "id": "captchaId"
+}
+
+###
+
+### 点选验证码
+POST http://{{domain}}/api/common/clickCaptcha
+Content-Type: application/json
+
+{
+  "id": "yourCaptchaId"
+}
+
+###
+
+### 点选验证码检查
+POST http://{{domain}}/api/common/checkClickCaptcha
+Content-Type: application/json
+
+{
+  "id": "yourCaptchaId",
+  "info": "captchaInfo",
+  "unset": false
+}
+
+###
+
+### 刷新Token
+POST http://{{domain}}/api/common/refreshToken
+Content-Type: application/json
+
+{
+  "refreshToken": "yourRefreshToken"
+}
+
+###
