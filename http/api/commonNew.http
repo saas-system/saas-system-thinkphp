@@ -1,0 +1,38 @@
+### 获取页面信息
+GET http://{{domain}}/api/commonnew/getPagesInfo
+Content-Type: application/json
+
+{
+  "alias": "agreement"
+}
+
+###
+
+### 获取轮播图
+GET http://{{domain}}/api/commonnew/getSlideList
+Content-Type: application/json
+
+{
+  "position": "your_position",
+  "tenant_id": "your_tenant_id"
+}
+
+###
+
+### 获取OSS签名信息
+GET http://{{domain}}/api/commonnew/getOssConfig
+Content-Type: application/json
+
+{
+  "name": "your_file_name"
+}
+
+###
+
+### 获取租户ID
+GET http://{{domain}}/api/commonnew/getTenantId
+Content-Type: application/json
+
+{
+  "mini_app_id": "your_mini_app_id"
+}
