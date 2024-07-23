@@ -1,0 +1,11 @@
+### Send Email Request
+POST http://{{domain}}/api/ems/send
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "event": "user_register",
+  "captchaId": "some-captcha-id",
+  "captchaInfo": "some-captcha-info",
+  "password": "your-password"
+}
