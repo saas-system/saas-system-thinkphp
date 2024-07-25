@@ -1,0 +1,45 @@
+### 查看管理员列表
+GET http://{{domain}}/tenant/auth.admin/index
+Batoken: {{tenant-token}}
+Content-Type: application/json
+Accept: application/json
+
+###
+
+### 添加管理员
+POST http://{{domain}}/tenant/auth.admin/add
+Content-Type: application/json
+Batoken: {{tenant-token}}
+
+{
+  "username": "newadmin",
+  "nickname": "New Admin",
+  "password": "password123",
+  "group_arr": [1, 2]
+}
+
+###
+
+### 编辑管理员
+POST http://{{domain}}/tenant/auth.admin/edit
+Content-Type: application/json
+Batoken: {{tenant-token}}
+
+{
+  "id": 1,
+  "username": "updatedadmin",
+  "nickname": "Updated Admin",
+  "password": "newpassword123",
+  "group_arr": [1, 3]
+}
+
+###
+
+### 删除管理员
+DELETE http://{{domain}}/tenant/auth.admin/del
+Content-Type: application/json
+Batoken: {{tenant-token}}
+
+{
+  "ids": [1, 2]
+}
