@@ -1,0 +1,32 @@
+### Send SMS Request
+POST http://{{domain}}/api/sms/send
+Content-Type: application/json
+
+{
+  "mobile": "12345678901",
+  "template_code": "your_template_code",
+  "captchaId": "your_captcha_id",
+  "captchaInfo": "your_captcha_info"
+}
+
+### Test invalid mobile format
+POST http://{{domain}}/api/sms/send
+Content-Type: application/json
+
+{
+  "mobile": "invalid_mobile",
+  "template_code": "your_template_code",
+  "captchaId": "your_captcha_id",
+  "captchaInfo": "your_captcha_info"
+}
+
+### Test missing template code
+POST http://{{domain}}/api/sms/send
+Content-Type: application/json
+
+{
+  "mobile": "12345678901",
+  "template_code": "",
+  "captchaId": "your_captcha_id",
+  "captchaInfo": "your_captcha_info"
+}
