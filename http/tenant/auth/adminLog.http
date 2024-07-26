@@ -1,0 +1,11 @@
+### Get admin logs
+GET http://{{domain}}/admin/auth.admin_log/index
+Batoken: {{tenant-token}}
+Accept: application/json
+Content-Type: application/json
+
+### Get admin logs with query parameters
+GET http://{{domain}}/admin/auth.admin_log/index?select=true
+Batoken: {{tenant-token}}
+Accept: application/json
+Content-Type: application/json

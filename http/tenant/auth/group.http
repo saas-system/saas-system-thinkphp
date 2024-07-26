@@ -1,0 +1,48 @@
+### 获取分组列表
+GET http://{{domain}}/admin/auth.group/index
+Batoken: {{tenant-token}}
+Content-Type: application/json
+
+###
+
+### 添加分组
+POST http://{{domain}}/admin/auth.group/add
+Batoken: {{tenant-token}}
+Content-Type: application/json
+
+{
+  "name": "New Group",
+  "rules": [1, 2, 3],
+  "status": 1
+}
+
+###
+
+### 编辑分组
+POST http://{{domain}}/admin/auth.group/edit?id=1
+Batoken: {{tenant-token}}
+Content-Type: application/json
+
+{
+  "name": "Updated Group",
+  "rules": [1, 2, 4],
+  "status": 1
+}
+
+###
+
+### 删除分组
+DELETE http://{{domain}}/admin/auth.group/del
+Batoken: {{tenant-token}}
+Content-Type: application/json
+
+[
+  1, 2
+]
+
+###
+
+### 获取远程下拉选项
+GET http://{{domain}}/admin/auth.group/select
+Batoken: {{tenant-token}}
+Content-Type: application/json
