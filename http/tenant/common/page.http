@@ -1,0 +1,31 @@
+### View Pages
+GET http://{{domain}}/tenant/pages
+Content-Type: application/json
+
+### View a Single Page by ID
+GET http://{{domain}}/tenant/pages/1
+Content-Type: application/json
+
+### Create a New Page
+POST http://{{domain}}/tenant/pages
+Content-Type: application/json
+
+{
+  "title": "New Page Title",
+  "alias": "new-page-alias",
+  "content": "Content of the new page"
+}
+
+### Update an Existing Page by ID
+PUT http://{{domain}}/tenant/pages/1
+Content-Type: application/json
+
+{
+  "title": "Updated Page Title",
+  "alias": "updated-page-alias",
+  "content": "Updated content of the page"
+}
+
+### Delete a Page by ID
+DELETE http://{{domain}}/tenant/pages/1
+Content-Type: application/json
