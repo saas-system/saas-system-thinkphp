@@ -1,0 +1,29 @@
+### 创建新的 Slide
+POST http://{{domain}}/tenant/slide
+Content-Type: application/json
+
+{
+  "field1": "value1",
+  "field2": "value2"
+}
+
+### 获取 Slide 列表
+GET http://{{domain}}/tenant/slide
+Content-Type: application/json
+
+### 获取指定的 Slide
+GET http://{{domain}}/tenant/slide/1
+Content-Type: application/json
+
+### 更新指定的 Slide
+PUT http://{{domain}}/tenant/slide/1
+Content-Type: application/json
+
+{
+  "field1": "new_value1",
+  "field2": "new_value2"
+}
+
+### 删除指定的 Slide
+DELETE http://{{domain}}/tenant/slide/1
+Content-Type: application/json

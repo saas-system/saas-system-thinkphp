@@ -1,0 +1,29 @@
+### 创建新的 SlideCategory
+POST http://{{domain}}/tenant/slide_category
+Content-Type: application/json
+
+{
+  "name": "New Category",
+  "description": "Description of the new category"
+}
+
+### 获取 SlideCategory 列表
+GET http://{{domain}}/tenant/slide_category
+Content-Type: application/json
+
+### 获取指定的 SlideCategory
+GET http://{{domain}}/tenant/slide_category/1
+Content-Type: application/json
+
+### 更新指定的 SlideCategory
+PUT http://{{domain}}/tenant/slide_category/1
+Content-Type: application/json
+
+{
+  "name": "Updated Category",
+  "description": "Updated description"
+}
+
+### 删除指定的 SlideCategory
+DELETE http://{{domain}}/tenant/slide_category/1
+Content-Type: application/json
