@@ -1,0 +1,51 @@
+### Get Config
+GET http://{{domain}}/admin/routine.config/index
+Batoken: {{tenant-token}}
+Content-Type: application/json
+Accept: application/json
+
+###
+
+### Edit Config
+POST http://{{domain}}/admin/routine.config/edit
+Batoken: {{tenant-token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "backend_entrance": "/new_entrance",
+  "other_config_key": "other_config_value"
+}
+
+###
+
+### Add Config
+POST http://{{domain}}/admin/routine.config/add
+Batoken: {{tenant-token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "new_config_name",
+  "type": "new_config_type",
+  "value": "new_config_value",
+  "group": "new_config_group"
+}
+
+###
+
+### Send Test Mail
+POST http://{{domain}}/admin/routine.config/sendTestMail
+Batoken: {{tenant-token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "smtp_server": "smtp.example.com",
+  "smtp_user": "user@example.com",
+  "smtp_pass": "password",
+  "smtp_verification": "SSL",
+  "smtp_port": 465,
+  "smtp_sender_mail": "sender@example.com",
+  "testMail": "test@example.com"
+}

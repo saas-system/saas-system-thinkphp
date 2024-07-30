@@ -1,0 +1,10 @@
+### 获取用户的基本信息
+GET http://{{domain}}/tenant/user.user/findUserInfo?id=1
+Batoken: {{tenant-token}}
+Accept: application/json
+
+### 导出用户信息
+POST http://{{domain}}//tenant.user/user/exportUser
+Batoken: {{tenant-token}}
+Content-Type: application/json
+Accept: application/json
