@@ -1,0 +1,14 @@
+### callback
+POST http://{{domain}}/admin/alioss/callback
+Content-Type: application/json
+Accept: application/json
+
+{
+  "url": "<url>",
+  "width": <width>,
+  "height": <height>,
+  "name": "<name>",
+  "size": <size>,
+  "type": "<type>",
+  "sha1": "<sha1>"
+}

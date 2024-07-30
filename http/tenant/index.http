@@ -1,0 +1,21 @@
+### Get Admin Info
+GET http://{{domain}}/admin/index/index
+Batoken:  {{tenant-token}}
+Content-Type: application/json
+
+###
+
+### Admin Login
+POST http://{{domain}}/admin/index/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "123123"
+}
+
+###
+
+### Admin Logout
+POST http://{{domain}}/admin/index/logout
+Content-Type: application/json

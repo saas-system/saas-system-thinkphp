@@ -1,0 +1,22 @@
+### Upload File
+POST http://{{domain}}/admin/ajax/upload
+Batoken: {{tenant-token}}
+Content-Type: multipart/form-data
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="example.txt"
+Content-Type: text/plain
+
+This is a sample file content.
+--boundary--
+
+###
+
+### Clear Cache
+POST http://{{domain}}/admin/ajax/clearCache
+Batoken: {{tenant-token}}
+Content-Type: application/json
+
+{
+  "type": "tp"
+}
