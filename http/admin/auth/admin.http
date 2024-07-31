@@ -25,9 +25,9 @@ Accept: application/json
 
 {
   "id": 1,
-  "username": "admin_super",
-  "nickname": "Admin Super",
-  "password": "admin123",
+  "username": "admin",
+  "nickname": "admin",
+  "password": "123123",
   "group_arr": [1],
   "status": 1
 }

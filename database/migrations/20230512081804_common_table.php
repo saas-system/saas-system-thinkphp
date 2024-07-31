@@ -28,13 +28,6 @@ class CommonTable extends Migrator
      */
     public function change(): void
     {
-        $table = $this->table('area', ['collation' => 'utf8mb4_unicode_ci', 'comment' => '公共 - 地区表']);
-        $table->addColumn('name', 'string', ['limit' => 100, 'null' => true, 'comment' => '名称'])
-            ->addColumn('pid', 'integer', ['null' => true, 'comment' => '父id'])
-            ->addColumn('level', 'integer', ['null' => true, 'comment' => '层级:1=省,2=市,3=区/县'])
-            ->addIndex('pid')
-            ->create();
-
         $table = $this->table('attachment', ['collation' => 'utf8mb4_unicode_ci', 'comment' => '公共 - 附件表']);
         $table->addColumn('topic', 'string', ['limit' => 20, 'null' => false, 'default' => '', 'comment' => '细目'])
             ->addColumn('tenant_id', 'string', ['limit' => 200, 'default' => '', 'comment' => '租户ID，空为平台'])
