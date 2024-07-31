@@ -3,6 +3,7 @@
 namespace app\admin\model;
 
 use app\common\model\Area;
+use app\common\model\tenant\BusinessAdmin;
 use app\common\model\tenant\TenantConfig;
 use think\Model;
 
@@ -23,6 +24,7 @@ class Tenant extends Model
     ];
 
     protected $append = [
+        'business_admin',
         'area_ids'
     ];
 
@@ -34,6 +36,25 @@ class Tenant extends Model
             $model->city_id     = $areaIds[1];
             $model->district_id = $areaIds[2];
         }
+    }
+
+    public function setBusinessAdminIdsAttr($val, $data)
+    {
+        return $val ? implode(',', $val) : '';
+    }
+
+
+    public function getBusinessAdminIdsAttr($val, $data)
+    {
+        return $val ? explode(',', $val) : [];
+    }
+
+    public function getBusinessAdminAttr($val, $data)
+    {
+        if (!empty($data['business_admin_ids'])) {
+            return (new BusinessAdmin())->where('id', 'in', $data['business_admin_ids'])->column('name');
+        }
+        return [];
     }
 
     public function getAreaIdsAttr($val, $data)

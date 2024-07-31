@@ -6,6 +6,7 @@ use app\admin\model\sms\Log as SmsLog;
 use app\admin\model\TenantAdmin;
 use app\common\exceptions\UserException;
 use app\common\library\SpreadsheetUtil;
+use app\common\model\tenant\BusinessAdmin;
 use app\common\model\tenant\Tenant;
 use app\tenant\model\AdminGroup;
 use app\tenant\model\AdminGroupAccess;
@@ -141,12 +142,21 @@ class TenantService
                 $tenantName     = $tenant->name;
                 $expireTimeText = date('Y-m-d H:i:s', $expireTime);
                 $config         = $tenant->config;
-                $remindAdminIds = $config->remind_admin_ids;
 
-                $tenantMobiles = [];
+                $tenantMobiles  = [];
+
+                // 租户过期通知管理员手机号
+                $remindAdminIds = $config->remind_admin_ids;
                 if (!empty($remindAdminIds)) {
-                    $tenantMobiles = TenantAdmin::whereIn('id', $remindAdminIds)->column('mobile');
+                    $tenantMobiles = array_merge($tenantMobiles, TenantAdmin::whereIn('id', $remindAdminIds)->column('mobile'));
                 }
+
+                // 分管业务员手机号
+                $remindBusinessAdminIds = $tenant->business_admin_ids;
+                if (!empty($remindBusinessAdminIds)) {
+                    $tenantMobiles = array_merge($tenantMobiles, BusinessAdmin::whereIn('id', $remindBusinessAdminIds)->column('mobile'));
+                }
+
 
                 $sendMobiles  = array_unique(array_merge($remindPlatformAdminMobiles, $tenantMobiles));
                 $templateCode = 'tenant_expire_remind';
