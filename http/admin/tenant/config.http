@@ -1,5 +1,5 @@
 ### 编辑配置
-POST http://{{domain}}/admin/tenant/config/edit
+POST http://{{domain}}/admin/tenant.config/edit
 Content-Type: application/json
 Batoken:  {{admin-token}}
 

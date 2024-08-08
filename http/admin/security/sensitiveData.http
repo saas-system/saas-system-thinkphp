@@ -1,5 +1,5 @@
 ### 查看 SensitiveData
-GET http://{{domain}}/admin/security/sensitivedata/index
+GET http://{{domain}}/admin/security.sensitivedata/index
 Content-Type: application/json
 
 {
@@ -9,7 +9,7 @@ Content-Type: application/json
 }
 
 ### 添加 SensitiveData
-POST http://{{domain}}/admin/security/sensitivedata/add
+POST http://{{domain}}/admin/security.sensitivedata/add
 Content-Type: application/json
 
 {
@@ -21,7 +21,7 @@ Content-Type: application/json
 }
 
 ### 编辑 SensitiveData
-POST http://{{domain}}/admin/security/sensitivedata/edit
+POST http://{{domain}}/admin/security.sensitivedata/edit
 Content-Type: application/json
 
 {

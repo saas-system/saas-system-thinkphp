@@ -1,5 +1,5 @@
 ### 查看列表
-GET http://{{domain}}/admin/tenant/admin/index
+GET http://{{domain}}/admin/tenant.admin/index
 Content-Type: application/json
 Batoken:  {{admin-token}}
 
@@ -8,7 +8,7 @@ Batoken:  {{admin-token}}
 }
 
 ### 添加管理员
-POST http://{{domain}}/admin/tenant/admin/add
+POST http://{{domain}}/admin/tenant.admin/add
 Content-Type: application/json
 Batoken:  {{admin-token}}
 
@@ -22,7 +22,7 @@ Batoken:  {{admin-token}}
 }
 
 ### 编辑管理员
-POST http://{{domain}}/admin/tenant/admin/edit/1
+POST http://{{domain}}/admin/tenant.admin/edit/1
 Content-Type: application/json
 Batoken:  {{admin-token}}
 
@@ -35,6 +35,6 @@ Batoken:  {{admin-token}}
 }
 
 ### 自动登录租户账号
-POST http://{{domain}}/admin/tenant/admin/autoLogin/1
+POST http://{{domain}}/admin/tenant.admin/autoLogin/1
 Content-Type: application/json
 Batoken:  {{admin-token}}

@@ -1,5 +1,5 @@
 ### 查看租户信息列表
-GET http://{{domain}}/admin/tenant/tenant/index
+GET http://{{domain}}/admin/tenant.tenant/index
 Content-Type: application/json
 Batoken:  {{admin-token}}
 
@@ -10,7 +10,7 @@ Batoken:  {{admin-token}}
 }
 
 ### 添加租户信息
-POST http://{{domain}}/admin/tenant/tenant/add
+POST http://{{domain}}/admin/tenant.tenant/add
 Content-Type: application/json
 Batoken:  {{admin-token}}
 
@@ -21,7 +21,7 @@ Batoken:  {{admin-token}}
 }
 
 ### 删除租户信息
-DELETE http://{{domain}}/admin/tenant/tenant/del
+DELETE http://{{domain}}/admin/tenant.tenant/del
 Content-Type: application/json
 Batoken:  {{admin-token}}
 
@@ -30,7 +30,7 @@ Batoken:  {{admin-token}}
 }
 
 ### 获取租户配置
-GET http://{{domain}}/admin/tenant/tenant/getTenantConfig
+GET http://{{domain}}/admin/tenant.tenant/getTenantConfig
 Content-Type: application/json
 Batoken:  {{admin-token}}
 
@@ -39,7 +39,7 @@ Batoken:  {{admin-token}}
 }
 
 ### 初始化租户数据
-POST http://{{domain}}/admin/tenant/tenant/initData
+POST http://{{domain}}/admin/tenant.tenant/initData
 Content-Type: application/json
 Batoken:  {{admin-token}}
 
@@ -48,7 +48,7 @@ Batoken:  {{admin-token}}
 }
 
 ### 清除租户数据
-POST http://{{domain}}/admin/tenant/tenant/clearData
+POST http://{{domain}}/admin/tenant.tenant/clearData
 Content-Type: application/json
 Batoken:  {{admin-token}}
 
@@ -57,6 +57,6 @@ Batoken:  {{admin-token}}
 }
 
 ### 导出租户信息
-GET http://{{domain}}/admin/tenant/tenant/exportTenant
+GET http://{{domain}}/admin/tenant.tenant/exportTenant
 Content-Type: application/json
 Batoken:  {{admin-token}}

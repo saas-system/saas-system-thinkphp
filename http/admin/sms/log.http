@@ -1,6 +1,6 @@
 ### 添加短信发送记录
 # 通过POST请求添加新的短信发送记录
-POST http://{{domain}}/admin/sms/log/add
+POST http://{{domain}}/admin/sms.log/add
 Content-Type: application/json
 
 {
@@ -12,7 +12,7 @@ Content-Type: application/json
 
 ### 编辑短信发送记录
 # 通过POST请求编辑现有的短信发送记录，ID为1
-POST http://{{domain}}/admin/sms/log/edit?id=1
+POST http://{{domain}}/admin/sms.log/edit?id=1
 Content-Type: application/json
 
 {
@@ -24,15 +24,15 @@ Content-Type: application/json
 
 ### 查看短信发送记录列表
 # 通过GET请求查看所有短信发送记录
-GET http://{{domain}}/admin/sms/log/index
+GET http://{{domain}}/admin/sms.log/index
 Accept: application/json
 
 # 通过GET请求查看短信发送记录列表，并带有查询参数
-GET http://{{domain}}/admin/sms/log/index?select=1&limit=10&page=1
+GET http://{{domain}}/admin/sms.log/index?select=1&limit=10&page=1
 Accept: application/json
 
 
 ### 删除短信发送记录
 # 通过POST请求删除指定的短信发送记录，ID为1
-POST http://{{domain}}/admin/sms/log/delete?id=1
+POST http://{{domain}}/admin/sms.log/delete?id=1
 Accept: application/json

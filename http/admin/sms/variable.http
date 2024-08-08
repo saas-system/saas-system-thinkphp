@@ -1,6 +1,6 @@
 ### 添加变量
 # 通过POST请求添加新的变量
-POST http://{{domain}}/admin/sms/variable/add
+POST http://{{domain}}/admin/sms.variable/add
 Content-Type: application/json
 
 {
@@ -12,7 +12,7 @@ Content-Type: application/json
 
 ### 编辑变量
 # 通过POST请求编辑现有的变量，ID为1
-POST http://{{domain}}/admin/sms/variable/edit?id=1
+POST http://{{domain}}/admin/sms.variable/edit?id=1
 Content-Type: application/json
 
 {
@@ -24,16 +24,16 @@ Content-Type: application/json
 
 ### 查看变量列表
 # 通过GET请求查看所有变量
-GET http://{{domain}}/admin/sms/variable/index
+GET http://{{domain}}/admin/sms.variable/index
 Accept: application/json
 
 ###
 # 通过GET请求查看变量列表，并带有查询参数
-GET http://{{domain}}/admin/sms/variable/index?select=1&limit=10&page=1
+GET http://{{domain}}/admin/sms.variable/index?select=1&limit=10&page=1
 Accept: application/json
 
 
 ### 获取变量值
 # 通过GET请求获取指定变量的值，ID为1
-GET http://{{domain}}/admin/sms/variable/getVar?id=1
+GET http://{{domain}}/admin/sms.variable/getVar?id=1
 Accept: application/json

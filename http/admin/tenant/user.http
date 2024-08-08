@@ -1,5 +1,5 @@
 ### 查看用户信息列表
-GET http://{{domain}}/admin/tenant/user/index
+GET http://{{domain}}/admin/tenant.user/index
 Content-Type: application/json
 Batoken:  {{admin-token}}
 
@@ -10,7 +10,7 @@ Batoken:  {{admin-token}}
 }
 
 ### 添加用户信息
-POST http://{{domain}}/admin/tenant/user/add
+POST http://{{domain}}/admin/tenant.user/add
 Content-Type: application/json
 Batoken:  {{admin-token}}
 
@@ -23,7 +23,7 @@ Batoken:  {{admin-token}}
 }
 
 ### 删除用户信息
-DELETE http://{{domain}}/admin/tenant/user/del
+DELETE http://{{domain}}/admin/tenant.user/del
 Content-Type: application/json
 Batoken:  {{admin-token}}
 
@@ -32,7 +32,7 @@ Batoken:  {{admin-token}}
 }
 
 ### 获取单个用户信息
-GET http://{{domain}}/admin/tenant/user/view
+GET http://{{domain}}/admin/tenant.user/view
 Content-Type: application/json
 Batoken:  {{admin-token}}
 
@@ -41,7 +41,7 @@ Batoken:  {{admin-token}}
 }
 
 ### 编辑用户信息
-PUT http://{{domain}}/admin/tenant/user/edit
+PUT http://{{domain}}/admin/tenant.user/edit
 Content-Type: application/json
 Batoken:  {{admin-token}}
 

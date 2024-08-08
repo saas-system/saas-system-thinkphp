@@ -1,5 +1,5 @@
 ### 查看分组列表
-GET http://{{domain}}/admin/tenant/group/index
+GET http://{{domain}}/admin/tenant.group/index
 Content-Type: application/json
 Batoken:  {{admin-token}}
 
@@ -8,7 +8,7 @@ Batoken:  {{admin-token}}
 }
 
 ### 选择分组
-GET http://{{domain}}/admin/tenant/group/select
+GET http://{{domain}}/admin/tenant.group/select
 Content-Type: application/json
 Batoken:  {{admin-token}}
 

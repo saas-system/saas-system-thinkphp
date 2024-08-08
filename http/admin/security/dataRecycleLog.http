@@ -1,5 +1,5 @@
 ### 查看 DataRecycleLog
-GET http://{{domain}}/admin/security/datarecyclelog/index
+GET http://{{domain}}/admin/security.datarecyclelog/index
 Content-Type: application/json
 
 {
@@ -9,7 +9,7 @@ Content-Type: application/json
 }
 
 ### 还原 DataRecycleLog
-POST http://{{domain}}/admin/security/datarecyclelog/restore
+POST http://{{domain}}/admin/security.datarecyclelog/restore
 Content-Type: application/json
 
 {
@@ -17,5 +17,5 @@ Content-Type: application/json
 }
 
 ### 详情 DataRecycleLog
-GET http://{{domain}}/admin/security/datarecyclelog/info?id=1
+GET http://{{domain}}/admin/security.datarecyclelog/info?id=1
 Content-Type: application/json

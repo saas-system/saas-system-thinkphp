@@ -1,5 +1,5 @@
 ### 查看单页列表
-GET http://{{domain}}/admin/tenant/pages/index
+GET http://{{domain}}/admin/tenant.pages/index
 Content-Type: application/json
 Batoken:  {{admin-token}}
 

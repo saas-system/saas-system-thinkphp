@@ -1,5 +1,5 @@
 ### Add DataRecycle
-POST http://{{domain}}/admin/security/datarecycle/add
+POST http://{{domain}}/admin/security.datarecycle/add
 Content-Type: application/json
 
 {
@@ -8,7 +8,7 @@ Content-Type: application/json
 }
 
 ### Edit DataRecycle
-POST http://{{domain}}/admin/security/datarecycle/edit?id=1
+POST http://{{domain}}/admin/security.datarecycle/edit?id=1
 Content-Type: application/json
 
 {

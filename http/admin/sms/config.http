@@ -1,10 +1,10 @@
 ### 获取基础配置
-GET http://{{domain}}/admin/sms/config/getConfigKey?name=base
+GET http://{{domain}}/admin/sms.config/getConfigKey?name=base
 Batoken:  {{admin-token}}
 Accept: application/json
 
 ### 保存基础配置
-POST http://{{domain}}/admin/sms/config/saveConfig?type=base
+POST http://{{domain}}/admin/sms.config/saveConfig?type=base
 Batoken:  {{admin-token}}
 Content-Type: application/json
 
@@ -15,7 +15,7 @@ Content-Type: application/json
 }
 
 ### 保存网关配置
-POST http://{{domain}}/admin/sms/config/saveConfig?type=gateway&name=your_gateway_name
+POST http://{{domain}}/admin/sms.config/saveConfig?type=gateway&name=your_gateway_name
 Batoken:  {{admin-token}}
 Content-Type: application/json
 
