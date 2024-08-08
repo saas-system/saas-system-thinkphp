@@ -197,7 +197,12 @@ class TenantService
                 'A' => ['title' => '代理商名称', 'width' => 'auto'],
                 'B' => ['title' => '联系人', 'width' => 'auto'],
                 'C' => ['title' => '联系电话', 'width' => 'auto'],
-                'D' => ['title' => '过期时间', 'width' => 'auto']
+                'D' => ['title' => '过期时间', 'width' => 'auto'],
+                'E' => ['title' => '省', 'width' => 'auto'],
+                'F' => ['title' => '市', 'width' => 'auto'],
+                'G' => ['title' => '县', 'width' => 'auto'],
+                'H' => ['title' => '详细地址', 'width' => 'auto'],
+                'I' => ['title' => '创建时间', 'width' => 'auto'],
             ];
             $titles          = [];
             foreach ($headers as $key => $item) {
@@ -214,7 +219,7 @@ class TenantService
             $tenantList = (new Tenant())->withJoin(['province', 'city', 'district', 'config'], 'LEFT')
                 ->alias($alias)
                 ->where($where)
-                ->order('expire_time asc')
+                ->order('create_time asc')
                 ->select();
 
             // 格式化数据
@@ -223,14 +228,19 @@ class TenantService
                     $tenant->name,
                     $tenant->contact_name,
                     $tenant->mobile,
-                    $tenant->expire_time_text
+                    $tenant->expire_time_text,
+                    $tenant->province->name ?? '',
+                    $tenant->city->name ?? '',
+                    $tenant->district->name ?? '',
+                    $tenant->address ?? '',
+                    date('Y-m-d H:i:s', $tenant->create_time) ?? '',
                 ];
             }
 
             $spreadsheetUtil->setRowValues($items, 2); // 内容
 
             // 文件名
-            $fileName  = "租户导出" . time();
+            $fileName = "租户导出" . time();
 
             return $spreadsheetUtil->save('', $fileName, false); // 浏览
         } catch (\Exception $e) {
