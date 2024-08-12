@@ -414,7 +414,7 @@ if (!function_exists('get_upload_config')) {
         Event::trigger('uploadConfigInit', App::getInstance());
 
         $uploadConfig             = Config::get('upload');
-        $uploadConfig['max_size'] = Filesystem::fileUnitToByte($uploadConfig['maxsize']);
+        $uploadConfig['max_size'] = Filesystem::fileUnitToByte($uploadConfig['max_size']);
 
         $upload = request()->upload;
         if (!$upload) {
