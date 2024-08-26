@@ -1,5 +1,6 @@
 ### index
 GET http://{{domain}}/admin/module/index
+Batoken: {{admin-token}}
 Accept: application/json
 
 ### state
