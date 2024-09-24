@@ -200,7 +200,7 @@ class Crud extends Backend
 
                 // 表单项
                 if (in_array($field['name'], $table['formFields'])) {
-                    $this->formVueData['formFields'][] = $this->getFormField($field, $columnDict, $app);
+                    $this->formVueData['formFields'][] = $this->getFormField($field, $columnDict, $app, $table['databaseConnection']);
                 }
 
                 // 表格列
@@ -668,13 +668,17 @@ class Crud extends Backend
                     $columns[$relationField]['table']['show']            = 'false';
                     $columns[$relationField]['table']['operator']        = 'FIND_IN_SET';
                     $columns[$relationField]['table']['comSearchRender'] = 'remoteSelect';
+                    $pk = $field['form']['remote-pk'] ?? 'id';
+                    if (!str_contains($pk, '.')) {
+                        $pk = TableManager::tableName($field['form']['remote-table'], true, $table['databaseConnection']) . '.' . $pk;
+                    }
                     $columns[$relationField]['table']['remote']          = [
-                        'pk'        => TableManager::tableName($field['form']['remote-table']) . '.' . ($field['form']['remote-pk'] ?? 'id'),
+                        'pk'        => $pk,
                         'field'     => $field['form']['remote-field'] ?? 'name',
                         'remoteUrl' => $this->getRemoteSelectUrl($field, $app),
                         'multiple'  => 'true',
                     ];
-                    $this->indexVueData['tableColumn'][]                 = $this->getTableColumn($columns[$relationField], $columnDict, '', $relationFieldLangPrefix);
+                    $this->indexVueData['tableColumn'][]        = $this->getTableColumn($columns[$relationField], $columnDict, '', $relationFieldLangPrefix);
                 } else {
                     $columns[$relationField]['table']['operator'] = 'LIKE';
                     $this->indexVueData['tableColumn'][]          = $this->getTableColumn($columns[$relationField], $columnDict, $relationFieldPrefix, $relationFieldLangPrefix);
@@ -768,7 +772,7 @@ class Crud extends Backend
      * 组装前台表单的数据
      * @throws Throwable
      */
-    private function getFormField($field, $columnDict, $app): array
+    private function getFormField($field, $columnDict, $app, ?string $dbConnection = null): array
     {
         // 表单项属性
         $formField = [
@@ -786,7 +790,12 @@ class Crud extends Backend
             $formField['@keyup.enter.stop']   = '';
             $formField['@keyup.ctrl.enter']   = 'baTable.onSubmit(formRef)';
         } elseif ($field['designType'] == 'remoteSelect' || $field['designType'] == 'remoteSelects') {
-            $formField[':input-attr']['pk']        = TableManager::tableName($field['form']['remote-table']) . '.' . ($field['form']['remote-pk'] ?? 'id');
+            $pk = $field['form']['remote-pk'] ?? 'id';
+            if (!str_contains($pk, '.')) {
+                $pk = TableManager::tableName($field['form']['remote-table'], true, $dbConnection) . '.' . $pk;
+            }
+
+            $formField[':input-attr']['pk']        = $pk;
             $formField[':input-attr']['field']     = $field['form']['remote-field'] ?? 'name';
             $formField[':input-attr']['remoteUrl'] = $this->getRemoteSelectUrl($field, $app);
         } elseif ($field['designType'] == 'number') {
