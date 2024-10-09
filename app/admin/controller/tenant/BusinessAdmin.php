@@ -12,15 +12,15 @@ class BusinessAdmin extends Backend
 {
     /**
      * BusinessAdmin模型对象
-     * @var \app\common\model\tenant\BusinessAdmin
      */
-    protected $model = null;
+
+    protected object $model;
     
-    protected $preExcludeFields = ['id', 'create_time', 'update_time', 'delete_time'];
+    protected string|array $preExcludeFields = ['id', 'create_time', 'update_time', 'delete_time'];
 
-    protected $quickSearchField = ['id'];
+    protected string|array $quickSearchField = ['id'];
 
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
         $this->model = new \app\common\model\tenant\BusinessAdmin;
