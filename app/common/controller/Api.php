@@ -7,7 +7,6 @@ use think\App;
 use think\Response;
 use think\facade\Db;
 use app\BaseController;
-use think\facade\Config;
 use think\db\exception\PDOException;
 use think\exception\HttpResponseException;
 
@@ -47,12 +46,6 @@ class Api extends BaseController
         }
 
         parent::initialize();
-
-        /**
-         * 设置默认过滤规则
-         * @see filter()
-         */
-        $this->request->filter('filter');
 
         // 加载控制器语言包
         $langSet = $this->app->lang->getLangSet();
