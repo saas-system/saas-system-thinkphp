@@ -31,6 +31,8 @@ return [
         // 混淆点长度
         'confuse_length' => 2,
     ],
+    // 代理服务器IP（\think\Request 类将尝试获取这些代理服务器发送过来的真实IP）
+    'proxy_server_ip'       => [],
     // Token 配置
     'token'                 => [
         // 默认驱动方式
