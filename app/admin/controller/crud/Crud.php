@@ -836,7 +836,7 @@ class Crud extends Backend
         }
 
         // 无意义的默认值
-        if (in_array($field['designType'], ['switch', 'number', 'float', 'remoteSelect']) && $field['default'] == 0) {
+        if (isset($field['default']) && in_array($field['designType'], ['switch', 'number', 'float', 'remoteSelect']) && $field['default'] == 0) {
             unset($this->indexVueData['defaultItems'][$field['name']]);
         }
         return $formField;
