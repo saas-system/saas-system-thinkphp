@@ -3,7 +3,6 @@
 namespace app\admin\library\traits;
 
 use Throwable;
-use think\facade\Config;
 
 /**
  * 后台控制器trait类
@@ -197,47 +196,94 @@ trait Backend
     }
 
     /**
-     * 排序
-     * @param int $id       排序主键值
-     * @param int $targetId 排序位置主键值
+     * 排序 - 增量重排法
      * @throws Throwable
      */
-    public function sortable(int $id, int $targetId): void
+    public function sortable(): void
     {
+        $pk        = $this->model->getPk();
+        $move      = $this->request->param('move');
+        $target    = $this->request->param('target');
+        $order     = $this->request->param("order/s") ?: $this->defaultSortField;
+        $direction = $this->request->param('direction');
+
+        $dataLimitWhere    = [];
         $dataLimitAdminIds = $this->getDataLimitAdminIds();
         if ($dataLimitAdminIds) {
-            $this->model->where($this->dataLimitField, 'in', $dataLimitAdminIds);
+            $dataLimitWhere[] = [$this->dataLimitField, 'in', $dataLimitAdminIds];
         }
 
-        $row    = $this->model->find($id);
-        $target = $this->model->find($targetId);
+        $moveRow   = $this->model->where($dataLimitWhere)->find($move);
+        $targetRow = $this->model->where($dataLimitWhere)->find($target);
 
-        if (!$row || !$target) {
+        if ($move == $target || !$moveRow || !$targetRow || !$direction) {
             $this->error(__('Record not found'));
         }
-        if ($row[$this->weighField] == $target[$this->weighField]) {
-            $autoSortEqWeight = is_null($this->autoSortEqWeight) ? Config::get('buildadmin.auto_sort_eq_weight') : $this->autoSortEqWeight;
-            if (!$autoSortEqWeight) {
-                $this->error(__('Invalid collation because the weights of the two targets are equal'));
-            }
 
-            // 自动重新整理排序
-            $all = $this->model->select();
-            foreach ($all as $item) {
-                $item[$this->weighField] = $item[$this->model->getPk()];
-                $item->save();
-            }
-            unset($all);
-            // 重新获取
-            $row    = $this->model->find($id);
-            $target = $this->model->find($targetId);
+        // 当前是否以权重字段排序（只检查当前排序和默认排序字段，不检查有序保证字段）
+        if ($order && is_string($order)) {
+            $order = explode(',', $order);
+            $order = [$order[0] => $order[1] ?? 'asc'];
+        }
+        if (!array_key_exists($this->weighField, $order)) {
+            $this->error(__('Please use the %s field to sort before operating', [$this->weighField]));
         }
 
-        $backup                    = $target[$this->weighField];
-        $target[$this->weighField] = $row[$this->weighField];
-        $row[$this->weighField]    = $backup;
-        $row->save();
-        $target->save();
+        // 开始增量重排
+        $order = $this->queryOrderBuilder();
+        $weigh = $targetRow[$this->weighField];
+
+        // 波及行的权重值向上增加还是向下减少
+        $updateMethod = $direction == 'up' ? 'dec' : 'inc';
+
+        // 与目标行权重相同的行
+        $weighRowIds    = $this->model
+            ->where($dataLimitWhere)
+            ->where($this->weighField, $weigh)
+            ->order($order)
+            ->column($pk);
+        $weighRowsCount = count($weighRowIds);
+
+        // 单个 SQL 查询中完成大于目标权重行的修改
+        $this->model->where($dataLimitWhere)
+            ->where($this->weighField, $updateMethod == 'dec' ? '<' : '>', $weigh)
+            ->whereNotIn($pk, [$moveRow->$pk])
+            ->$updateMethod($this->weighField, $weighRowsCount)
+            ->save();
+
+        // 遍历与目标行权重相同的行，每出现一行权重值将额外 +1，保证权重相同行的顺序位置不变
+        if ($updateMethod == 'inc') {
+            $weighRowIds = array_reverse($weighRowIds);
+        }
+
+        $moveComplete = 0;
+        $weighRowIds  = implode(',', $weighRowIds);
+        $weighRows    = $this->model->where($dataLimitWhere)
+            ->where($pk, 'in', $weighRowIds)
+            ->orderRaw("field($pk,$weighRowIds)")
+            ->select();
+
+        foreach ($weighRows as $key => $weighRow) {
+            if ($moveRow[$pk] == $weighRow[$pk]) {
+                continue;
+            }
+
+            if ($updateMethod == 'dec') {
+                $rowWeighVal = $weighRow[$this->weighField] - $key;
+            } else {
+                $rowWeighVal = $weighRow[$this->weighField] + $key;
+            }
+
+            if ($weighRow[$pk] == $targetRow[$pk]) {
+                $moveComplete               = 1;
+                $moveRow[$this->weighField] = $rowWeighVal;
+                $moveRow->save();
+            }
+
+            $rowWeighVal                 = $updateMethod == 'dec' ? $rowWeighVal - $moveComplete : $rowWeighVal + $moveComplete;
+            $weighRow[$this->weighField] = $rowWeighVal;
+            $weighRow->save();
+        }
 
         $this->success();
     }

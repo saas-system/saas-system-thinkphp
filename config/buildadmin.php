@@ -16,8 +16,6 @@ return [
     'user_token_keep_time'  => 60 * 60 * 24 * 3,
     // 管理员登录态保持时间（非刷新token，3天）
     'admin_token_keep_time' => 60 * 60 * 24 * 3,
-    // 表格拖拽排序时,两个权重相等则自动重新整理;控制器类中也有此项（作为单控制器自定义配置）
-    'auto_sort_eq_weight'   => false,
     // 开启前台会员中心
     'open_member_center'    => true,
     // 模块纯净安装（安装时移动模块文件而不是复制）

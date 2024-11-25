@@ -20,7 +20,6 @@ return [
     'Added successfully'                                                                  => '添加成功!',
     'Deleted successfully'                                                                => '删除成功!',
     'Parameter error'                                                                     => '参数错误!',
-    'Invalid collation because the weights of the two targets are equal'                  => '无效排序整理，因为两个目标权重是相等的',
     'File uploaded successfully'                                                          => '文件上传成功！',
     'No files were uploaded'                                                              => '没有文件被上传',
     'The uploaded file format is not allowed'                                             => '上传的文件格式未被允许',

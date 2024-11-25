@@ -20,7 +20,6 @@ return [
     'Added successfully'                                                                  => 'Added successfully!',
     'Deleted successfully'                                                                => 'Deleted successfully!',
     'Parameter error'                                                                     => 'Parameter error!',
-    'Invalid collation because the weights of the two targets are equal'                  => 'Invalid sort, because these two target weight is equal.',
     'File uploaded successfully'                                                          => 'File uploaded successfully',
     'No files were uploaded'                                                              => 'No files were uploaded',
     'The uploaded file format is not allowed'                                             => 'The uploaded file format is no allowance.',
