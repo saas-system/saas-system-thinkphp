@@ -731,7 +731,7 @@ class Crud extends Backend
             $modelData['methods'][] = Helper::assembleStub('mixins/model/getters/string', [
                 'field' => $fieldName
             ]);
-        } elseif ($field['originalDesignType'] == 'float') {
+        } elseif (in_array($field['type'], ['float', 'decimal', 'double'])) {
             $modelData['methods'][] = Helper::assembleStub('mixins/model/getters/float', [
                 'field' => $fieldName
             ]);
