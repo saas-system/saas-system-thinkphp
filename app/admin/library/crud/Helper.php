@@ -238,6 +238,7 @@ class Helper
             'quickSearchField' => 'string|array',
             'withJoinTable'    => 'array',
             'defaultSortField' => 'string|array',
+            'weighField'       => 'string',
         ],
     ];
 
