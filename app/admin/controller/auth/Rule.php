@@ -199,15 +199,11 @@ class Rule extends Backend
 
     /**
      * 删除
-     * @param array $ids
      * @throws Throwable
      */
-    public function del(array $ids = []): void
+    public function del(): void
     {
-        if (!$this->request->isDelete() || !$ids) {
-            $this->error(__('Parameter error'));
-        }
-
+        $ids = $this->request->param('ids/a', []);
         // 子级元素检查
         $subData = $this->model->where('pid', 'in', $ids)->column('pid', 'id');
         foreach ($subData as $key => $subDatum) {
@@ -215,7 +211,7 @@ class Rule extends Backend
                 $this->error(__('Please delete the child element first, or use batch deletion'));
             }
         }
-        parent::del($ids);
+        parent::del();
     }
 
     /**

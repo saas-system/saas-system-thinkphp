@@ -158,26 +158,21 @@ trait Backend
 
     /**
      * 删除
-     * @param array $ids
      * @throws Throwable
      */
-    public function del(array $ids = []): void
+    public function del(): void
     {
-        if (!$this->request->isDelete() || !$ids) {
-            $this->error(__('Parameter error'));
-        }
-
         $where             = [];
         $dataLimitAdminIds = $this->getDataLimitAdminIds();
         if ($dataLimitAdminIds) {
             $where[] = [$this->dataLimitField, 'in', $dataLimitAdminIds];
         }
 
-        $pk      = $this->model->getPk();
-        $where[] = [$pk, 'in', $ids];
+        $ids     = $this->request->param('ids/a', []);
+        $where[] = [$this->model->getPk(), 'in', $ids];
+        $data    = $this->model->where($where)->select();
 
         $count = 0;
-        $data  = $this->model->where($where)->select();
         $this->model->startTrans();
         try {
             foreach ($data as $v) {

@@ -203,17 +203,12 @@ class Group extends Backend
 
     /**
      * 删除
-     * @param array $ids
      * @throws Throwable
      */
-    public function del(array $ids = []): void
+    public function del(): void
     {
-        if (!$this->request->isDelete() || !$ids) {
-            $this->error(__('Parameter error'));
-        }
-
-        $pk   = $this->model->getPk();
-        $data = $this->model->where($pk, 'in', $ids)->select();
+        $ids  = $this->request->param('ids/a', []);
+        $data = $this->model->where($this->model->getPk(), 'in', $ids)->select();
         foreach ($data as $v) {
             $this->checkAuth($v->id);
         }
