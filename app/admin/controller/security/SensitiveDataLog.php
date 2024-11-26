@@ -83,11 +83,12 @@ class SensitiveDataLog extends Backend
 
     /**
      * 详情
-     * @param string|int|null $id
      * @throws Throwable
      */
-    public function info(string|int $id = null): void
+    public function info(): void
     {
+        $pk  = $this->model->getPk();
+        $id  = $this->request->param($pk);
         $row = $this->model
             ->withJoin($this->withJoinTable, $this->withJoinType)
             ->where('sensitive_data_log.id', $id)
@@ -103,11 +104,11 @@ class SensitiveDataLog extends Backend
 
     /**
      * 回滚
-     * @param array|null $ids
      * @throws Throwable
      */
-    public function rollback(array $ids = null): void
+    public function rollback(): void
     {
+        $ids  = $this->request->param('ids/a', []);
         $data = $this->model->where('id', 'in', $ids)->select();
         if (!$data) {
             $this->error(__('Record not found'));

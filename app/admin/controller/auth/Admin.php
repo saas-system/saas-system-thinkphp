@@ -127,8 +127,10 @@ class Admin extends Backend
      * 编辑
      * @throws Throwable
      */
-    public function edit($id = null): void
+    public function edit(): void
     {
+        $pk  = $this->model->getPk();
+        $id  = $this->request->param($pk);
         $row = $this->model->find($id);
         if (!$row) {
             $this->error(__('Record not found'));
@@ -257,7 +259,7 @@ class Admin extends Backend
      * 检查分组权限
      * @throws Throwable
      */
-    public function checkGroupAuth(array $groups): void
+    private function checkGroupAuth(array $groups): void
     {
         if ($this->auth->isSuperAdmin()) {
             return;

@@ -33,8 +33,10 @@ class AdminInfo extends Backend
         ]);
     }
 
-    public function edit($id = null): void
+    public function edit(): void
     {
+        $pk  = $this->model->getPk();
+        $id  = $this->request->param($pk);
         $row = $this->model->find($id);
         if (!$row) {
             $this->error(__('Record not found'));
@@ -46,7 +48,7 @@ class AdminInfo extends Backend
                 $this->error(__('Parameter %s can not be empty', ['']));
             }
 
-            if (isset($data['avatar']) && $data['avatar']) {
+            if (!empty($data['avatar'])) {
                 $row->avatar = $data['avatar'];
                 if ($row->save()) {
                     $this->success(__('Avatar modified successfully!'));
@@ -64,7 +66,7 @@ class AdminInfo extends Backend
                 }
             }
 
-            if (isset($data['password']) && $data['password']) {
+            if (!empty($data['password'])) {
                 $this->model->resetPassword($this->auth->id, $data['password']);
             }
 
