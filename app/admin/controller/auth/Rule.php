@@ -12,6 +12,8 @@ class Rule extends Backend
 {
     protected string|array $preExcludeFields = ['create_time', 'update_time'];
 
+    protected string|array $defaultSortField = ['weigh' => 'desc'];
+
     protected string|array $quickSearchField = 'title';
 
     /**
@@ -260,7 +262,7 @@ class Rule extends Backend
         // 读取用户组所有权限规则
         $rules = $this->model
             ->where($where)
-            ->order('weigh desc,id asc')
+            ->order($this->queryOrderBuilder())
             ->select()->toArray();
 
         // 如果要求树状，此处先组装好 children

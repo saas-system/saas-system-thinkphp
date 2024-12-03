@@ -211,7 +211,7 @@ class Admin extends Backend
      * @param array $ids
      *
      */
-    public function del(array $ids = []): void
+    public function del(): void
     {
         $this->error('禁止删除');
     }

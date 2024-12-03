@@ -28,11 +28,9 @@ class Attachment extends Backend
      * 删除
      * @param array $ids
      */
-    public function del(array $ids = []): void
+    public function del(): void
     {
-        if (!$this->request->isDelete() || !$ids) {
-            $this->error(__('Parameter error'));
-        }
+        $ids = $this->request->param('ids/a', []);
 
         $dataLimitAdminIds = $this->getDataLimitAdminIds();
         if ($dataLimitAdminIds) {
