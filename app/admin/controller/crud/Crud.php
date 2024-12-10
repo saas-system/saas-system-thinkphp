@@ -108,7 +108,7 @@ class Crud extends Backend
 
             // 生成文件信息解析
             $modelFile      = Helper::parseNameData($table['isCommonModel'] ? 'common' : $app, $tableName, 'model', $table['modelFile']);
-            $validateFile   = Helper::parseNameData($app, $tableName, 'validate', $table['validateFile']);
+            $validateFile   = Helper::parseNameData($table['isCommonModel'] ? 'common' : 'admin', $tableName, 'validate', $table['validateFile']);
             $controllerFile = Helper::parseNameData($app, $tableName, 'controller', $table['controllerFile']);
             $webViewsDir    = Helper::parseWebDirNameData($tableName, 'views', $table['webViewsDir'], $app);
             $webLangDir     = Helper::parseWebDirNameData($tableName, 'lang', $table['webViewsDir'], $app);
@@ -399,7 +399,7 @@ class Crud extends Backend
 
         try {
             $modelFile      = Helper::parseNameData($commonModel ? 'common' : $app, $table, 'model');
-            $validateFile   = Helper::parseNameData($app, $table, 'validate');
+            $validateFile   = Helper::parseNameData($commonModel ? 'common' : 'admin', $table, 'validate');
             $controllerFile = Helper::parseNameData($app, $table, 'controller');
             $webViewsDir    = Helper::parseWebDirNameData($table, 'views', '', $app);
         } catch (Throwable $e) {
