@@ -805,8 +805,6 @@ class Crud extends Backend
             $formField[':input-attr']['remoteUrl'] = $this->getRemoteSelectUrl($field, $app);
         } elseif ($field['designType'] == 'number') {
             $formField[':input-attr']['step'] = (int)($field['form']['step'] ?? 1);
-            $formField['v-model.number']      = $formField['v-model'];
-            unset($formField['v-model']);
         } elseif ($field['designType'] == 'icon') {
             $formField[':input-attr']['placement'] = 'top';
         } elseif ($field['designType'] == 'editor') {
