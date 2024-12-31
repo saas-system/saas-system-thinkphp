@@ -218,7 +218,22 @@ class Backend extends Api
 
             $field['operator'] = $this->getOperatorByAlias($field['operator']);
 
-            $fieldName = str_contains($field['field'], '.') ? $field['field'] : $mainTableAlias . $field['field'];
+            // 关联查询，兼容前端传过来的是驼峰字段
+            if (str_contains($field['field'], '.')) {
+                // 获取第一个.之前的字段名
+                $fieldNameFirst = explode('.', $field['field'])[0];
+                // 获取第一个.之后的字段名
+                $fieldNameSecond = explode('.', $field['field'])[1];
+                // 检查是不是在关联表中
+                if (in_array($fieldNameFirst, $this->withJoinTable)) {
+                    // 将 $fieldName从驼峰转为下划线
+                    $fieldName = parse_name($fieldNameFirst) . '.' . $fieldNameSecond;
+                } else {
+                    $fieldName = $field['field'];
+                }
+            } else {
+                $fieldName = $mainTableAlias . $field['field'];
+            }
 
             // 日期时间
             if (isset($field['render']) && $field['render'] == 'datetime') {
