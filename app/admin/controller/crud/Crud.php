@@ -668,12 +668,8 @@ class Crud extends Backend
                     $columns[$relationField]['table']['show']            = 'false';
                     $columns[$relationField]['table']['operator']        = 'FIND_IN_SET';
                     $columns[$relationField]['table']['comSearchRender'] = 'remoteSelect';
-                    $pk = $field['form']['remote-pk'] ?? 'id';
-                    if (!str_contains($pk, '.')) {
-                        $pk = TableManager::tableName($field['form']['remote-table'], true, $table['databaseConnection']) . '.' . $pk;
-                    }
                     $columns[$relationField]['table']['remote']          = [
-                        'pk'        => $pk,
+                        'pk'        => $this->getRemoteSelectPk($field),
                         'field'     => $field['form']['remote-field'] ?? 'name',
                         'remoteUrl' => $this->getRemoteSelectUrl($field, $app),
                         'multiple'  => 'true',
@@ -795,12 +791,7 @@ class Crud extends Backend
             $formField['@keyup.enter.stop']   = '';
             $formField['@keyup.ctrl.enter']   = 'baTable.onSubmit(formRef)';
         } elseif ($field['designType'] == 'remoteSelect' || $field['designType'] == 'remoteSelects') {
-            $pk = $field['form']['remote-pk'] ?? 'id';
-            if (!str_contains($pk, '.')) {
-                $pk = TableManager::tableName($field['form']['remote-table'], true, $dbConnection) . '.' . $pk;
-            }
-
-            $formField[':input-attr']['pk']        = $pk;
+            $formField[':input-attr']['pk']        = $this->getRemoteSelectPk($field);
             $formField[':input-attr']['field']     = $field['form']['remote-field'] ?? 'name';
             $formField[':input-attr']['remoteUrl'] = $this->getRemoteSelectUrl($field, $app);
         } elseif ($field['designType'] == 'number') {
@@ -845,12 +836,22 @@ class Crud extends Backend
         return $formField;
     }
 
+    private function getRemoteSelectPk($field): string
+    {
+        $pk = $field['form']['remote-pk'] ?? 'id';
+        if (!str_contains($pk, '.')) {
+            if ($field['form']['remote-source-config-type'] == 'crud' && $field['form']['remote-model']) {
+                $alias = parse_name(basename(str_replace('\\', '/', $field['form']['remote-model']), '.php'));
+            } else {
+                $alias = $field['form']['remote-primary-table-alias'] ?? '';
+            }
+        }
+        return !empty($alias) ? "$alias.$pk" : $pk;
+    }
+
     private function getRemoteSelectUrl($field, $app): string
     {
-        if ($field['form']['remote-url'])
-            return $field['form']['remote-url'];
-        $url = '';
-        if ($field['form']['remote-controller']) {
+        if ($field['form']['remote-source-config-type'] == 'crud' && $field['form']['remote-controller']) {
             $pathArr      = [];
             $controller   = explode(DIRECTORY_SEPARATOR, $field['form']['remote-controller']);
             $controller   = str_replace('.php', '', $controller);
@@ -865,9 +866,9 @@ class Crud extends Backend
                 }
             }
             $url = count($pathArr) > 1 ? implode('.', $pathArr) : $pathArr[0];
-            $url = "/{$app}/" . $url . '/index';
+            return "/{$app}/" . $url . '/index';
         }
-        return $url;
+        return $field['form']['remote-url'];
     }
 
     private function getTableColumn($field, $columnDict, $fieldNamePrefix = '', $translationPrefix = ''): array
