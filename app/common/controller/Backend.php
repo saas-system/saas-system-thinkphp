@@ -218,19 +218,19 @@ class Backend extends Api
 
             $field['operator'] = $this->getOperatorByAlias($field['operator']);
 
-            // 关联查询，兼容前端传过来的是驼峰字段
+            // 查询关联表字段，转换表别名（驼峰转小写下划线）
             if (str_contains($field['field'], '.')) {
-                // 获取第一个.之前的字段名
-                $fieldNameFirst = explode('.', $field['field'])[0];
-                // 获取第一个.之后的字段名
-                $fieldNameSecond = explode('.', $field['field'])[1];
-                // 检查是不是在关联表中
-                if (in_array($fieldNameFirst, $this->withJoinTable)) {
-                    // 将 $fieldName从驼峰转为下划线
-                    $fieldName = parse_name($fieldNameFirst) . '.' . $fieldNameSecond;
-                } else {
-                    $fieldName = $field['field'];
+                $fieldNameParts        = explode('.', $field['field']);
+                $fieldNamePartsLastKey = array_key_last($fieldNameParts);
+
+                // 忽略最后一个元素（字段名）
+                foreach ($fieldNameParts as $fieldNamePartsKey => $fieldNamePart) {
+                    if ($fieldNamePartsKey !== $fieldNamePartsLastKey) {
+                        $fieldNameParts[$fieldNamePartsKey] = parse_name($fieldNamePart);
+                    }
                 }
+
+                $fieldName = implode('.', $fieldNameParts);
             } else {
                 $fieldName = $mainTableAlias . $field['field'];
             }
