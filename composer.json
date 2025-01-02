@@ -36,7 +36,6 @@
     "sxqibo/fast-wallet": "^1.0",
     "sxqibo/fast-payment": "^2.0",
     "sxqibo/fast-sms": "^1.0",
-    "ext-calendar": "*",
     "ext-bcmath": "*",
     "ext-iconv": "*",
     "ext-json": "*",
