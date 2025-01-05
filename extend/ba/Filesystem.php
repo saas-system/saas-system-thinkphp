@@ -209,7 +209,7 @@ class Filesystem
      * @param array  $suffix 要获取的文件列表的后缀
      * @return array
      */
-    public static function getDirFiles(string $dir, array $suffix = ['php']): array
+    public static function getDirFiles(string $dir, array $suffix = []): array
     {
         $files = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($dir), RecursiveIteratorIterator::LEAVES_ONLY
@@ -217,12 +217,16 @@ class Filesystem
 
         $fileList = [];
         foreach ($files as $file) {
-            if (!$file->isDir() && in_array($file->getExtension(), $suffix)) {
-                $filePath        = $file->getRealPath();
-                $name            = str_replace($dir, '', $filePath);
-                $name            = str_replace(DIRECTORY_SEPARATOR, "/", $name);
-                $fileList[$name] = $name;
+            if ($file->isDir()) {
+                continue;
             }
+            if (!empty($suffix) && !in_array($file->getExtension(), $suffix)) {
+                continue;
+            }
+            $filePath        = $file->getRealPath();
+            $name            = str_replace($dir, '', $filePath);
+            $name            = str_replace(DIRECTORY_SEPARATOR, "/", $name);
+            $fileList[$name] = $name;
         }
         return $fileList;
     }
