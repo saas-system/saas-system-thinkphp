@@ -941,45 +941,45 @@ class Helper
             $menuModel = new TenantRule();
         }
 
-        if (!$menuModel::where('name', $menuName)->value('id')) {
-            $pid = 0;
-            foreach ($webViewsDir['path'] as $item) {
-                $pMenu = $menuModel::where('name', $item)->value('id');
-                if ($pMenu) {
-                    $pid = $pMenu;
-                    continue;
-                }
-                $menu = [
-                    'pid'   => $pid,
-                    'type'  => 'menu_dir',
-                    'title' => $item,
-                    'name'  => $item,
-                    'path'  => $item,
-                ];
-                $menu = $menuModel::create($menu);
-                $pid  = $menu->id;
-            }
-
-            // 建立菜单
-            foreach (self::$menuChildren as &$item) {
-                $item['name'] = $menuName . $item['name'];
-            }
-            $componentPath = str_replace(['\\', 'web/src'], ['/', '/src'], $webViewsDir['views'] . '/' . 'index.vue');
-
-            $position = $app == 'admin' ? 'backend' : 'tenant';
-            Menu::create([
-                [
-                    'type'      => 'menu',
-                    'title'     => $tableComment ?: $webViewsDir['originalLastName'],
-                    'name'      => $menuName,
-                    'path'      => $menuName,
-                    'menu_type' => 'tab',
-                    'keepalive' => '1',
-                    'component' => $componentPath,
-                    'children'  => self::$menuChildren,
-                ]
-            ], $pid, 'cover', $position);
+        if ($menuModel::where('name', $menuName)->value('id')) {
+            return;
         }
+
+        // 组装权限节点数据
+        $menuChildren = self::$menuChildren;
+        foreach ($menuChildren as &$item) {
+            $item['name'] = $menuName . $item['name'];
+        }
+
+        // 组件路径
+        $componentPath = str_replace(['\\', 'web/src'], ['/', '/src'], $webViewsDir['views'] . '/' . 'index.vue');
+
+        // 菜单数组
+        $menus = [
+            'type'      => 'menu',
+            'title'     => $tableComment ?: $webViewsDir['originalLastName'],
+            'name'      => $menuName,
+            'path'      => $menuName,
+            'menu_type' => 'tab',
+            'keepalive' => 1,
+            'component' => $componentPath,
+            'children'  => $menuChildren,
+        ];
+        $paths = array_reverse($webViewsDir['path']);
+        foreach ($paths as $path) {
+            $menus = [
+                'type'     => 'menu_dir',
+                'title'    => $path,
+                'name'     => $path,
+                'path'     => $path,
+                'children' => [$menus],
+            ];
+        }
+
+        // 创建菜单
+        $position = $app == 'admin' ? 'backend' : 'tenant';
+        Menu::create([$menus], 0, 'ignore', $position);
+
     }
 
     public static function writeWebLangFile($langData, $webLangDir): void
