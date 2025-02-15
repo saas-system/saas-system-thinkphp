@@ -215,6 +215,7 @@ class Terminal
             $contents = file_get_contents($this->outputFile);
             if (strlen($contents) && $this->outputContent != $contents) {
                 $newOutput = str_replace($this->outputContent, '', $contents);
+                $this->checkOutput($contents, $newOutput);
                 if (preg_match('/\r\n|\r|\n/', $newOutput)) {
                     $this->output($newOutput);
                     $this->outputContent = $contents;
@@ -289,11 +290,13 @@ class Terminal
 
     /**
      * 检查输出
+     * @param string $outputs   全部输出内容
+     * @param string $rowOutput 当前输出内容（行）
      */
-    public function checkOutput(): void
+    public function checkOutput(string $outputs, string $rowOutput): void
     {
-        if (str_contains($this->outputContent, '(Y/n)')) {
-            $this->execError('An interactive command has been detected, and you can manually execute the command to confirm the situation.', true);
+        if (str_contains($rowOutput, '(Y/n)')) {
+            $this->execError('Interactive output detected, please manually execute the command to confirm the situation.', true);
         }
     }
 
