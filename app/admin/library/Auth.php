@@ -441,15 +441,16 @@ class Auth extends \ba\Auth
     /**
      * 获取拥有"所有权限"的分组
      * @param string $dataLimit 数据权限
+     * @param array $where 分组条件,默认启用的分组 [['status','=',1]]
      * @return array 分组数组
      * @throws Throwable
      */
-    public function getAllAuthGroups(string $dataLimit): array
+    public function getAllAuthGroups(string $dataLimit,array $where = [['status','=',1]]): array
     {
         // 当前管理员拥有的权限
         $rules         = $this->getRuleIds();
         $allAuthGroups = [];
-        $groups        = AdminGroup::where('status', '1')->select();
+        $groups        = AdminGroup::where($where)->select();
         foreach ($groups as $group) {
             if ($group['rules'] == '*') {
                 continue;

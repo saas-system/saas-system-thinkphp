@@ -315,7 +315,7 @@ class Group extends Backend
         }
 
         if (!$this->auth->isSuperAdmin()) {
-            $authGroups = $this->auth->getAllAuthGroups($this->authMethod);
+            $authGroups = $this->auth->getAllAuthGroups($this->authMethod, $where);
             if (!$absoluteAuth) $authGroups = array_merge($this->adminGroups, $authGroups);
             $where[] = ['id', 'in', $authGroups];
         }
