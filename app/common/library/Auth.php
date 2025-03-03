@@ -255,16 +255,32 @@ class Auth extends \ba\Auth
             $this->setError('Account disabled');
             return false;
         }
+        // 登录失败重试检查
         $userLoginRetry = Config::get('buildadmin.user_login_retry');
-        if ($userLoginRetry && $this->model->login_failure >= $userLoginRetry && time() - $this->model->last_login_time < 86400) {
-            $this->setError('Please try again after 1 day');
-            return false;
+        if ($userLoginRetry && $this->model->last_login_time) {
+            // 重置失败次数
+            if ($this->model->login_failure > 0 && time() - $this->model->last_login_time >= 86400) {
+                $this->model->login_failure = 0;
+                $this->model->save();
+
+                // 重获模型实例，避免单实例多次更新
+                $this->model = User::where($accountType, $username)->find();
+            }
+
+            if ($this->model->login_failure >= $userLoginRetry) {
+                $this->setError('Please try again after 1 day');
+                return false;
+            }
         }
+
+        // 密码检查
         if ($this->model->password != encrypt_password($password, $this->model->salt)) {
             $this->loginFailed();
             $this->setError('Password is incorrect');
             return false;
         }
+
+        // 清理 token
         if (Config::get('buildadmin.user_sso')) {
             Token::clear(self::TOKEN_TYPE, $this->model->id);
             Token::clear(self::TOKEN_TYPE.'-refresh', $this->model->id);
