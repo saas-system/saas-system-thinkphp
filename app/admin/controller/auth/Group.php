@@ -186,7 +186,7 @@ class Group extends Backend
 
         // 读取所有pid，全部从节点数组移除，父级选择状态由子级决定
         $pidArr = MenuRule::field('pid')
-            ->distinct(true)
+            ->distinct()
             ->where('id', 'in', $row->rules)
             ->select()
             ->toArray();
@@ -266,22 +266,42 @@ class Group extends Backend
     private function handleRules(array &$data): array
     {
         if (!empty($data['rules']) && is_array($data['rules'])) {
-            $rules      = MenuRule::select();
-            $superAdmin = true;
-            foreach ($rules as $rule) {
-                if (!in_array($rule['id'], $data['rules'])) {
+            $superAdmin   = true;
+            $checkedRules = [];
+            $allRuleIds   = MenuRule::column('id');
+
+            // 遍历检查权限ID是否存在（以免传递了可预测的未来权限ID号）
+            foreach ($data['rules'] as $postRuleId) {
+                if (in_array($postRuleId, $allRuleIds)) {
+                    $checkedRules[] = $postRuleId;
+                }
+            }
+
+            // 正在建立超管级分组？
+            foreach ($allRuleIds as $ruleId) {
+                if (!in_array($ruleId, $checkedRules)) {
                     $superAdmin = false;
                 }
             }
 
-            if ($superAdmin) {
+            if ($superAdmin && $this->auth->isSuperAdmin()) {
+                // 允许超管建立超管级分组
                 $data['rules'] = '*';
             } else {
+                // 当前管理员所拥有的权限节点
+                $ownedRuleIds = $this->auth->getRuleIds();
+
                 // 禁止添加`拥有自己全部权限`的分组
-                if (!array_diff($this->auth->getRuleIds(), $data['rules'])) {
+                if (!array_diff($ownedRuleIds, $checkedRules)) {
                     $this->error(__('Role group has all your rights, please contact the upper administrator to add or do not need to add!'));
                 }
-                $data['rules'] = implode(',', $data['rules']);
+
+                // 检查分组权限是否超出了自己的权限（超管的 $ownedRuleIds 为 ['*']，不便且可以不做此项检查）
+                if (array_diff($checkedRules, $ownedRuleIds) && !$this->auth->isSuperAdmin()) {
+                    $this->error(__('The group permission node exceeds the range that can be allocated'));
+                }
+
+                $data['rules'] = implode(',', $checkedRules);
             }
         } else {
             unset($data['rules']);
