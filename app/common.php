@@ -62,7 +62,15 @@ if (!function_exists('clean_xss')) {
      */
     function clean_xss(string $string): string
     {
-        return (new AntiXSS())->xss_clean($string);
+        $antiXss = new AntiXSS();
+
+        // 允许 style 属性（style="list-style-image: url(javascript:alert(0))" 任然可被正确过滤）
+        $antiXss->removeEvilAttributes(['style']);
+
+        // 检查到 xss 代码之后使用 cleanXss 替换它
+        $antiXss->setReplacement('cleanXss');
+
+        return $antiXss->xss_clean($string);
     }
 }
 
