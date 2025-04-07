@@ -75,21 +75,11 @@ class Common extends Api
 
         // 管理员token刷新
         if ($refreshToken['type'] == AdminAuth::TOKEN_TYPE . '-refresh') {
-            $baToken = get_auth_token();
-            if (!$baToken) {
-                $this->error(__('Invalid token'));
-            }
-            Token::delete($baToken);
             Token::set($newToken, AdminAuth::TOKEN_TYPE, $refreshToken['user_id'], (int)Config::get('buildadmin.admin_token_keep_time'));
         }
 
         // 会员token刷新
         if ($refreshToken['type'] == UserAuth::TOKEN_TYPE . '-refresh') {
-            $baUserToken = get_auth_token(['ba', 'user', 'token']);
-            if (!$baUserToken) {
-                $this->error(__('Invalid token'));
-            }
-            Token::delete($baUserToken);
             Token::set($newToken, UserAuth::TOKEN_TYPE, $refreshToken['user_id'], (int)Config::get('buildadmin.user_token_keep_time'));
         }
 
