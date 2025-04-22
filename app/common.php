@@ -179,7 +179,9 @@ if (!function_exists('full_url')) {
         Event::trigger('uploadConfigInit', App::getInstance());
 
         $cdnUrl = Config::get('buildadmin.cdn_url');
-        if (!$cdnUrl) $cdnUrl = request()->upload['cdn'] ?? '//' . request()->host();
+        if (!$cdnUrl) {
+            $cdnUrl = request()->upload['cdn'] ?? '//' . request()->host();
+        }
         if ($domain === true) {
             $domain = $cdnUrl;
         } elseif ($domain === false) {
@@ -194,7 +196,14 @@ if (!function_exists('full_url')) {
         if (preg_match('/^http(s)?:\/\//', $relativeUrl) || preg_match($regex, $relativeUrl) || $domain === false) {
             return $relativeUrl;
         }
-        return $domain . $relativeUrl;
+        $url          = $domain . $relativeUrl;
+        $cdnUrlParams = Config::get('buildadmin.cdn_url_params');
+        if ($domain === $cdnUrl && $cdnUrlParams) {
+            $separator = str_contains($url, '?') ? '&' : '?';
+            $url       .= $separator . $cdnUrlParams;
+        }
+
+        return $url;
     }
 }
 

@@ -71,6 +71,8 @@ return [
     'default_avatar'        => '/static/images/avatar.png',
     // 内容分发网络URL，末尾不带`/`
     'cdn_url'               => '',
+    // 内容分发网络URL参数，将自动添加 `?`，之后拼接到 cdn_url 的结尾（例如 `imageMogr2/format/heif`）
+    'cdn_url_params'        => '',
     // 版本号
     'version'               => 'v2.2.1',
     // 中心接口地址（用于请求模块市场的数据等用途）

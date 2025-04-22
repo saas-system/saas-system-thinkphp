@@ -36,11 +36,12 @@ class Index extends Backend
             'adminInfo'  => $adminInfo,
             'menus'      => $menus,
             'siteConfig' => [
-                'siteName' => get_sys_config('site_name'),
-                'version'  => get_sys_config('version'),
-                'cdnUrl'   => full_url(),
-                'apiUrl'   => Config::get('buildadmin.api_url'),
-                'upload'   => keys_to_camel_case(get_upload_config(), ['max_size', 'save_name', 'allowed_suffixes', 'allowed_mime_types']),
+                'siteName'     => get_sys_config('site_name'),
+                'version'      => get_sys_config('version'),
+                'apiUrl'       => Config::get('buildadmin.api_url'),
+                'upload'       => keys_to_camel_case(get_upload_config(), ['max_size', 'save_name', 'allowed_suffixes', 'allowed_mime_types']),
+                'cdnUrl'       => full_url(),
+                'cdnUrlParams' => Config::get('buildadmin.cdn_url_params'),
             ],
             'terminal'   => [
                 'installServicePort' => Config::get('terminal.install_service_port'),
