@@ -20,7 +20,7 @@ class Log extends Backend
 
     protected string|array $preExcludeFields = ['id', 'create_time'];
 
-    protected string|array $quickSearchField = ['id', 'table_name'];
+    protected string|array $quickSearchField = ['id', 'table_name', 'comment'];
 
     protected array $noNeedPermission = ['index'];
 

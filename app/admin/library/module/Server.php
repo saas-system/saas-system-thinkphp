@@ -7,7 +7,6 @@ use ba\Depends;
 use ba\Exception;
 use ba\Filesystem;
 use think\facade\Db;
-use GuzzleHttp\Client;
 use FilesystemIterator;
 use think\facade\Config;
 use RecursiveIteratorIterator;
@@ -21,8 +20,6 @@ use GuzzleHttp\Exception\TransferException;
  */
 class Server
 {
-    private static ?Client $client = null;
-
     private static string $apiBaseUrl = '/api/v6.store/';
 
     /**
@@ -33,7 +30,6 @@ class Server
     {
         $tmpFile = $dir . $uid . ".zip";
         try {
-            $client   = self::getClient();
             $response = $client->get(self::$apiBaseUrl . 'download', ['query' => array_merge(['uid' => $uid, 'server' => 1], $extend)]);
             $body     = $response->getBody();
             $content  = $body->getContents();
@@ -63,7 +59,6 @@ class Server
     public static function installPreCheck(array $query = []): bool
     {
         try {
-            $client     = self::getClient();
             $response   = $client->get(self::$apiBaseUrl . 'preCheck', ['query' => $query]);
             $body       = $response->getBody();
             $statusCode = $response->getStatusCode();
@@ -559,29 +554,5 @@ class Server
         } else {
             return $runtimeContentArr;
         }
-    }
-
-    /**
-     * 获取请求对象
-     * @return Client
-     */
-    protected static function getClient(): Client
-    {
-        $options = [
-            'base_uri'        => Config::get('buildadmin.api_url'),
-            'timeout'         => 30,
-            'connect_timeout' => 30,
-            'verify'          => false,
-            'http_errors'     => false,
-            'headers'         => [
-                'X-REQUESTED-WITH' => 'XMLHttpRequest',
-                'Referer'          => dirname(request()->root(true)),
-                'User-Agent'       => 'BuildAdminClient',
-            ]
-        ];
-        if (is_null(self::$client)) {
-            self::$client = new Client($options);
-        }
-        return self::$client;
     }
 }

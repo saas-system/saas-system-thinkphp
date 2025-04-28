@@ -288,6 +288,7 @@ class Helper
         $connection = $data['table']['databaseConnection'] ?: config('database.default');
         $log        = CrudLog::create([
             'table_name' => $data['table']['name'],
+            'comment'    => $data['table']['comment'],
             'table'      => $data['table'],
             'fields'     => $data['fields'],
             'connection' => $connection,
