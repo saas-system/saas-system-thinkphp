@@ -164,6 +164,15 @@ class Terminal
                 'command' => $command['command'],
             ];
         }
+        
+        if (str_contains($command['command'], '%')) {
+            $args = request()->param('extend', '');
+            $args = explode('~~', $args);
+
+            array_unshift($args, $command['command']);
+            $command['command'] = call_user_func_array('sprintf', $args);
+        }
+
         $command['cwd'] = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $command['cwd']);
         return $command;
     }
