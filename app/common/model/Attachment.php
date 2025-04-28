@@ -12,6 +12,9 @@ use think\model\relation\BelongsTo;
 
 /**
  * Attachment模型
+ * @property string url              文件物理路径
+ * @property int    quote            上传(引用)次数
+ * @property int    last_upload_time 最后上传时间
  */
 class Attachment extends Base
 {

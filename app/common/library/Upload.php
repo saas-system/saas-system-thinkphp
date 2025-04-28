@@ -303,7 +303,7 @@ class Upload
             ->where('topic', $params['topic'])
             ->where('storage', $params['storage'])
             ->find();
-        if ($attachment && $driver->exists($saveName)) {
+        if ($attachment && $driver->exists($attachment->url)) {
             $attachment->quote++;
             $attachment->last_upload_time = time();
         } else {
