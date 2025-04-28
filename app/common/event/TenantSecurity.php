@@ -28,7 +28,7 @@ class TenantSecurity
         if ($action == 'del') {
             $dataIds = $request->param('ids');
             try {
-                $recycle = DataRecycle::where('status', '1')
+                $recycle = DataRecycle::where('status', 1)
                     ->where('app', SensitiveData::APP_TYPE_TENANT)
                     ->where('controller_as', $request->controllerPath)
                     ->find();
@@ -73,7 +73,7 @@ class TenantSecurity
         }
 
         try {
-            $sensitiveData = SensitiveData::where('status', '1')
+            $sensitiveData = SensitiveData::where('status', 1)
                 ->where('app', SensitiveData::APP_TYPE_TENANT)
                 ->where('controller_as', $request->controllerPath)
                 ->find();

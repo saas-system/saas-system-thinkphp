@@ -161,7 +161,7 @@ class Admin extends Backend
                 }
             }
 
-            if ($this->auth->id == $data['id'] && $data['status'] == '0') {
+            if ($this->auth->id == $data['id'] && $data['status'] == 'disable') {
                 $this->error(__('Please use another administrator account to disable the current account!'));
             }
 

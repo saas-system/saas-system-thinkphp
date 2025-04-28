@@ -222,7 +222,7 @@ class Rule extends Backend
      */
     public function select(): void
     {
-        $data = $this->getMenus([['type', 'in', ['menu_dir', 'menu']], ['status', '=', '1']]);
+        $data = $this->getMenus([['type', 'in', ['menu_dir', 'menu']], ['status', '=', 1]]);
 
         if ($this->assembleTree) {
             $data = $this->tree->assembleTree($this->tree->getTreeArray($data, 'title'));

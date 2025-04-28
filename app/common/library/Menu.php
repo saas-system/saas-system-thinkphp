@@ -33,7 +33,7 @@ class Menu
             }
 
             // 属性
-            $item['status'] = '1';
+            $item['status'] = 1;
             if (!isset($item['pid'])) {
                 $item['pid'] = $pid;
             }
@@ -116,7 +116,7 @@ class Menu
         if (!$menuRule) {
             return false;
         }
-        $menuRule->status = '1';
+        $menuRule->status = 1;
         $menuRule->save();
         return true;
     }
@@ -135,7 +135,7 @@ class Menu
         if (!$menuRule) {
             return false;
         }
-        $menuRule->status = '0';
+        $menuRule->status = 0;
         $menuRule->save();
         return true;
     }
