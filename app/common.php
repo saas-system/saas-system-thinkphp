@@ -211,10 +211,42 @@ if (!function_exists('encrypt_password')) {
 
     /**
      * 加密密码
+     * @deprecated 使用 hash_password 代替
      */
     function encrypt_password($password, $salt = '', $encrypt = 'md5')
     {
         return $encrypt($encrypt($password) . $salt);
+    }
+}
+
+if (!function_exists('hash_password')) {
+
+    /**
+     * 创建密码散列（hash）
+     */
+    function hash_password(string $password): string
+    {
+        return password_hash($password, PASSWORD_DEFAULT);
+    }
+}
+
+if (!function_exists('verify_password')) {
+
+    /**
+     * 验证密码是否和散列值匹配
+     * @param string $password 密码
+     * @param string $hash     散列值
+     * @param array  $extend   扩展数据
+     */
+    function verify_password(string $password, string $hash, array $extend = []): bool
+    {
+        // 第一个表达式直接检查是否为 password_hash 函数创建的 hash 的典型格式，即：$algo$cost$salt.hash
+        if (str_starts_with($hash, '$') || password_get_info($hash)['algoName'] != 'unknown') {
+            return password_verify($password, $hash);
+        } else {
+            // 兼容旧版 md5 加密的密码
+            return encrypt_password($password, $extend['salt'] ?? '') === $hash;
+        }
     }
 }
 
