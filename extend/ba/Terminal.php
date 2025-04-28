@@ -2,11 +2,11 @@
 // +----------------------------------------------------------------------
 // | BuildAdmin [ Quickly create commercial-grade management system using popular technology stack ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2022~2022 http://saas-system.com All rights reserved.
+// | Copyright (c) 2022~2022 http://buildadmin.com All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: 妙码生花 <hi@saas-system.com>
+// | Author: 妙码生花 <hi@buildadmin.com>
 // +----------------------------------------------------------------------
 
 namespace ba;
@@ -159,12 +159,9 @@ class Terminal
                 'command' => $command,
             ];
         } else {
-            $command = [
-                'cwd'     => root_path() . $command['cwd'],
-                'command' => $command['command'],
-            ];
+            $command['cwd'] = root_path() . $command['cwd'];
         }
-        
+
         if (str_contains($command['command'], '%')) {
             $args = request()->param('extend', '');
             $args = explode('~~', $args);
@@ -214,6 +211,10 @@ class Terminal
 
         $this->beforeExecution();
         $this->outputFlag('link-success');
+
+        if (!empty($command['notes'])) {
+            $this->output('> ' . __($command['notes']), false);
+        }
         $this->output('> ' . $command['command'], false);
 
         $this->process = proc_open($command['command'], $this->descriptorsPec, $this->pipes, $command['cwd']);
@@ -228,7 +229,6 @@ class Terminal
                 if (preg_match('/\r\n|\r|\n/', $newOutput)) {
                     $this->output($newOutput);
                     $this->outputContent = $contents;
-                    $this->checkOutput();
                 }
             }
 
@@ -459,18 +459,15 @@ class Terminal
     public static function changeTerminalConfig($config = []): bool
     {
         // 不保存在数据库中，因为切换包管理器时，数据库资料可能还未配置
-        $oldPort           = Config::get('terminal.install_service_port');
         $oldPackageManager = Config::get('terminal.npm_package_manager');
-        $newPort           = request()->post('port', $config['port'] ?? $oldPort);
         $newPackageManager = request()->post('manager', $config['manager'] ?? $oldPackageManager);
 
-        if ($oldPort == $newPort && $oldPackageManager == $newPackageManager) {
+        if ($oldPackageManager == $newPackageManager) {
             return true;
         }
 
         $buildConfigFile    = config_path() . 'terminal.php';
         $buildConfigContent = @file_get_contents($buildConfigFile);
-        $buildConfigContent = preg_replace("/'install_service_port'(\s+)=>(\s+)'$oldPort'/", "'install_service_port'\$1=>\$2'$newPort'", $buildConfigContent);
         $buildConfigContent = preg_replace("/'npm_package_manager'(\s+)=>(\s+)'$oldPackageManager'/", "'npm_package_manager'\$1=>\$2'$newPackageManager'", $buildConfigContent);
         $result             = @file_put_contents($buildConfigFile, $buildConfigContent);
         return (bool)$result;
