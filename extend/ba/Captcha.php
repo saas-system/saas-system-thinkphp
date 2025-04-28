@@ -437,6 +437,7 @@ class Captcha
                 $code[$i] = $captcha ? $captcha[$i] : $this->codeSet[mt_rand(0, strlen($this->codeSet) - 1)];
             }
         }
-        return $captcha ?: strtoupper(implode('', $code));
+        $captcha = $captcha ?: implode('', $code);
+        return strtoupper($captcha);
     }
 }
