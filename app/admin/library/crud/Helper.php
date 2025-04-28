@@ -352,7 +352,7 @@ class Helper
                 return ['precision' => $dataTypeLimit[0], 'scale' => $dataTypeLimit[1] ?? 0];
             }
             $scale = isset($field['precision']) ? intval($field['precision']) : 0;
-            return ['precision' => $field['length'] ?: 10, 'scale' => $scale];
+            return ['precision' => $field['length'] ?? 10, 'scale' => $scale];
         } elseif (in_array($type, $fieldType['values'])) {
             foreach ($dataTypeLimit as &$item) {
                 $item = str_replace(['"', "'"], '', $item);
