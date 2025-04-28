@@ -18,12 +18,12 @@ class Version222 extends Migrator
         $attachment->changeColumn('name', 'string', ['limit' => 120, 'default' => '', 'comment' => '原始名称', 'null' => false])->save();
 
         /**
-         * 用户表
+         * 租户用户表
          * 1. status 注释优化
          * 2. password 增加长度至 password_hash 建议值
          * 3. salt 注释中标记废弃待删除
          */
-        $user = $this->table('user');
+        $user = $this->table('tenant_user');
         $user->changeColumn('status', 'string', ['limit' => 30, 'default' => '', 'comment' => '状态:enable=启用,disable=禁用', 'null' => false])
             ->changeColumn('password', 'string', ['limit' => 255, 'default' => '', 'comment' => '密码', 'null' => false])
             ->changeColumn('salt', 'string', ['limit' => 30, 'default' => '', 'comment' => '密码盐（废弃待删）', 'null' => false])
@@ -34,14 +34,15 @@ class Version222 extends Migrator
          * 1. status 改为字符串存储
          * 2. 其他和以上用户表的改动相同
          */
-        $admin = $this->table('admin');
+        $admin = $this->table('platform_admin');
         $admin->changeColumn('status', 'string', ['limit' => 30, 'default' => '', 'comment' => '状态:enable=启用,disable=禁用', 'null' => false])
             ->changeColumn('password', 'string', ['limit' => 255, 'default' => '', 'comment' => '密码', 'null' => false])
             ->changeColumn('salt', 'string', ['limit' => 30, 'default' => '', 'comment' => '密码盐（废弃待删）', 'null' => false])
             ->save();
 
-        Db::name('admin')->where('status', '0')->update(['status' => 'disable']);
-        Db::name('admin')->where('status', '1')->update(['status' => 'enable']);
+
+        Db::name('platform_admin')->where('status', '0')->update(['status' => 'disable']);
+        Db::name('platform_admin')->where('status', '1')->update(['status' => 'enable']);
 
         /**
          * CRUD 历史记录表
@@ -65,7 +66,7 @@ class Version222 extends Migrator
         /**
          * 多个数据表的 status 字段类型修改为更合理的类型
          */
-        $tables = ['admin_group', 'admin_rule', 'user_group', 'user_rule', 'security_data_recycle', 'security_sensitive_data', 'test_build'];
+        $tables = ['platform_admin_group', 'platform_admin_rule', 'tenant_user_group', 'tenant_user_rule', 'security_data_recycle', 'security_sensitive_data', 'test_build'];
         foreach ($tables as $table) {
             if ($this->hasTable($table)) {
                 $mTable = $this->table($table);

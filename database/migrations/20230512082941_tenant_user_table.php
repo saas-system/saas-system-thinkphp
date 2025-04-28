@@ -38,6 +38,8 @@ class TenantUserTable extends Migrator
             ->addColumn('mobile', 'string', ['limit' => 10, 'default' => '', 'comment' => '手机号'])
             ->addColumn('id_card', 'string', ['limit' => 50, 'default' => '', 'comment' => '身份证'])
             ->addColumn('avatar', 'string', ['limit' => 255, 'default' => '', 'comment' => '头像'])
+            ->addColumn('password', 'string', ['limit' => 32, 'null' => false, 'default' => '', 'comment' => '密码'])
+            ->addColumn('salt', 'string', ['limit' => 30, 'null' => false, 'default' => '', 'comment' => '密码盐'])
 
             // 扩展信息
             ->addColumn('country', 'string', ['limit' => 50, 'default' => '', 'comment' => '国家'])

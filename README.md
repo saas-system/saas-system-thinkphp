@@ -3,7 +3,8 @@
 #### 第一步： 复制env-example到.env文件中，并修改正确的信息
 ```shell
 git clone https://github.com/sxqibo/saas-system-thinkphp.git  
-git submodule update --init --force --remote
+git clone https://github.com/sxqibo/saas-system-vue.git  
+mv saas-system-vue saas-system-thinkphp/web
 ```
 
 #### 第二步： 后端安装和运行
