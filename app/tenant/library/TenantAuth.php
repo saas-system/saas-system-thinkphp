@@ -176,7 +176,7 @@ class TenantAuth extends \ba\Auth
             $this->setError('Please try again after 1 day');
             return false;
         }
-        if ($this->model->password != encrypt_password($password, $this->model->salt)) {
+        if (!verify_password($password, $this->model->password, ['salt' => $this->model->salt])) {
             $this->loginFailed();
             $this->setError('Password is incorrect');
             return false;

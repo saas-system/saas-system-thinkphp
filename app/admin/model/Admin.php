@@ -2,7 +2,6 @@
 
 namespace app\admin\model;
 
-use ba\Random;
 use think\Model;
 use think\facade\Db;
 
@@ -76,8 +75,6 @@ class Admin extends Model
      */
     public function resetPassword(int|string $uid, string $newPassword): int|Admin
     {
-        $salt   = Random::build('alnum', 16);
-        $passwd = encrypt_password($newPassword, $salt);
-        return $this->where(['id' => $uid])->update(['password' => $passwd, 'salt' => $salt]);
+        return $this->where(['id' => $uid])->update(['password' => hash_password($newPassword), 'salt' => '']);
     }
 }

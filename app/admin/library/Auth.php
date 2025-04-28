@@ -203,7 +203,7 @@ class Auth extends \ba\Auth
         }
 
         // 密码检查
-        if ($this->model->password != encrypt_password($password, $this->model->salt)) {
+        if (!verify_password($password, $this->model->password, ['salt' => $this->model->salt])) {
             $this->loginFailed();
             $this->setError('Password is incorrect');
             return false;

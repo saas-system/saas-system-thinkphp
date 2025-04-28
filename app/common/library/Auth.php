@@ -192,16 +192,13 @@ class Auth extends \ba\Auth
 
         $ip   = request()->ip();
         $time = time();
-        $salt = Random::build('alnum', 16);
         $data = [
-            'password'        => encrypt_password($password, $salt),
             'group_id'        => $group,
             'nickname'        => preg_match("/^1[3-9]\d{9}$/", $username) ? substr_replace($username, '****', 3, 4) : $username,
             'join_ip'         => $ip,
             'join_time'       => $time,
             'last_login_ip'   => $ip,
             'last_login_time' => $time,
-            'salt'            => $salt,
             'status'          => 'enable',
         ];
         $data = array_merge($params, $data);
@@ -212,6 +209,9 @@ class Auth extends \ba\Auth
             $this->token = Random::uuid();
             Token::set($this->token, self::TOKEN_TYPE, $this->model->id, $this->keepTime);
             Db::commit();
+
+            $this->model->resetPassword($this->model->id, $password);
+
             Event::trigger('userRegisterSuccess', $this->model);
         } catch (Throwable $e) {
             $this->setError($e->getMessage());
@@ -274,7 +274,7 @@ class Auth extends \ba\Auth
         }
 
         // 密码检查
-        if ($this->model->password != encrypt_password($password, $this->model->salt)) {
+        if (!verify_password($password, $this->model->password, ['salt' => $this->model->salt])) {
             $this->loginFailed();
             $this->setError('Password is incorrect');
             return false;
@@ -314,14 +314,11 @@ class Auth extends \ba\Auth
      * 检查旧密码是否正确
      * @param $password
      * @return bool
+     * @deprecated 请使用 verify_password 公共函数代替
      */
     public function checkPassword($password): bool
     {
-        if ($this->model->password != encrypt_password($password, $this->model->salt)) {
-            return false;
-        } else {
-            return true;
-        }
+        return verify_password($password, $this->model->password, ['salt' => $this->model->salt]);
     }
 
     /**

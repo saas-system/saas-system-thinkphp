@@ -2,7 +2,6 @@
 
 namespace app\admin\controller\auth;
 
-use ba\Random;
 use Throwable;
 use think\facade\Db;
 use app\common\controller\Backend;
@@ -72,10 +71,6 @@ class Admin extends Backend
                 $this->error(__('Parameter %s can not be empty', ['']));
             }
 
-            /**
-             * 由于有密码字段-对方法进行重写
-             * 数据验证
-             */
             if ($this->modelValidate) {
                 try {
                     $validate = str_replace("\\model\\", "\\validate\\", get_class($this->model));
@@ -86,8 +81,7 @@ class Admin extends Backend
                 }
             }
 
-            $salt   = Random::build('alnum', 16);
-            $passwd = encrypt_password($data['password'], $salt);
+            $passwd = $data['password']; // 密码将被排除不直接入库
 
             $data   = $this->excludeFields($data);
             $result = false;
@@ -95,9 +89,7 @@ class Admin extends Backend
                 $this->checkGroupAuth($data['group_arr']);
             $this->model->startTrans();
             try {
-                $data['salt']     = $salt;
-                $data['password'] = $passwd;
-                $result           = $this->model->save($data);
+                $result = $this->model->save($data);
                 if ($data['group_arr']) {
                     $groupAccess = [];
                     foreach ($data['group_arr'] as $datum) {
@@ -109,6 +101,10 @@ class Admin extends Backend
                     Db::name($this->adminGroupAccessTable)->insertAll($groupAccess);
                 }
                 $this->model->commit();
+
+                if (!empty($passwd)) {
+                    $this->model->resetPassword($this->model->id, $passwd);
+                }
             } catch (Throwable $e) {
                 $this->model->rollback();
                 $this->error($e->getMessage());
@@ -147,10 +143,6 @@ class Admin extends Backend
                 $this->error(__('Parameter %s can not be empty', ['']));
             }
 
-            /**
-             * 由于有密码字段-对方法进行重写
-             * 数据验证
-             */
             if ($this->modelValidate) {
                 try {
                     $validate = str_replace("\\model\\", "\\validate\\", get_class($this->model));
@@ -165,8 +157,8 @@ class Admin extends Backend
                 $this->error(__('Please use another administrator account to disable the current account!'));
             }
 
-            if (isset($data['password']) && $data['password']) {
-                $this->model->resetPassword($data['id'], $data['password']);
+            if (!empty($data['password'])) {
+                $this->model->resetPassword($row->id, $data['password']);
             }
 
             $groupAccess = [];

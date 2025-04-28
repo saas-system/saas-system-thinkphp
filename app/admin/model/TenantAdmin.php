@@ -6,7 +6,6 @@ use app\common\model\tenant\Tenant;
 use think\facade\Config;
 use think\facade\Db;
 use think\Model;
-use ba\Random;
 
 /**
  * TenantAdmin
@@ -68,11 +67,9 @@ class TenantAdmin extends Model
      * @param int $uid 管理员ID
      * @param string $newPassword 新密码
      */
-    public function resetPassword($uid, $newPassword)
+    public function resetPassword(int $uid, string $newPassword): TenantAdmin
     {
-        $salt   = Random::build('alnum', 16);
-        $passwd = encrypt_password($newPassword, $salt);
-        return $this->where(['id' => $uid])->update(['password' => $passwd, 'salt' => $salt]);
+        return $this->where(['id' => $uid])->update(['password' => hash_password($newPassword), 'salt' => '']);
     }
 
     public function tenant()

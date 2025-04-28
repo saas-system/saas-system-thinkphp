@@ -82,7 +82,7 @@ class Ems extends Frontend
             }
             // 验证账户密码
             $password = $this->request->post('password');
-            if ($this->auth->password != encrypt_password($password, $this->auth->salt)) {
+            if (!verify_password($password, $this->auth->password, ['salt' => $this->auth->salt])) {
                 $this->error(__('Password error'));
             }
         }
