@@ -61,7 +61,7 @@ class Crud extends Backend
      */
     protected array $dtStringToArray = ['checkbox', 'selects', 'remoteSelects', 'city', 'images', 'files'];
 
-    protected array $noNeedPermission = ['logStart', 'getFileData', 'parseFieldData', 'generateCheck'];
+    protected array $noNeedPermission = ['logStart', 'getFileData', 'parseFieldData', 'generateCheck', 'uploadCompleted'];
 
     public function initialize(): void
     {
@@ -301,7 +301,9 @@ class Crud extends Backend
             $this->error($e->getMessage());
         }
 
-        $this->success();
+        $this->success('', [
+            'crudLog' => CrudLog::find($crudLogId),
+        ]);
     }
 
     /**
@@ -311,8 +313,41 @@ class Crud extends Backend
     public function logStart(): void
     {
         $id   = $this->request->post('id');
-        $info = CrudLog::find($id)->toArray();
-        if (!$info) {
+        $type = $this->request->post('type', '');
+
+        if ($type == 'Cloud history') {
+            // 云端 历史记录
+            $client     = get_ba_client();
+            $response   = $client->request('GET', '/api/v6.Crud/info', [
+                'query' => [
+                    'id'            => $id,
+                    'server'        => 1,
+                    'ba-user-token' => $this->request->post('token', ''),
+                ]
+            ]);
+            $body       = $response->getBody();
+            $statusCode = $response->getStatusCode();
+            $content    = $body->getContents();
+            if ($content == '' || stripos($content, '<title>系统发生错误</title>') !== false || $statusCode != 200) {
+                $this->error(__('Failed to load cloud data'));
+            }
+            $json = json_decode($content, true);
+            if (json_last_error() != JSON_ERROR_NONE) {
+                $this->error(__('Failed to load cloud data'));
+            }
+            if (is_array($json)) {
+                if ($json['code'] != 1) {
+                    $this->error($json['msg']);
+                }
+
+                $info = $json['data']['info'];
+            }
+        } else {
+            // 本地记录
+            $info = CrudLog::find($id)->toArray();
+        }
+
+        if (!isset($info) || !$info) {
             $this->error(__('Record not found'));
         }
         // 数据表是否有数据
@@ -335,6 +370,7 @@ class Crud extends Backend
             'table'  => $info['table'],
             'fields' => $info['fields'],
             'app'    => $info['app'],
+            'sync'   => $info['sync'],
         ]);
     }
 
@@ -559,6 +595,39 @@ class Crud extends Backend
         }
         $this->success();
     }
+
+    /**
+     * CRUD 设计记录上传成功标记
+     * @throws Throwable
+     */
+    public function uploadCompleted(): void
+    {
+        $syncIds      = $this->request->post('syncIds/a', []);
+        $cancelSync   = $this->request->post('cancelSync/b', false);
+        $crudLogModel = new CrudLog();
+
+        if ($cancelSync) {
+            $logData = $crudLogModel->where('id', 'in', array_keys($syncIds))->select();
+            foreach ($logData as $logDatum) {
+                if ($logDatum->sync == $syncIds[$logDatum->id]) {
+                    $logDatum->sync = 0;
+                    $logDatum->save();
+                }
+            }
+            $this->success();
+        }
+
+        $saveData = [];
+        foreach ($syncIds as $key => $syncId) {
+            $saveData[] = [
+                'id'   => $key,
+                'sync' => $syncId,
+            ];
+        }
+        $crudLogModel->saveAll($saveData);
+        $this->success();
+    }
+
 
     /**
      * 关联表数据解析

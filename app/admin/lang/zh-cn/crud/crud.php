@@ -7,4 +7,5 @@ return [
     'del-field fail not exist'         => '字段 %s 删除失败，数据表内不存在该字段',
     'change-field-attr fail not exist' => '修改字段 %s 的属性失败，数据表内不存在该字段',
     'add-field fail exist'             => '添加字段 %s 失败，数据表内已经存在该字段',
+    'Failed to load cloud data'        => '加载云端数据失败，请稍后重试！',
 ];
