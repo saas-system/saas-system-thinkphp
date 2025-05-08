@@ -18,8 +18,6 @@ class Config extends Backend
      */
     protected object $model;
 
-    protected array $noNeedLogin = ['index'];
-
     protected array $filePath = [
         'appConfig'           => 'config/app.php',
         'webAdminBase'        => 'web/src/router/static/adminBase.ts',

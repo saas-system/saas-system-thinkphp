@@ -9,8 +9,6 @@ class User extends Frontend
 {
     protected array $noNeedLogin = ['checkIn', 'logout'];
 
-    protected array $noNeedPermission = ['index'];
-
     public function initialize(): void
     {
         parent::initialize();
