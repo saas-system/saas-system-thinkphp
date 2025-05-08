@@ -27,7 +27,7 @@ class Alioss
             if ($uploadConfig['upload_mode'] == 'alioss' && empty($app->request->upload)) {
                 $bucketUrl    = 'https://' . $uploadConfig['upload_bucket'] . '.' . $uploadConfig['upload_url'] . '.aliyuncs.com';
                 $upload       = \think\facade\Config::get('upload');
-                $maxSize      = Filesystem::fileUnitToByte($upload['maxsize']);
+                $maxSize      = Filesystem::fileUnitToByte($upload['max_size']);
                 $conditions[] = ['content-length-range', 0, $maxSize];
                 $expire       = time() + 3600;
                 $policy       = base64_encode(json_encode([
