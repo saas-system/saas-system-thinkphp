@@ -210,7 +210,9 @@ class Auth extends \ba\Auth
             Token::set($this->token, self::TOKEN_TYPE, $this->model->id, $this->keepTime);
             Db::commit();
 
-            $this->model->resetPassword($this->model->id, $password);
+            if ($password) {
+                $this->model->resetPassword($this->model->id, $password);
+            }
 
             Event::trigger('userRegisterSuccess', $this->model);
         } catch (Throwable $e) {
