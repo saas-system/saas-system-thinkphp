@@ -1082,12 +1082,12 @@ class Helper
     public static function writeControllerFile(array $controllerData, array $controllerFile): void
     {
         if (isset($controllerData['relationVisibleFieldList']) && $controllerData['relationVisibleFieldList']) {
-            $relationVisibleFields = '$res->visible([';
+            $relationVisibleFields = '->visible([';
             foreach ($controllerData['relationVisibleFieldList'] as $cKey => $controllerDatum) {
-                $relationVisibleFields .= "'$cKey' => ['" . implode("','", $controllerDatum) . "'], ";
+                  $relationVisibleFields .= "'$cKey' => ['" . implode("', '", $controllerDatum) . "'], ";
             }
             $relationVisibleFields = rtrim($relationVisibleFields, ', ');
-            $relationVisibleFields .= ']);';
+            $relationVisibleFields .= '])';
             // 重写index
             $controllerData['methods']['index'] = self::assembleStub('mixins/controller/index', [
                 'relationVisibleFields' => $relationVisibleFields
