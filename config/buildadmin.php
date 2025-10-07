@@ -74,7 +74,7 @@ return [
     // 内容分发网络URL参数，将自动添加 `?`，之后拼接到 cdn_url 的结尾（例如 `imageMogr2/format/heif`）
     'cdn_url_params'        => '',
     // 版本号
-    'version'               => 'v2.3.1',
+    'version'               => 'v2.3.2',
     // 中心接口地址（用于请求模块市场的数据等用途）
     'api_url'               => 'https://buildadmin.com',
 ];
