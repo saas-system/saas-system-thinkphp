@@ -53,16 +53,17 @@ class Rule extends Backend
     public function initialize(): void
     {
         parent::initialize();
-        $this->model = new MenuRule();
-        $this->tree  = Tree::instance();
 
-        $isTree          = $this->request->param('isTree', true);
-        $this->initValue = $this->request->get('initValue/a', []);
-        $this->initValue = array_filter($this->initValue);
-        $this->keyword   = $this->request->request('quickSearch', '');
-
-        // 有初始化值时不组装树状（初始化出来的值更好看）
-        $this->assembleTree = $isTree && !$this->initValue;
+        // 防止 URL 中的特殊符号被默认的 filter 函数转义
+        $this->request->filter('clean_xss');
+        
+        $this->model        = new MenuRule();
+        $this->tree         = Tree::instance();
+        $isTree             = $this->request->param('isTree', true);
+        $this->initValue    = $this->request->get('initValue/a', []);
+        $this->initValue    = array_filter($this->initValue);
+        $this->keyword      = $this->request->request('quickSearch', '');
+        $this->assembleTree = $isTree && !$this->initValue; // 有初始化值时不组装树状（初始化出来的值更好看）
     }
 
     public function index(): void
