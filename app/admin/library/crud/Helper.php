@@ -1106,7 +1106,7 @@ class Helper
     public static function writeFormFile($formVueData, $webViewsDir, $fields, $webTranslate): void
     {
         $fieldHtml                = "\n";
-        $formVueData['bigDialog'] = $formVueData['bigDialog'] ? "\n" . self::tab(2) . 'width="50%"' : '';
+        $formVueData['bigDialog'] = $formVueData['bigDialog'] ? "\n" . self::tab(2) . 'width="70%"' : '';
         foreach ($formVueData['formFields'] as $field) {
             $fieldHtml .= self::tab(5) . "<FormItem";
             foreach ($field as $key => $attr) {

@@ -164,7 +164,7 @@ class Crud extends Backend
             $this->indexVueData['defaultOrder']          = '';
 
             // form.vue数据
-            $this->formVueData['bigDialog']  = 'false';
+            $this->formVueData['bigDialog']  = false;
             $this->formVueData['formFields'] = [];
 
             // 语言包数据
@@ -826,8 +826,8 @@ class Crud extends Backend
     private function parseSundryData($field, $table): void
     {
         if ($field['designType'] == 'editor') {
-            $this->formVueData['bigDialog']     = 'true'; // form 使用较宽的 Dialog
-            $this->controllerData['filterRule'] = "\n" . Helper::tab(2) . '$this->request->filter(\'clean_xss\');';// 修改变量过滤规则
+            $this->formVueData['bigDialog']     = true; // 加宽 dialog
+            $this->controllerData['filterRule'] = "\n" . Helper::tab(2) . '$this->request->filter(\'clean_xss\');'; // 修改变量过滤规则
         }
 
         // 默认排序字段
