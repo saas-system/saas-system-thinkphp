@@ -702,6 +702,20 @@ class Helper
         return app_path() . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'crud' . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . Filesystem::fsFit($name) . '.stub';
     }
 
+     /**
+     * 多维数组转字符串
+     */
+    public static function arrayToString(array|string $value): string
+    {
+        if (!is_array($value)) {
+            return $value;
+        }
+        foreach ($value as &$item) {
+            $item = self::arrayToString($item);
+        }
+        return implode(PHP_EOL, $value);
+    }
+
     /**
      * 组装模板
      * @param string $name
@@ -712,7 +726,7 @@ class Helper
     public static function assembleStub(string $name, array $data, bool $escape = false): string
     {
         foreach ($data as &$datum) {
-            $datum = is_array($datum) ? implode(PHP_EOL, $datum) : $datum;
+            $datum = self::arrayToString($datum);
         }
         $search = $replace = [];
         foreach ($data as $k => $v) {
@@ -1129,16 +1143,30 @@ class Helper
                     if (isset($field['form']['validatorMsg']) && $field['form']['validatorMsg']) {
                         $message = ", message: '{$field['form']['validatorMsg']}'";
                     }
-                    $formValidatorRules[$field['name']][] = "buildValidatorData({ name: '$item', title: t('$webTranslate{$field['name']}')$message })";
+                    $formVueData['formValidatorRules'][$field['name']][] = "buildValidatorData({ name: '$item', title: t('$webTranslate{$field['name']}')$message })";
                 }
             }
         }
-        $formVueData['formItemRules'] = self::buildFormValidatorRules($formValidatorRules);
+        if ($formVueData['formValidatorRules']) {
+            $formVueData['imports'][] = "import { buildValidatorData } from '/@/utils/validate'";
+        }
+
+        $formVueData['importExpand']  = self::buildImportExpand($formVueData['imports']);
+        $formVueData['formItemRules'] = self::buildFormValidatorRules($formVueData['formValidatorRules']);
         $formVueContent               = self::assembleStub('html/form', $formVueData);
         self::writeFile(root_path() . $webViewsDir['views'] . '/' . 'popupForm.vue', $formVueContent);
     }
 
-    public static function buildFormValidatorRules($formValidatorRules): string
+    public static function buildImportExpand(array $imports): string
+    {
+        $importExpand = '';
+        foreach ($imports as $import) {
+            $importExpand .= "\n$import";
+        }
+        return $importExpand;
+    }
+
+    public static function buildFormValidatorRules(array $formValidatorRules): string
     {
         $rulesHtml = "";
         foreach ($formValidatorRules as $key => $formItemRule) {

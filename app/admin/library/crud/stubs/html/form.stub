@@ -48,9 +48,8 @@ import type { FormItemRule } from 'element-plus'
 import { inject, reactive, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import FormItem from '/@/components/formItem/index.vue'
-import { buildValidatorData } from '/@/utils/validate'
 import { useConfig } from '/@/stores/config'
-import type baTableClass from '/@/utils/baTable'
+import type baTableClass from '/@/utils/baTable'{%importExpand%}
 
 const config = useConfig()
 const formRef = useTemplateRef<FormInstance>()

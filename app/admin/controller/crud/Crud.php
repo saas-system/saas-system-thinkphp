@@ -164,8 +164,10 @@ class Crud extends Backend
             $this->indexVueData['defaultOrder']          = '';
 
             // form.vue数据
-            $this->formVueData['bigDialog']  = false;
-            $this->formVueData['formFields'] = [];
+            $this->formVueData['bigDialog']          = false;
+            $this->formVueData['formFields']         = [];
+            $this->formVueData['formValidatorRules'] = [];
+            $this->formVueData['imports']            = [];
 
             // 语言包数据
             $this->langTsData = [
