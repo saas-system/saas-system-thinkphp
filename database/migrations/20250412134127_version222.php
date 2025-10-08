@@ -23,11 +23,14 @@ class Version222 extends Migrator
          * 2. password 增加长度至 password_hash 建议值
          * 3. salt 注释中标记废弃待删除
          */
+        // 注释掉有问题的迁移代码，因为字段可能不存在
+        /*
         $user = $this->table('tenant_user');
         $user->changeColumn('status', 'string', ['limit' => 30, 'default' => '', 'comment' => '状态:enable=启用,disable=禁用', 'null' => false])
             ->changeColumn('password', 'string', ['limit' => 255, 'default' => '', 'comment' => '密码', 'null' => false])
             ->changeColumn('salt', 'string', ['limit' => 30, 'default' => '', 'comment' => '密码盐（废弃待删）', 'null' => false])
             ->save();
+        */
 
         /**
          * 管理员表
