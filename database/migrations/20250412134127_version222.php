@@ -24,13 +24,14 @@ class Version222 extends Migrator
          * 3. salt 注释中标记废弃待删除
          */
         // 注释掉有问题的迁移代码，因为字段可能不存在
-        /*
-        $user = $this->table('tenant_user');
+        $user = $this->table('tenant_admin');
         $user->changeColumn('status', 'string', ['limit' => 30, 'default' => '', 'comment' => '状态:enable=启用,disable=禁用', 'null' => false])
             ->changeColumn('password', 'string', ['limit' => 255, 'default' => '', 'comment' => '密码', 'null' => false])
             ->changeColumn('salt', 'string', ['limit' => 30, 'default' => '', 'comment' => '密码盐（废弃待删）', 'null' => false])
             ->save();
-        */
+
+        Db::name('tenant_admin')->where('status', '0')->update(['status' => 'disable']);
+        Db::name('tenant_admin')->where('status', '1')->update(['status' => 'enable']);
 
         /**
          * 管理员表
@@ -69,7 +70,7 @@ class Version222 extends Migrator
         /**
          * 多个数据表的 status 字段类型修改为更合理的类型
          */
-        $tables = ['platform_admin_group', 'platform_admin_rule', 'tenant_user_group', 'tenant_user_rule', 'security_data_recycle', 'security_sensitive_data', 'test_build'];
+        $tables = ['platform_admin_group', 'platform_admin_rule', 'tenant_admin_group', 'tenant_admin_rule', 'security_data_recycle', 'security_sensitive_data', 'test_build'];
         foreach ($tables as $table) {
             if ($this->hasTable($table)) {
                 $mTable = $this->table($table);
