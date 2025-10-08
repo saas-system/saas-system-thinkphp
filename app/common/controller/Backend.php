@@ -190,7 +190,7 @@ class Backend extends Api
         $initValue    = $this->request->get("initValue", '');
         $initOperator = $this->request->get("initOperator/s", 'in');
 
-        $search = $this->filterParams($search, $nobuildfields); // 过滤搜索参数
+        $search = $this->filterParams($search); // 过滤搜索参数
 
         $where              = [];
         $modelTable         = strtolower($this->model->getTable());
