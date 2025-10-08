@@ -130,7 +130,7 @@ class TenantAuth extends \ba\Auth
                 $this->setError('Account not exist');
                 return false;
             }
-            if ($this->model['status'] != '1') {
+            if ($this->model['status'] != 'enable') {
                 $this->setError('Account disabled');
                 return false;
             }
