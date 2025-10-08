@@ -5,6 +5,7 @@ namespace app\admin\controller\tenant;
 use app\common\controller\Backend;
 use app\common\facade\Token;
 use app\tenant\library\TenantAuth;
+use ba\Random;
 use think\db\exception\PDOException;
 use think\exception\ValidateException;
 use think\facade\Db;
