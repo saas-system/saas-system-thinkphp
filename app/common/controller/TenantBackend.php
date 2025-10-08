@@ -179,7 +179,7 @@ class TenantBackend extends Api
         $initKey     = $this->request->get("initKey/s", $pk);
         $initValue   = $this->request->get("initValue/a", '');
 
-        $search = $this->filterParams($search, $nobuildfields); // 过滤搜索参数
+        $search = $this->filterParams($search); // 过滤搜索参数
 
         $where              = [];
         $modelTable         = strtolower($this->model->getTable());
